@@ -1,0 +1,22 @@
+{
+  "name": "bud-love-tickets",
+  "version": "4.0.0",
+  "description": "Visual investigation board for OpenClaw memory - PWA with auto-sync",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "pwa",
+    "dashboard",
+    "memory",
+    "openclaw",
+    "visualization"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}
