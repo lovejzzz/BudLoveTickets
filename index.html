@@ -1511,16 +1511,25 @@
     
     // ===== TICKETS / KANBAN =====
     let tickets = [];
-    const TICKETS_KEY = 'bud-love-tickets';
+    const TICKETS_API = 'https://jsonblob.com/api/jsonBlob/019c347e-db34-702c-93a1-6c1277dc8843';
     
-    function saveTicketsLocal() {
-      localStorage.setItem(TICKETS_KEY, JSON.stringify(tickets));
+    async function saveTicketsRemote() {
+      try {
+        await fetch(TICKETS_API, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tickets })
+        });
+      } catch (e) {
+        console.error('Failed to save:', e);
+      }
     }
     
     async function loadTickets() {
       try {
-        const saved = localStorage.getItem(TICKETS_KEY);
-        tickets = saved ? JSON.parse(saved) : [];
+        const res = await fetch(TICKETS_API);
+        const data = await res.json();
+        tickets = data.tickets || [];
         if (state.currentView === 'tickets') renderTickets();
       } catch (e) {
         console.error('Failed to load tickets:', e);
@@ -1593,7 +1602,7 @@
         const ticket = tickets.find(t => t.id === draggedId);
         if (ticket) {
           ticket.status = newStatus;
-          saveTicketsLocal();
+          saveTicketsRemote();
           renderTickets();
         }
         draggedId = null;
@@ -1653,7 +1662,7 @@
         });
       }
       
-      saveTicketsLocal();
+      saveTicketsRemote();
       renderTickets();
       closeTicketModal();
     }
@@ -1676,7 +1685,7 @@
     async function deleteTicket(id) {
       if (confirm('Delete this ticket?')) {
         tickets = tickets.filter(t => t.id !== id);
-        saveTicketsLocal();
+        saveTicketsRemote();
         renderTickets();
       }
     }
@@ -1685,7 +1694,7 @@
       const ticket = tickets.find(t => t.id === id);
       if (ticket) {
         ticket.status = newStatus;
-        saveTicketsLocal();
+        saveTicketsRemote();
         renderTickets();
       }
     }
