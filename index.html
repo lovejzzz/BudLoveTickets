@@ -661,6 +661,92 @@
       border-radius: 10px;
       font-size: 0.75em;
     }
+    
+    /* Case Detail */
+    .case-detail {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+    
+    .back-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    .case-detail-header {
+      margin-bottom: 24px;
+    }
+    
+    .case-detail-title {
+      font-size: 1.5em;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .case-detail-desc {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    
+    .case-features {
+      margin-bottom: 24px;
+    }
+    
+    .case-features h3 {
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    
+    .feature-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+      animation: fadeInUp 0.3s ease-out;
+    }
+    
+    .case-create-btn {
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--pink) 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .case-create-btn:hover {
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 8px 20px var(--accent-glow);
+    }
+    
+    .case-tickets-section {
+      margin-top: 24px;
+    }
+    
+    .case-tickets-section h3 {
+      margin-bottom: 12px;
+    }
 
     /* Kanban / Tickets View */
     .kanban {
@@ -1188,9 +1274,7 @@
       </div>
     </div>
     <div class="tabs" id="tabs">
-      <button class="tab active" data-project="all" tabindex="0">📊 All Cases</button>
-      <button class="tab" data-project="timeline" tabindex="0">📅 Timeline</button>
-      <button class="tab" data-project="tickets" tabindex="0">🎫 Tickets</button>
+      <button class="tab active" data-project="tickets" tabindex="0">🎫 Tickets</button>
       <button class="tab" data-project="cases" tabindex="0">📁 Cases</button>
     </div>
   </div>
@@ -1245,6 +1329,12 @@
       <p>Projects we've built together</p>
     </div>
     <div id="casesList" class="cases-list"></div>
+  </div>
+  
+  <!-- Case Detail View -->
+  <div id="caseDetailView" class="case-detail hidden">
+    <button class="back-btn" onclick="navigateToView('cases')">← Back to Cases</button>
+    <div id="caseDetailContent"></div>
   </div>
   
   <!-- Ticket Modal -->
@@ -1377,8 +1467,9 @@
       document.getElementById('loadingView').classList.add('hidden');
       initTabs();
       
-      // Default to tickets view for static version
+      // Default to tickets view
       state.currentView = 'tickets';
+      loadTickets();
       navigateToView('tickets');
     }
     
@@ -1447,6 +1538,7 @@
       document.getElementById('timelineView').classList.add('hidden');
       document.getElementById('ticketsView').classList.add('hidden');
       document.getElementById('casesView').classList.add('hidden');
+      document.getElementById('caseDetailView').classList.add('hidden');
       
       // Show appropriate view
       if (view === 'all') {
@@ -1461,6 +1553,9 @@
       } else if (view === 'cases') {
         document.getElementById('casesView').classList.remove('hidden');
         renderCases();
+      } else if (view === 'caseDetail' && project) {
+        document.getElementById('caseDetailView').classList.remove('hidden');
+        renderCaseDetail(project);
       } else if (view === 'project' && project) {
         document.getElementById('projectView').classList.remove('hidden');
         renderProject(project);
@@ -1655,10 +1750,14 @@
     
     // ===== CASES =====
     const DEFAULT_CASES = [
-      { id: 'claude-billing', name: 'Claude Billing', icon: '💰', desc: 'CLI tool to track Claude API spending', created: '2026-02-06' },
-      { id: 'openclaw-desktop', name: 'OpenClaw Desktop', icon: '🖥️', desc: 'macOS menu bar app for OpenClaw gateway', created: '2026-02-06' },
-      { id: 'detective-wall', name: 'Detective Wall', icon: '🔍', desc: 'Visual case board for tracking projects', created: '2026-02-06' },
-      { id: 'bud-love-tickets', name: 'Bud Love Tickets', icon: '💜', desc: 'This ticket app!', created: '2026-02-06' }
+      { id: 'claude-billing', name: 'Claude Billing', icon: '💰', desc: 'CLI tool to track Claude API spending from OpenClaw sessions.', created: '2026-02-06',
+        features: ['SQLite database for billing data', 'Syncs from OpenClaw session files', 'Global CLI command', 'Cost breakdown by session'] },
+      { id: 'openclaw-desktop', name: 'OpenClaw Desktop', icon: '🖥️', desc: 'macOS menu bar app to run OpenClaw gateway in background.', created: '2026-02-06',
+        features: ['Tray icon with status', 'Gateway start/stop/restart', 'Settings UI', 'Dark mode', 'Stats tab', 'Model selector (v2.0)'] },
+      { id: 'detective-wall', name: 'Detective Wall', icon: '🔍', desc: 'Visual case board for tracking projects — the original version with Christmas tree layout.', created: '2026-02-06',
+        features: ['Christmas tree layout', 'Red string connections', 'Search', 'Timeline view', 'PWA installable', 'WebSocket live updates'] },
+      { id: 'bud-love-tickets', name: 'Bud Love Tickets', icon: '💜', desc: 'Ticket management app for collaborating with your AI assistant.', created: '2026-02-06',
+        features: ['Kanban board (To Do / Doing / Done)', 'Cloud storage via JSONBlob', 'Vercel hosting', 'Case categories', 'Edit & delete tickets', 'Move buttons for mobile'] }
     ];
     
     function getCases() {
@@ -1677,7 +1776,7 @@
       container.innerHTML = cases.map(c => {
         const caseTickets = tickets.filter(t => t.category === c.id);
         return `
-          <div class="case-card" onclick="filterByCase('${c.id}')">
+          <div class="case-card" onclick="viewCaseDetail('${c.id}')"
             <div class="case-card-title">${c.icon} ${c.name}</div>
             <div class="case-card-desc">${c.desc}</div>
             <div class="case-card-meta">
@@ -1692,6 +1791,59 @@
     function filterByCase(caseId) {
       state.currentFilter = caseId;
       navigateToView('tickets');
+    }
+    
+    function viewCaseDetail(caseId) {
+      navigateToView('caseDetail', caseId);
+    }
+    
+    function renderCaseDetail(caseId) {
+      const cases = getCases();
+      const c = cases.find(cs => cs.id === caseId);
+      if (!c) return;
+      
+      const caseTickets = tickets.filter(t => t.category === caseId);
+      const features = c.features || [];
+      
+      const container = document.getElementById('caseDetailContent');
+      container.innerHTML = `
+        <div class="case-detail-header">
+          <div class="case-detail-title">${c.icon} ${c.name}</div>
+          <div class="case-detail-desc">${c.desc}</div>
+          <div style="color: var(--text-muted); font-size: 0.85em;">Created: ${c.created}</div>
+        </div>
+        
+        ${features.length > 0 ? `
+        <div class="case-features">
+          <h3>✨ Features</h3>
+          ${features.map(f => `<div class="feature-item">${f}</div>`).join('')}
+        </div>
+        ` : ''}
+        
+        <button class="case-create-btn" onclick="addTicketForCase('${caseId}')">
+          🎫 Create Ticket for ${c.name}
+        </button>
+        
+        ${caseTickets.length > 0 ? `
+        <div class="case-tickets-section">
+          <h3>🎫 Tickets (${caseTickets.length})</h3>
+          ${caseTickets.map(t => `
+            <div class="feature-item" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>${t.title}</span>
+              <span class="kanban-card-priority priority-${t.priority}" style="font-size:0.7em; padding:2px 6px; border-radius:4px;">${t.status}</span>
+            </div>
+          `).join('')}
+        </div>
+        ` : ''}
+      `;
+    }
+    
+    function addTicketForCase(caseId) {
+      addTicket('todo');
+      // Set the category to this case
+      setTimeout(() => {
+        document.getElementById('ticketCategory').value = caseId;
+      }, 100);
     }
     
     function updateCategoryDropdown() {
