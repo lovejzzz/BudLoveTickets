@@ -1511,7 +1511,7 @@
     
     // ===== TICKETS / KANBAN =====
     let tickets = [];
-    const TICKETS_API = 'https://jsonblob.com/api/jsonBlob/019c347e-db34-702c-93a1-6c1277dc8843';
+    const TICKETS_API = '/api/tickets';
     
     async function saveTicketsRemote() {
       try {
@@ -1520,6 +1520,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tickets })
         });
+        console.log('Tickets saved!');
       } catch (e) {
         console.error('Failed to save:', e);
       }
@@ -1530,6 +1531,7 @@
         const res = await fetch(TICKETS_API);
         const data = await res.json();
         tickets = data.tickets || [];
+        console.log('Loaded tickets:', tickets.length);
         if (state.currentView === 'tickets') renderTickets();
       } catch (e) {
         console.error('Failed to load tickets:', e);
