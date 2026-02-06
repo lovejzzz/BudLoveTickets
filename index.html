@@ -1776,7 +1776,7 @@
       container.innerHTML = cases.map(c => {
         const caseTickets = tickets.filter(t => t.category === c.id);
         return `
-          <div class="case-card" onclick="viewCaseDetail('${c.id}')"
+          <div class="case-card" onclick="viewCaseDetail('${c.id}')">
             <div class="case-card-title">${c.icon} ${c.name}</div>
             <div class="case-card-desc">${c.desc}</div>
             <div class="case-card-meta">
