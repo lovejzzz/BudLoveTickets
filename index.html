@@ -9,28 +9,45 @@
   <title>💜 Bud Love Tickets</title>
   <link rel="manifest" href="/manifest.json">
   <link rel="apple-touch-icon" href="/icons/icon-192.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0a1520;
-      --bg-secondary: #12202d;
-      --bg-card: linear-gradient(135deg, #152535 0%, #1a3045 100%);
-      --accent: #00b4d8;
-      --accent-light: #48cae4;
-      --text-primary: #e0e8f0;
-      --text-secondary: #8899aa;
-      --text-muted: #556677;
-      --border: rgba(255,255,255,0.1);
-      --border-hover: rgba(0,180,216,0.5);
-      --success: #06d6a0;
-      --warning: #ffd166;
-      --info: #2196f3;
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-card: linear-gradient(135deg, #1e1e32 0%, #2a2a45 100%);
+      --accent: #a855f7;
+      --accent-light: #c084fc;
+      --accent-glow: rgba(168, 85, 247, 0.4);
+      --text-primary: #f0f0f5;
+      --text-secondary: #9999bb;
+      --text-muted: #666688;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(168, 85, 247, 0.5);
+      --success: #22c55e;
+      --warning: #eab308;
+      --info: #3b82f6;
+      --pink: #ec4899;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
@@ -587,9 +604,14 @@
       flex: 1;
       min-width: 280px;
       background: var(--bg-card);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 16px;
+      padding: 16px;
       border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .kanban-column:hover {
+      border-color: rgba(168, 85, 247, 0.3);
     }
     
     .kanban-header {
@@ -624,19 +646,19 @@
     }
     
     .kanban-card {
-      background: var(--bg);
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
+      border-radius: 12px;
+      padding: 14px;
       cursor: grab;
-      transition: all 0.2s;
-      animation: slideIn 0.3s ease-out;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInUp 0.4s ease-out;
     }
     
     .kanban-card:hover {
       border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(170,51,51,0.2);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 24px var(--accent-glow);
     }
     
     .kanban-card.dragging {
@@ -716,43 +738,51 @@
       text-transform: uppercase;
     }
     
-    .priority-high { background: #ef476f; color: white; }
-    .priority-medium { background: #ffd166; color: #222; }
-    .priority-low { background: #06d6a0; color: #222; }
+    .priority-high { background: linear-gradient(135deg, #ef476f, #f97316); color: white; }
+    .priority-medium { background: linear-gradient(135deg, #eab308, #fbbf24); color: #222; }
+    .priority-low { background: linear-gradient(135deg, #22c55e, #10b981); color: white; }
     
     .kanban-add {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 12px;
-      background: transparent;
-      border: 2px dashed var(--border);
-      border-radius: 8px;
+      background: rgba(168, 85, 247, 0.05);
+      border: 2px dashed rgba(168, 85, 247, 0.3);
+      border-radius: 10px;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      font-weight: 500;
     }
     
     .kanban-add:hover {
       border-color: var(--accent);
       color: var(--accent);
+      background: rgba(168, 85, 247, 0.1);
+      transform: translateY(-2px);
     }
     
     .share-bud-btn {
       width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+      padding: 12px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       color: white;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
     
     .share-bud-btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 12px rgba(155,89,182,0.4);
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+    }
+    
+    .share-bud-btn:active {
+      transform: scale(0.98);
     }
     
     .drop-zone {
