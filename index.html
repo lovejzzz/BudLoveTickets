@@ -587,6 +587,81 @@
       color: var(--text-secondary);
     }
     
+    /* Cases View */
+    .cases-grid {
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .cases-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .cases-header h2 {
+      font-size: 1.5em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .cases-header p {
+      color: var(--text-secondary);
+    }
+    
+    .cases-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    
+    .case-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .case-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+    
+    .case-card-title {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .case-card-desc {
+      color: var(--text-secondary);
+      font-size: 0.9em;
+      margin-bottom: 12px;
+    }
+    
+    .case-card-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8em;
+      color: var(--text-muted);
+    }
+    
+    .case-card-tickets {
+      background: var(--accent);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.75em;
+    }
+
     /* Kanban / Tickets View */
     .kanban {
       display: flex;
@@ -935,6 +1010,22 @@
       background: var(--accent-light);
     }
     
+    .category-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.95em;
+      cursor: pointer;
+    }
+    
+    .category-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
     .modal-section {
       margin-bottom: 16px;
     }
@@ -1100,6 +1191,7 @@
       <button class="tab active" data-project="all" tabindex="0">📊 All Cases</button>
       <button class="tab" data-project="timeline" tabindex="0">📅 Timeline</button>
       <button class="tab" data-project="tickets" tabindex="0">🎫 Tickets</button>
+      <button class="tab" data-project="cases" tabindex="0">📁 Cases</button>
     </div>
   </div>
   
@@ -1135,7 +1227,6 @@
       </div>
       <div class="kanban-cards" id="doingCards"></div>
       <button class="kanban-add" onclick="addTicket('doing')">+ Add ticket</button>
-      <button class="share-bud-btn" onclick="shareWithBud()">💜 Share with Bud</button>
     </div>
     <div class="kanban-column" data-status="done">
       <div class="kanban-header">
@@ -1145,6 +1236,15 @@
       <div class="kanban-cards" id="doneCards"></div>
       <button class="kanban-add" onclick="addTicket('done')">+ Add ticket</button>
     </div>
+  </div>
+  
+  <!-- Cases View -->
+  <div id="casesView" class="cases-grid hidden">
+    <div class="cases-header">
+      <h2>📁 Our Cases</h2>
+      <p>Projects we've built together</p>
+    </div>
+    <div id="casesList" class="cases-list"></div>
   </div>
   
   <!-- Ticket Modal -->
@@ -1175,6 +1275,13 @@
               <button type="button" class="priority-btn active" data-priority="medium">Medium</button>
               <button type="button" class="priority-btn" data-priority="high">High</button>
             </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="ticketCategory">Category</label>
+            <select id="ticketCategory" class="category-select">
+              <option value="general">🌐 General</option>
+            </select>
           </div>
           
           <button type="submit" class="submit-btn">Create Ticket</button>
@@ -1302,7 +1409,7 @@
     function initTabs() {
       const tabsContainer = document.getElementById('tabs');
       
-      // Click handlers (only fixed tabs now: All Cases, Timeline, Tickets)
+      // Click handlers
       tabsContainer.addEventListener('click', (e) => {
         const tab = e.target.closest('.tab');
         if (tab) {
@@ -1311,6 +1418,8 @@
             navigateToView('timeline');
           } else if (project === 'tickets') {
             navigateToView('tickets');
+          } else if (project === 'cases') {
+            navigateToView('cases');
           } else if (project === 'all') {
             navigateToView('all');
           }
@@ -1327,7 +1436,8 @@
         const isActive = (view === 'project' && t.dataset.project === project) ||
                         (view === 'all' && t.dataset.project === 'all') ||
                         (view === 'timeline' && t.dataset.project === 'timeline') ||
-                        (view === 'tickets' && t.dataset.project === 'tickets');
+                        (view === 'tickets' && t.dataset.project === 'tickets') ||
+                        (view === 'cases' && t.dataset.project === 'cases');
         t.classList.toggle('active', isActive);
       });
       
@@ -1336,6 +1446,7 @@
       document.getElementById('projectView').classList.add('hidden');
       document.getElementById('timelineView').classList.add('hidden');
       document.getElementById('ticketsView').classList.add('hidden');
+      document.getElementById('casesView').classList.add('hidden');
       
       // Show appropriate view
       if (view === 'all') {
@@ -1347,6 +1458,9 @@
       } else if (view === 'tickets') {
         document.getElementById('ticketsView').classList.remove('hidden');
         renderTickets();
+      } else if (view === 'cases') {
+        document.getElementById('casesView').classList.remove('hidden');
+        renderCases();
       } else if (view === 'project' && project) {
         document.getElementById('projectView').classList.remove('hidden');
         renderProject(project);
@@ -1539,6 +1653,54 @@
       }).join('');
     }
     
+    // ===== CASES =====
+    const DEFAULT_CASES = [
+      { id: 'claude-billing', name: 'Claude Billing', icon: '💰', desc: 'CLI tool to track Claude API spending', created: '2026-02-06' },
+      { id: 'openclaw-desktop', name: 'OpenClaw Desktop', icon: '🖥️', desc: 'macOS menu bar app for OpenClaw gateway', created: '2026-02-06' },
+      { id: 'detective-wall', name: 'Detective Wall', icon: '🔍', desc: 'Visual case board for tracking projects', created: '2026-02-06' },
+      { id: 'bud-love-tickets', name: 'Bud Love Tickets', icon: '💜', desc: 'This ticket app!', created: '2026-02-06' }
+    ];
+    
+    function getCases() {
+      const saved = localStorage.getItem('bud-love-cases');
+      return saved ? JSON.parse(saved) : DEFAULT_CASES;
+    }
+    
+    function saveCases(cases) {
+      localStorage.setItem('bud-love-cases', JSON.stringify(cases));
+    }
+    
+    function renderCases() {
+      const cases = getCases();
+      const container = document.getElementById('casesList');
+      
+      container.innerHTML = cases.map(c => {
+        const caseTickets = tickets.filter(t => t.category === c.id);
+        return `
+          <div class="case-card" onclick="filterByCase('${c.id}')">
+            <div class="case-card-title">${c.icon} ${c.name}</div>
+            <div class="case-card-desc">${c.desc}</div>
+            <div class="case-card-meta">
+              <span>${c.created}</span>
+              <span class="case-card-tickets">${caseTickets.length} tickets</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function filterByCase(caseId) {
+      state.currentFilter = caseId;
+      navigateToView('tickets');
+    }
+    
+    function updateCategoryDropdown() {
+      const select = document.getElementById('ticketCategory');
+      const cases = getCases();
+      select.innerHTML = '<option value="general">🌐 General</option>' +
+        cases.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+    }
+    
     // ===== TICKETS / KANBAN =====
     let tickets = [];
     const TICKETS_API = '/api/tickets';
@@ -1650,11 +1812,13 @@
       document.getElementById('ticketStatus').value = status;
       document.getElementById('ticketTitle').value = '';
       document.getElementById('ticketDesc').value = '';
+      document.getElementById('ticketCategory').value = 'general';
       document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('.priority-btn[data-priority="medium"]').classList.add('active');
       document.getElementById('ticketForm').dataset.editId = '';
       document.querySelector('.modal-title').textContent = '🎫 New Ticket';
       document.querySelector('.submit-btn').textContent = 'Create Ticket';
+      updateCategoryDropdown();
       document.getElementById('ticketModalOverlay').style.display = 'flex';
       document.getElementById('ticketTitle').focus();
     }
@@ -1672,6 +1836,7 @@
       const desc = document.getElementById('ticketDesc').value;
       const status = document.getElementById('ticketStatus').value;
       const priority = document.querySelector('.priority-btn.active').dataset.priority;
+      const category = document.getElementById('ticketCategory').value;
       
       if (editId) {
         // Update existing
@@ -1681,6 +1846,7 @@
           ticket.desc = desc;
           ticket.status = status;
           ticket.priority = priority;
+          ticket.category = category;
         }
       } else {
         // Create new
@@ -1690,6 +1856,7 @@
           desc,
           status,
           priority,
+          category,
           created: new Date().toISOString().split('T')[0]
         });
       }
