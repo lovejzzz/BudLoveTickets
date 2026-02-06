@@ -612,54 +612,80 @@
     }
     
     .cases-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    
-    .case-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    
-    .case-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px var(--accent-glow);
-    }
-    
-    .case-card-title {
-      font-weight: 600;
-      font-size: 1.1em;
-      margin-bottom: 8px;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
+      gap: 0;
     }
     
-    .case-card-desc {
+    .cases-table-header {
+      display: grid;
+      grid-template-columns: 180px 1fr 120px 80px;
+      gap: 20px;
+      padding: 12px 16px;
+      font-size: 0.75em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .case-row {
+      display: grid;
+      grid-template-columns: 180px 1fr 120px 80px;
+      gap: 20px;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      align-items: center;
+      animation: fadeInUp 0.3s ease-out;
+    }
+    
+    .case-row:hover {
+      background: rgba(168, 85, 247, 0.08);
+      border-color: rgba(168, 85, 247, 0.2);
+    }
+    
+    .case-row .col-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    
+    .case-row .col-desc {
       color: var(--text-secondary);
       font-size: 0.9em;
-      margin-bottom: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     
-    .case-card-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.8em;
+    .case-row .col-date {
       color: var(--text-muted);
+      font-size: 0.85em;
+    }
+    
+    .case-row .col-tickets {
+      text-align: center;
     }
     
     .case-card-tickets {
       background: var(--accent);
       color: white;
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 10px;
-      font-size: 0.75em;
+      font-size: 0.8em;
+    }
+    
+    @media (max-width: 600px) {
+      .cases-table-header {
+        grid-template-columns: 1fr 80px 60px;
+      }
+      .cases-table-header .col-desc { display: none; }
+      .case-row {
+        grid-template-columns: 1fr 80px 60px;
+      }
+      .case-row .col-desc { display: none; }
     }
     
     /* Case Detail */
@@ -1769,23 +1795,39 @@
       localStorage.setItem('bud-love-cases', JSON.stringify(cases));
     }
     
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      const month = months[parseInt(parts[1]) - 1];
+      const day = parseInt(parts[2]);
+      return `${month}.${day} ${parts[0]}`;
+    }
+    
     function renderCases() {
       const cases = getCases();
       const container = document.getElementById('casesList');
       
-      container.innerHTML = cases.map(c => {
-        const caseTickets = tickets.filter(t => t.category === c.id);
-        return `
-          <div class="case-card" onclick="viewCaseDetail('${c.id}')">
-            <div class="case-card-title">${c.icon} ${c.name}</div>
-            <div class="case-card-desc">${c.desc}</div>
-            <div class="case-card-meta">
-              <span>${c.created}</span>
-              <span class="case-card-tickets">${caseTickets.length} tickets</span>
+      container.innerHTML = `
+        <div class="cases-table-header">
+          <span class="col-name">Name</span>
+          <span class="col-desc">Description</span>
+          <span class="col-date">Created</span>
+          <span class="col-tickets">Tickets</span>
+        </div>
+        ${cases.map(c => {
+          const caseTickets = tickets.filter(t => t.category === c.id);
+          return `
+            <div class="case-row" onclick="viewCaseDetail('${c.id}')">
+              <span class="col-name">${c.icon} ${c.name}</span>
+              <span class="col-desc">${c.desc}</span>
+              <span class="col-date">${formatDate(c.created)}</span>
+              <span class="col-tickets"><span class="case-card-tickets">${caseTickets.length}</span></span>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('')}
+      `;
     }
     
     function filterByCase(caseId) {
