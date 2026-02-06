@@ -1230,58 +1230,25 @@
     
     // ===== DATA LOADING =====
     async function loadData() {
-      try {
-        const res = await fetch('/api/projects');
-        const data = await res.json();
-        
-        state.projects = data.projects || {};
-        state.allFeatures = data.allFeatures || [];
-        state.stats = data.stats || {};
-        state.crossLinks = data.crossLinks || [];
-        state.achievements = data.achievements || [];
-        
-        // Hide offline banner - we got fresh data
-        document.getElementById('offlineBanner').classList.remove('show');
-        
-        // Only cache if not already offline data from SW
-        if (!data.offline) {
-          localStorage.setItem('bud-love-tickets-cache', JSON.stringify(data));
-        }
-        
-        document.getElementById('loadingView').classList.add('hidden');
-        initTabs();
-        renderAchievements();
-        loadURLState();
-        navigateToView(state.currentView, state.currentProject);
-      } catch (e) {
-        console.error('Failed to load:', e);
-        // Only show offline if actually offline
-        if (!navigator.onLine) {
-          document.getElementById('offlineBanner').classList.add('show');
-        }
-        // Try loading from cache
-        const cached = localStorage.getItem('bud-love-tickets-cache');
-        if (cached) {
-          const data = JSON.parse(cached);
-          state.projects = data.projects || {};
-          state.allFeatures = data.allFeatures || [];
-          state.stats = data.stats || {};
-          state.crossLinks = data.crossLinks || [];
-          state.achievements = data.achievements || [];
-          
-          document.getElementById('loadingView').classList.add('hidden');
-          initTabs();
-          renderAchievements();
-          loadURLState();
-          navigateToView(state.currentView, state.currentProject);
-        }
-      }
+      // Static version - no backend needed
+      state.projects = {};
+      state.allFeatures = [];
+      state.stats = { totalProjects: 0, totalFeatures: 0 };
+      state.crossLinks = [];
+      state.achievements = [];
+      
+      document.getElementById('loadingView').classList.add('hidden');
+      initTabs();
+      
+      // Default to tickets view for static version
+      state.currentView = 'tickets';
+      navigateToView('tickets');
     }
     
-    // ===== WEBSOCKET =====
+    // ===== WEBSOCKET (disabled for static) =====
     function connectWebSocket() {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const ws = new WebSocket(`${protocol}//${window.location.host}`);
+      // Disabled for static hosting
+      return;
       
       ws.onmessage = (e) => {
         const data = JSON.parse(e.data);
