@@ -1,5 +1,5 @@
-// Bud Love Tickets Service Worker v5.0
-const CACHE_NAME = 'bud-love-tickets-v5';
+// Bud Love Tickets Service Worker v6.0
+const CACHE_NAME = 'bud-love-tickets-v6';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
