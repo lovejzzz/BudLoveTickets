@@ -1,11 +1,10 @@
 {
+  "buildCommand": "",
+  "outputDirectory": ".",
   "functions": {
     "api/tickets.js": {
       "memory": 128,
       "maxDuration": 10
     }
-  },
-  "rewrites": [
-    { "source": "/api/tickets", "destination": "/api/tickets.js" }
-  ]
+  }
 }
