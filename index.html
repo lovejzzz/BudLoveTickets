@@ -3151,7 +3151,8 @@
 
     function renderIdeas() {
       const container = document.getElementById('ideasGrid');
-      const filtered = ideasFilter === 'all' ? ideas : ideas.filter(i => i.status === ideasFilter);
+      const filtered = (ideasFilter === 'all' ? ideas : ideas.filter(i => i.status === ideasFilter))
+        .slice().sort((a, b) => (b.id || '0').localeCompare(a.id || '0'));
 
       if (filtered.length === 0) {
         container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">No ideas yet${ideasFilter !== 'all' ? ' with this status' : ''}. Spark one! ✨</div>`;
