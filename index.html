@@ -1481,6 +1481,352 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* ===== IDEAS VIEW ===== */
+    .ideas-container {
+      padding: 20px 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .ideas-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .ideas-header h2 {
+      font-size: 1.5em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .ideas-header p {
+      color: var(--text-secondary);
+    }
+
+    .ideas-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .ideas-filters {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .idea-filter-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.78em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .idea-filter-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #ccc;
+    }
+
+    .idea-filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+    }
+
+    .new-idea-btn {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, var(--accent) 0%, #60a5fa 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .new-idea-btn:hover {
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4);
+    }
+
+    .ideas-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .ideas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .idea-card {
+      background: var(--bg-card-solid);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-left: 3px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      animation: fadeInUp 0.4s ease-out;
+      position: relative;
+    }
+
+    .idea-card:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+      border-left-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.15), 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .idea-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .idea-status-badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.68em;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .idea-status-brainstorming { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .idea-status-planned { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.35); }
+    .idea-status-building { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .idea-status-shipped { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.35); }
+
+    .idea-card-menu {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.4em;
+      cursor: pointer;
+      padding: 2px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      line-height: 1;
+      opacity: 0.4;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .idea-card:hover .idea-card-menu { opacity: 1; }
+
+    .idea-card-menu:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--text-primary);
+    }
+
+    .idea-menu-dropdown {
+      position: absolute;
+      top: 42px;
+      right: 12px;
+      background: #1a1a2e;
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 10px;
+      padding: 4px;
+      z-index: 999;
+      min-width: 140px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      display: none;
+    }
+
+    .idea-menu-dropdown.active {
+      display: block;
+      animation: scaleIn 0.15s ease-out;
+    }
+
+    .idea-card-title {
+      font-weight: 600;
+      font-size: 1em;
+      margin-bottom: 6px;
+      color: #fff;
+      line-height: 1.4;
+    }
+
+    .idea-card-desc {
+      font-size: 0.82em;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .idea-card-desc.expanded {
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+
+    .idea-card-tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .idea-tag {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--accent-light);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.65em;
+      font-weight: 500;
+    }
+
+    .idea-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.72em;
+      color: var(--text-muted);
+    }
+
+    .idea-card-category {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.7em;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* Expanded idea card */
+    .idea-card.expanded {
+      grid-column: 1 / -1;
+      border-color: var(--accent);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+    }
+
+    .idea-card.expanded .idea-card-desc {
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+
+    .idea-inline-edit {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .idea-card.expanded .idea-inline-edit {
+      display: block;
+    }
+
+    .idea-inline-edit .form-group {
+      margin-bottom: 12px;
+    }
+
+    .idea-inline-edit .form-group input,
+    .idea-inline-edit .form-group textarea,
+    .idea-inline-edit .form-group select {
+      width: 100%;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.9em;
+      font-family: inherit;
+    }
+
+    .idea-inline-edit .form-group input:focus,
+    .idea-inline-edit .form-group textarea:focus,
+    .idea-inline-edit .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .idea-inline-edit .form-group label {
+      display: block;
+      font-size: 0.78em;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-secondary);
+    }
+
+    .idea-save-btn {
+      padding: 8px 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.85em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-right: 8px;
+    }
+
+    .idea-save-btn:hover { background: var(--accent-light); }
+
+    .idea-cancel-btn {
+      padding: 8px 16px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .idea-cancel-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Idea Modal */
+    .idea-modal { max-width: 480px; }
+
+    .idea-modal textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .idea-status-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.95em;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .idea-status-select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -1496,6 +1842,7 @@
     <div class="tabs" id="tabs">
       <button class="tab active" data-project="tickets" tabindex="0">🎫 Tickets</button>
       <button class="tab" data-project="cases" tabindex="0">📁 Cases</button>
+      <button class="tab" data-project="ideas" tabindex="0">💡 Ideas</button>
     </div>
   </div>
   
@@ -1556,7 +1903,67 @@
     <button class="back-btn" onclick="navigateToView('cases')">← Back to Cases</button>
     <div id="caseDetailContent"></div>
   </div>
-  
+
+  <!-- Ideas View -->
+  <div id="ideasView" class="ideas-container hidden">
+    <div class="ideas-header">
+      <h2>💡 Ideas Lab</h2>
+      <p>Future projects and wild concepts</p>
+    </div>
+    <div class="ideas-toolbar">
+      <div class="ideas-filters" id="ideasFilters">
+        <button class="idea-filter-btn active" data-filter="all">All</button>
+        <button class="idea-filter-btn" data-filter="brainstorming">💭 Brainstorming</button>
+        <button class="idea-filter-btn" data-filter="planned">📋 Planned</button>
+        <button class="idea-filter-btn" data-filter="building">🔨 Building</button>
+        <button class="idea-filter-btn" data-filter="shipped">🚀 Shipped</button>
+      </div>
+      <button class="new-idea-btn" onclick="openNewIdeaModal()">+ New Idea</button>
+    </div>
+    <div class="ideas-grid" id="ideasGrid"></div>
+  </div>
+
+  <!-- Idea Modal -->
+  <div class="modal-overlay" id="ideaModalOverlay">
+    <div class="modal idea-modal">
+      <div class="modal-header">
+        <div class="modal-title" id="ideaModalTitle">💡 New Idea</div>
+        <button class="modal-close" onclick="closeIdeaModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="ideaForm" onsubmit="submitIdea(event)">
+          <input type="hidden" id="ideaEditId" value="">
+          <div class="form-group">
+            <label for="ideaTitle">Title</label>
+            <input type="text" id="ideaTitle" placeholder="What's the big idea?" required>
+          </div>
+          <div class="form-group">
+            <label for="ideaDesc">Description</label>
+            <textarea id="ideaDesc" placeholder="Describe the vision... what does it do? why is it cool?" rows="5"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="ideaCategory">Category</label>
+            <input type="text" id="ideaCategory" placeholder="e.g. MCP, UI, Tool">
+          </div>
+          <div class="form-group">
+            <label for="ideaTags">Tags (comma separated)</label>
+            <input type="text" id="ideaTags" placeholder="e.g. webapp, ai, creative">
+          </div>
+          <div class="form-group">
+            <label for="ideaStatus">Status</label>
+            <select id="ideaStatus" class="idea-status-select">
+              <option value="brainstorming">💭 Brainstorming</option>
+              <option value="planned">📋 Planned</option>
+              <option value="building">🔨 Building</option>
+              <option value="shipped">🚀 Shipped</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Create Idea</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Ticket Modal -->
   <div class="modal-overlay" id="ticketModalOverlay">
     <div class="modal ticket-modal">
@@ -1731,6 +2138,8 @@
             navigateToView('tickets');
           } else if (project === 'cases') {
             navigateToView('cases');
+          } else if (project === 'ideas') {
+            navigateToView('ideas');
           } else if (project === 'all') {
             navigateToView('all');
           }
@@ -1748,7 +2157,8 @@
                         (view === 'all' && t.dataset.project === 'all') ||
                         (view === 'timeline' && t.dataset.project === 'timeline') ||
                         (view === 'tickets' && t.dataset.project === 'tickets') ||
-                        (view === 'cases' && t.dataset.project === 'cases');
+                        (view === 'cases' && t.dataset.project === 'cases') ||
+                        (view === 'ideas' && t.dataset.project === 'ideas');
         t.classList.toggle('active', isActive);
       });
       
@@ -1759,6 +2169,7 @@
       document.getElementById('ticketsView').classList.add('hidden');
       document.getElementById('casesView').classList.add('hidden');
       document.getElementById('caseDetailView').classList.add('hidden');
+      document.getElementById('ideasView').classList.add('hidden');
       
       // Show appropriate view
       if (view === 'all') {
@@ -1773,6 +2184,9 @@
       } else if (view === 'cases') {
         document.getElementById('casesView').classList.remove('hidden');
         renderCases();
+      } else if (view === 'ideas') {
+        document.getElementById('ideasView').classList.remove('hidden');
+        renderIdeas();
       } else if (view === 'caseDetail' && project) {
         document.getElementById('caseDetailView').classList.remove('hidden');
         renderCaseDetail(project);
@@ -2091,16 +2505,23 @@
     
     // ===== TICKETS / KANBAN =====
     let tickets = [];
+    let ideas = [];
     const TICKETS_API = '/api/tickets';
     
+    const SEED_IDEAS = [
+      { id: 'idea-seed-1', title: 'MCP Playground', desc: 'Visual web app to explore, test, and chain MCP servers. Like Postman meets Zapier for MCP. Server browser, tool tester, workflow builder.', category: 'MCP', status: 'planned', tags: ['mcp', 'webapp', 'tool'], created: '2026-02-07' },
+      { id: 'idea-seed-2', title: 'Vibe Board', desc: 'Describe a mood in words and it generates a complete design system — colors, fonts, components. AI-powered design generation.', category: 'UI', status: 'brainstorming', tags: ['design', 'ai', 'creative'], created: '2026-02-07' },
+      { id: 'idea-seed-3', title: 'Pulse Dashboard', desc: 'Personal command center connecting Discord, GitHub, tickets, calendar into one live dashboard. Mission control for your digital life.', category: 'Tool', status: 'brainstorming', tags: ['dashboard', 'integration'], created: '2026-02-07' }
+    ];
+
     async function saveTicketsRemote() {
       try {
         await fetch(TICKETS_API, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tickets })
+          body: JSON.stringify({ tickets, ideas })
         });
-        console.log('Tickets saved!');
+        console.log('Data saved!');
       } catch (e) {
         console.error('Failed to save:', e);
       }
@@ -2111,11 +2532,19 @@
         const res = await fetch(TICKETS_API);
         const data = await res.json();
         tickets = data.tickets || [];
-        console.log('Loaded tickets:', tickets.length);
+        ideas = data.ideas || [];
+        // Seed ideas if none exist
+        if (ideas.length === 0) {
+          ideas = [...SEED_IDEAS];
+          saveTicketsRemote();
+        }
+        console.log('Loaded tickets:', tickets.length, 'ideas:', ideas.length);
         if (state.currentView === 'tickets') renderTickets();
+        if (state.currentView === 'ideas') renderIdeas();
       } catch (e) {
         console.error('Failed to load tickets:', e);
         tickets = [];
+        ideas = [...SEED_IDEAS];
       }
     }
     
@@ -2419,6 +2848,210 @@
     // Load tickets on startup
     loadTickets();
 
+    // ===== IDEAS =====
+    let ideasFilter = 'all';
+    let expandedIdeaId = null;
+
+    const IDEA_STATUS_LABELS = {
+      brainstorming: '💭 Brainstorming',
+      planned: '📋 Planned',
+      building: '🔨 Building',
+      shipped: '🚀 Shipped'
+    };
+
+    function renderIdeas() {
+      const container = document.getElementById('ideasGrid');
+      const filtered = ideasFilter === 'all' ? ideas : ideas.filter(i => i.status === ideasFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">No ideas yet${ideasFilter !== 'all' ? ' with this status' : ''}. Spark one! ✨</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(idea => {
+        const isExpanded = expandedIdeaId === idea.id;
+        return `
+          <div class="idea-card ${isExpanded ? 'expanded' : ''}" data-id="${idea.id}" onclick="toggleIdeaExpand('${idea.id}', event)">
+            <div class="idea-card-top">
+              <span class="idea-status-badge idea-status-${idea.status}">${IDEA_STATUS_LABELS[idea.status] || idea.status}</span>
+              <button class="idea-card-menu" onclick="toggleIdeaMenu(event, '${idea.id}')" title="Menu">⋯</button>
+            </div>
+            <div class="idea-menu-dropdown" id="idea-menu-${idea.id}">
+              <button class="card-menu-item" onclick="event.stopPropagation(); openEditIdeaModal('${idea.id}')">✏️ Edit</button>
+              <button class="card-menu-item danger" onclick="event.stopPropagation(); deleteIdea('${idea.id}')">🗑️ Delete</button>
+            </div>
+            <div class="idea-card-title">${idea.title}</div>
+            <div class="idea-card-desc ${isExpanded ? 'expanded' : ''}">${idea.desc || ''}</div>
+            <div class="idea-card-tags">
+              ${(idea.tags || []).map(t => `<span class="idea-tag">${t}</span>`).join('')}
+            </div>
+            <div class="idea-card-footer">
+              <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
+              <span>${formatTicketDate(idea.created)}</span>
+            </div>
+            ${isExpanded ? `
+            <div class="idea-inline-edit" onclick="event.stopPropagation()">
+              <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="inline-idea-title-${idea.id}" value="${(idea.title || '').replace(/"/g, '&quot;')}">
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea rows="4" id="inline-idea-desc-${idea.id}">${idea.desc || ''}</textarea>
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <input type="text" id="inline-idea-cat-${idea.id}" value="${(idea.category || '').replace(/"/g, '&quot;')}">
+              </div>
+              <div class="form-group">
+                <label>Tags (comma separated)</label>
+                <input type="text" id="inline-idea-tags-${idea.id}" value="${(idea.tags || []).join(', ')}">
+              </div>
+              <div class="form-group">
+                <label>Status</label>
+                <select id="inline-idea-status-${idea.id}" class="idea-status-select">
+                  <option value="brainstorming" ${idea.status === 'brainstorming' ? 'selected' : ''}>💭 Brainstorming</option>
+                  <option value="planned" ${idea.status === 'planned' ? 'selected' : ''}>📋 Planned</option>
+                  <option value="building" ${idea.status === 'building' ? 'selected' : ''}>🔨 Building</option>
+                  <option value="shipped" ${idea.status === 'shipped' ? 'selected' : ''}>🚀 Shipped</option>
+                </select>
+              </div>
+              <button class="idea-save-btn" onclick="saveInlineIdea('${idea.id}')">Save</button>
+              <button class="idea-cancel-btn" onclick="expandedIdeaId=null; renderIdeas();">Cancel</button>
+            </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleIdeaExpand(id, e) {
+      // Don't expand if clicking menu or dropdown
+      if (e.target.closest('.idea-card-menu') || e.target.closest('.idea-menu-dropdown') || e.target.closest('.idea-inline-edit')) return;
+      expandedIdeaId = expandedIdeaId === id ? null : id;
+      renderIdeas();
+    }
+
+    function toggleIdeaMenu(e, id) {
+      e.stopPropagation();
+      document.querySelectorAll('.idea-menu-dropdown.active').forEach(m => m.classList.remove('active'));
+      const menu = document.getElementById('idea-menu-' + id);
+      if (menu) menu.classList.add('active');
+      const closeMenu = () => {
+        menu && menu.classList.remove('active');
+        document.removeEventListener('click', closeMenu);
+      };
+      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+    }
+
+    function saveInlineIdea(id) {
+      const idea = ideas.find(i => i.id === id);
+      if (!idea) return;
+      idea.title = document.getElementById('inline-idea-title-' + id).value.trim();
+      idea.desc = document.getElementById('inline-idea-desc-' + id).value.trim();
+      idea.category = document.getElementById('inline-idea-cat-' + id).value.trim();
+      idea.tags = document.getElementById('inline-idea-tags-' + id).value.split(',').map(t => t.trim()).filter(Boolean);
+      idea.status = document.getElementById('inline-idea-status-' + id).value;
+      saveTicketsRemote();
+      expandedIdeaId = null;
+      renderIdeas();
+      showToast('💡 Idea updated!');
+    }
+
+    function openNewIdeaModal() {
+      document.getElementById('ideaEditId').value = '';
+      document.getElementById('ideaTitle').value = '';
+      document.getElementById('ideaDesc').value = '';
+      document.getElementById('ideaCategory').value = '';
+      document.getElementById('ideaTags').value = '';
+      document.getElementById('ideaStatus').value = 'brainstorming';
+      document.getElementById('ideaModalTitle').textContent = '💡 New Idea';
+      document.querySelector('#ideaForm .submit-btn').textContent = 'Create Idea';
+      document.getElementById('ideaModalOverlay').style.display = 'flex';
+      document.getElementById('ideaTitle').focus();
+    }
+
+    function openEditIdeaModal(id) {
+      const idea = ideas.find(i => i.id === id);
+      if (!idea) return;
+      document.getElementById('ideaEditId').value = id;
+      document.getElementById('ideaTitle').value = idea.title;
+      document.getElementById('ideaDesc').value = idea.desc || '';
+      document.getElementById('ideaCategory').value = idea.category || '';
+      document.getElementById('ideaTags').value = (idea.tags || []).join(', ');
+      document.getElementById('ideaStatus').value = idea.status || 'brainstorming';
+      document.getElementById('ideaModalTitle').textContent = '✏️ Edit Idea';
+      document.querySelector('#ideaForm .submit-btn').textContent = 'Save Changes';
+      document.getElementById('ideaModalOverlay').style.display = 'flex';
+      document.getElementById('ideaTitle').focus();
+    }
+
+    function closeIdeaModal() {
+      document.getElementById('ideaModalOverlay').style.display = 'none';
+    }
+
+    function submitIdea(e) {
+      e.preventDefault();
+      const editId = document.getElementById('ideaEditId').value;
+      const title = document.getElementById('ideaTitle').value.trim();
+      const desc = document.getElementById('ideaDesc').value.trim();
+      const category = document.getElementById('ideaCategory').value.trim();
+      const tags = document.getElementById('ideaTags').value.split(',').map(t => t.trim()).filter(Boolean);
+      const status = document.getElementById('ideaStatus').value;
+
+      if (editId) {
+        const idea = ideas.find(i => i.id === editId);
+        if (idea) {
+          idea.title = title;
+          idea.desc = desc;
+          idea.category = category;
+          idea.tags = tags;
+          idea.status = status;
+        }
+      } else {
+        ideas.push({
+          id: 'idea-' + Date.now().toString(),
+          title,
+          desc,
+          category,
+          status,
+          tags,
+          created: new Date().toISOString().split('T')[0]
+        });
+      }
+
+      saveTicketsRemote();
+      renderIdeas();
+      closeIdeaModal();
+      showToast(editId ? '💡 Idea updated!' : '💡 Idea created!');
+    }
+
+    function deleteIdea(id) {
+      if (confirm('Delete this idea?')) {
+        ideas = ideas.filter(i => i.id !== id);
+        if (expandedIdeaId === id) expandedIdeaId = null;
+        saveTicketsRemote();
+        renderIdeas();
+        showToast('🗑️ Idea deleted');
+      }
+    }
+
+    // Ideas filter click handlers
+    document.getElementById('ideasFilters').addEventListener('click', (e) => {
+      const btn = e.target.closest('.idea-filter-btn');
+      if (!btn) return;
+      ideasFilter = btn.dataset.filter;
+      document.querySelectorAll('.idea-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      expandedIdeaId = null;
+      renderIdeas();
+    });
+
+    // Close idea modal on overlay click
+    document.getElementById('ideaModalOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'ideaModalOverlay') closeIdeaModal();
+    });
+
     // ===== SEARCH =====
     function highlightMatch(text, query) {
       if (!query || !text) return text;
@@ -2437,6 +3070,8 @@
         renderTimeline();
       } else if (state.currentView === 'tickets') {
         renderTickets();
+      } else if (state.currentView === 'ideas') {
+        renderIdeas();
       } else if (state.currentView === 'project') {
         renderProject(state.currentProject);
       }
