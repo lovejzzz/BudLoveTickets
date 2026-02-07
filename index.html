@@ -1579,6 +1579,24 @@
       .ideas-grid {
         grid-template-columns: 1fr;
       }
+      .ideas-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .ideas-filters {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .ideas-sort {
+        justify-content: flex-start;
+      }
+      .ideas-sort select {
+        flex: 1;
+      }
+      .new-idea-btn {
+        align-self: flex-end;
+      }
     }
 
     .idea-card {
@@ -2610,7 +2628,9 @@
       { id: 'detective-wall', name: 'Detective Wall', icon: '🔍', desc: 'Visual case board for tracking projects — the original version with Christmas tree layout.', created: '2026-02-06',
         features: ['Christmas tree layout', 'Red string connections', 'Search', 'Timeline view', 'PWA installable', 'WebSocket live updates'] },
       { id: 'bud-love-tickets', name: 'Bud Love Tickets', icon: '💜', desc: 'Ticket management app for collaborating with your AI assistant.', created: '2026-02-06',
-        features: ['Kanban board (To Do / Doing / Done)', 'Cloud storage via JSONBlob', 'Vercel hosting', 'Case categories', 'Edit & delete tickets', 'Move buttons for mobile'] }
+        features: ['Kanban board (To Do / Doing / Done)', 'Cloud storage via JSONBlob', 'Vercel hosting', 'Case categories', 'Edit & delete tickets', 'Move buttons for mobile'] },
+      { id: 'mcp', name: 'MCP', icon: '🔌', desc: 'Model Context Protocol tools, servers, and integrations.', created: '2026-02-07',
+        features: ['MCP Client Library', 'Multi-server orchestration', 'Magic MCP integration', 'mcporter CLI', 'OpenClaw MCP skill'] }
     ];
     
     function getCases() {
@@ -2644,7 +2664,10 @@
           <span class="col-tickets">Tickets</span>
         </div>
         ${cases.map(c => {
-          const caseTickets = tickets.filter(t => t.category === c.id);
+          const caseTickets = tickets.filter(t => {
+            const cat = (t.category || '').toLowerCase();
+            return cat === c.id.toLowerCase() || cat === c.name.toLowerCase();
+          });
           return `
             <div class="case-row" onclick="viewCaseDetail('${c.id}')">
               <span class="col-name">${c.icon} ${c.name}</span>
@@ -2671,7 +2694,10 @@
       const c = cases.find(cs => cs.id === caseId);
       if (!c) return;
       
-      const caseTickets = tickets.filter(t => t.category === caseId);
+      const caseTickets = tickets.filter(t => {
+        const cat = (t.category || '').toLowerCase();
+        return cat === caseId.toLowerCase() || cat === c.name.toLowerCase();
+      });
       const features = c.features || [];
       
       const container = document.getElementById('caseDetailContent');
