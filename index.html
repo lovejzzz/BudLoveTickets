@@ -1803,6 +1803,202 @@
 
     .idea-cancel-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+    /* ===== IDEA INNER TABS ===== */
+    .idea-inner-tabs {
+      display: flex;
+      gap: 4px;
+      margin: 10px 0 14px;
+      padding-bottom: 0;
+    }
+
+    .idea-inner-tab {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.78em;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 10px 8px;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .idea-inner-tab:hover {
+      color: var(--text-secondary);
+    }
+
+    .idea-inner-tab.active {
+      color: var(--accent-light);
+      border-bottom-color: var(--accent);
+    }
+
+    .idea-tab-content {
+      min-height: 80px;
+    }
+
+    /* Plan Phases */
+    .plan-phases {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .plan-phase {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: opacity 0.2s;
+    }
+
+    .plan-phase:last-child {
+      border-bottom: none;
+    }
+
+    .plan-phase.done {
+      opacity: 0.5;
+    }
+
+    .plan-phase.done .plan-phase-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .plan-phase.done .plan-phase-desc {
+      text-decoration: line-through;
+    }
+
+    .plan-phase-check {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .plan-phase-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .plan-phase-name {
+      font-weight: 600;
+      font-size: 0.88em;
+      color: var(--text-primary);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .plan-phase-name:hover {
+      color: var(--accent-light);
+    }
+
+    .plan-phase-desc {
+      font-size: 0.78em;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .plan-phase-desc:hover {
+      color: var(--text-secondary);
+    }
+
+    .plan-phase-delete {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .plan-phase:hover .plan-phase-delete {
+      opacity: 0.6;
+    }
+
+    .plan-phase-delete:hover {
+      opacity: 1 !important;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .plan-add-btn {
+      margin-top: 10px;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+    }
+
+    .plan-add-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-light);
+      background: rgba(168, 85, 247, 0.06);
+    }
+
+    /* Inline edit for phase name/desc */
+    .plan-phase-edit-input {
+      width: 100%;
+      padding: 4px 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: inherit;
+      font-family: inherit;
+      font-weight: inherit;
+      outline: none;
+    }
+
+    /* Notes textarea in idea */
+    .idea-notes-area {
+      width: 100%;
+      min-height: 120px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.85em;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+      line-height: 1.6;
+    }
+
+    .idea-notes-area:focus {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .idea-notes-saved {
+      font-size: 0.7em;
+      color: var(--text-muted);
+      margin-top: 6px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .idea-notes-saved.visible {
+      opacity: 1;
+    }
+
     /* Idea Modal */
     .idea-modal { max-width: 480px; }
 
@@ -2509,9 +2705,16 @@
     const TICKETS_API = '/api/tickets';
     
     const SEED_IDEAS = [
-      { id: 'idea-seed-1', title: 'MCP Playground', desc: 'Visual web app to explore, test, and chain MCP servers. Like Postman meets Zapier for MCP. Server browser, tool tester, workflow builder.', category: 'MCP', status: 'planned', tags: ['mcp', 'webapp', 'tool'], created: '2026-02-07' },
-      { id: 'idea-seed-2', title: 'Vibe Board', desc: 'Describe a mood in words and it generates a complete design system — colors, fonts, components. AI-powered design generation.', category: 'UI', status: 'brainstorming', tags: ['design', 'ai', 'creative'], created: '2026-02-07' },
-      { id: 'idea-seed-3', title: 'Pulse Dashboard', desc: 'Personal command center connecting Discord, GitHub, tickets, calendar into one live dashboard. Mission control for your digital life.', category: 'Tool', status: 'brainstorming', tags: ['dashboard', 'integration'], created: '2026-02-07' }
+      { id: 'idea-seed-1', title: 'MCP Playground', desc: 'Visual web app to explore, test, and chain MCP servers. Like Postman meets Zapier for MCP. Server browser, tool tester, workflow builder.', category: 'MCP', status: 'planned', tags: ['mcp', 'webapp', 'tool'], created: '2026-02-07',
+        plan: [
+          { name: 'Phase 1: Server Explorer', desc: 'Connect to any MCP server and browse its tools', done: false },
+          { name: 'Phase 2: Tool Tester', desc: 'Run any tool interactively with auto-generated forms', done: false },
+          { name: 'Phase 3: Multi-Server + Workflow', desc: 'Connect multiple servers, chain tools, visual canvas', done: false },
+          { name: 'Phase 4: Community', desc: 'Share workflows, preset library, featured gallery', done: false }
+        ],
+        notes: '' },
+      { id: 'idea-seed-2', title: 'Vibe Board', desc: 'Describe a mood in words and it generates a complete design system — colors, fonts, components. AI-powered design generation.', category: 'UI', status: 'brainstorming', tags: ['design', 'ai', 'creative'], created: '2026-02-07', plan: [], notes: '' },
+      { id: 'idea-seed-3', title: 'Pulse Dashboard', desc: 'Personal command center connecting Discord, GitHub, tickets, calendar into one live dashboard. Mission control for your digital life.', category: 'Tool', status: 'brainstorming', tags: ['dashboard', 'integration'], created: '2026-02-07', plan: [], notes: '' }
     ];
 
     async function saveTicketsRemote() {
@@ -2538,6 +2741,11 @@
           ideas = [...SEED_IDEAS];
           saveTicketsRemote();
         }
+        // Ensure all ideas have plan and notes fields
+        ideas.forEach(idea => {
+          if (!idea.plan) idea.plan = [];
+          if (typeof idea.notes !== 'string') idea.notes = '';
+        });
         console.log('Loaded tickets:', tickets.length, 'ideas:', ideas.length);
         if (state.currentView === 'tickets') renderTickets();
         if (state.currentView === 'ideas') renderIdeas();
@@ -2851,6 +3059,8 @@
     // ===== IDEAS =====
     let ideasFilter = 'all';
     let expandedIdeaId = null;
+    let activeIdeaInnerTab = {}; // { ideaId: 'description' | 'plan' | 'notes' }
+    let notesDebounceTimers = {};
 
     const IDEA_STATUS_LABELS = {
       brainstorming: '💭 Brainstorming',
@@ -2858,6 +3068,86 @@
       building: '🔨 Building',
       shipped: '🚀 Shipped'
     };
+
+    function getIdeaInnerTab(id) {
+      return activeIdeaInnerTab[id] || 'description';
+    }
+
+    function setIdeaInnerTab(id, tab, e) {
+      if (e) e.stopPropagation();
+      activeIdeaInnerTab[id] = tab;
+      renderIdeas();
+    }
+
+    function renderPlanTab(idea) {
+      const phases = idea.plan || [];
+      const phasesHtml = phases.map((p, i) => `
+        <div class="plan-phase ${p.done ? 'done' : ''}">
+          <input type="checkbox" class="plan-phase-check" ${p.done ? 'checked' : ''}
+            onchange="togglePhase('${idea.id}', ${i}, this.checked)">
+          <div class="plan-phase-content">
+            <div class="plan-phase-name" onclick="editPhaseName('${idea.id}', ${i}, this, event)">${escHtml(p.name)}</div>
+            <div class="plan-phase-desc" onclick="editPhaseDesc('${idea.id}', ${i}, this, event)">${escHtml(p.desc) || '<span style="color:var(--text-muted);font-style:italic;">Add description...</span>'}</div>
+          </div>
+          <button class="plan-phase-delete" onclick="deletePhase('${idea.id}', ${i}, event)" title="Delete phase">✕</button>
+        </div>
+      `).join('');
+
+      return `
+        <div class="plan-phases">${phasesHtml}</div>
+        ${phases.length === 0 ? '<div style="color:var(--text-muted);font-size:0.82em;padding:12px 0;">No phases yet. Add one to start planning!</div>' : ''}
+        <button class="plan-add-btn" onclick="addPhase('${idea.id}', event)">+ Add Phase</button>
+      `;
+    }
+
+    function renderNotesTab(idea) {
+      return `
+        <textarea class="idea-notes-area" id="idea-notes-${idea.id}"
+          placeholder="Jot down thoughts, links, references..."
+          oninput="debounceSaveNotes('${idea.id}')">${escHtml(idea.notes || '')}</textarea>
+        <div class="idea-notes-saved" id="idea-notes-saved-${idea.id}">✓ Saved</div>
+      `;
+    }
+
+    function renderDescriptionTab(idea) {
+      return `
+        <div style="color:var(--text-secondary);font-size:0.88em;line-height:1.6;margin-bottom:14px;">${idea.desc || '<span style="color:var(--text-muted);font-style:italic;">No description</span>'}</div>
+        <div class="idea-inline-edit" style="display:block;" onclick="event.stopPropagation()">
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="inline-idea-title-${idea.id}" value="${(idea.title || '').replace(/"/g, '&quot;')}">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea rows="4" id="inline-idea-desc-${idea.id}">${escHtml(idea.desc || '')}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <input type="text" id="inline-idea-cat-${idea.id}" value="${(idea.category || '').replace(/"/g, '&quot;')}">
+          </div>
+          <div class="form-group">
+            <label>Tags (comma separated)</label>
+            <input type="text" id="inline-idea-tags-${idea.id}" value="${(idea.tags || []).join(', ')}">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="inline-idea-status-${idea.id}" class="idea-status-select">
+              <option value="brainstorming" ${idea.status === 'brainstorming' ? 'selected' : ''}>💭 Brainstorming</option>
+              <option value="planned" ${idea.status === 'planned' ? 'selected' : ''}>📋 Planned</option>
+              <option value="building" ${idea.status === 'building' ? 'selected' : ''}>🔨 Building</option>
+              <option value="shipped" ${idea.status === 'shipped' ? 'selected' : ''}>🚀 Shipped</option>
+            </select>
+          </div>
+          <button class="idea-save-btn" onclick="saveInlineIdea('${idea.id}')">Save</button>
+          <button class="idea-cancel-btn" onclick="expandedIdeaId=null; renderIdeas();">Collapse</button>
+        </div>
+      `;
+    }
+
+    function escHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
 
     function renderIdeas() {
       const container = document.getElementById('ideasGrid');
@@ -2870,6 +3160,17 @@
 
       container.innerHTML = filtered.map(idea => {
         const isExpanded = expandedIdeaId === idea.id;
+        const innerTab = getIdeaInnerTab(idea.id);
+        const planCount = (idea.plan || []).length;
+        const planDone = (idea.plan || []).filter(p => p.done).length;
+
+        let innerTabContent = '';
+        if (isExpanded) {
+          if (innerTab === 'plan') innerTabContent = renderPlanTab(idea);
+          else if (innerTab === 'notes') innerTabContent = renderNotesTab(idea);
+          else innerTabContent = renderDescriptionTab(idea);
+        }
+
         return `
           <div class="idea-card ${isExpanded ? 'expanded' : ''}" data-id="${idea.id}" onclick="toggleIdeaExpand('${idea.id}', event)">
             <div class="idea-card-top">
@@ -2881,54 +3182,131 @@
               <button class="card-menu-item danger" onclick="event.stopPropagation(); deleteIdea('${idea.id}')">🗑️ Delete</button>
             </div>
             <div class="idea-card-title">${idea.title}</div>
-            <div class="idea-card-desc ${isExpanded ? 'expanded' : ''}">${idea.desc || ''}</div>
+            ${!isExpanded ? `
+              <div class="idea-card-desc">${idea.desc || ''}</div>
+            ` : ''}
             <div class="idea-card-tags">
               ${(idea.tags || []).map(t => `<span class="idea-tag">${t}</span>`).join('')}
             </div>
-            <div class="idea-card-footer">
-              <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
-              <span>${formatTicketDate(idea.created)}</span>
-            </div>
+            ${!isExpanded ? `
+              <div class="idea-card-footer">
+                <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
+                <span>${formatTicketDate(idea.created)}</span>
+              </div>
+            ` : ''}
             ${isExpanded ? `
-            <div class="idea-inline-edit" onclick="event.stopPropagation()">
-              <div class="form-group">
-                <label>Title</label>
-                <input type="text" id="inline-idea-title-${idea.id}" value="${(idea.title || '').replace(/"/g, '&quot;')}">
+              <div onclick="event.stopPropagation()">
+                <div class="idea-inner-tabs">
+                  <button class="idea-inner-tab ${innerTab === 'description' ? 'active' : ''}" onclick="setIdeaInnerTab('${idea.id}', 'description', event)">📝 Description</button>
+                  <button class="idea-inner-tab ${innerTab === 'plan' ? 'active' : ''}" onclick="setIdeaInnerTab('${idea.id}', 'plan', event)">📋 Plan${planCount > 0 ? ' (' + planDone + '/' + planCount + ')' : ''}</button>
+                  <button class="idea-inner-tab ${innerTab === 'notes' ? 'active' : ''}" onclick="setIdeaInnerTab('${idea.id}', 'notes', event)">💬 Notes${idea.notes ? ' •' : ''}</button>
+                </div>
+                <div class="idea-tab-content">
+                  ${innerTabContent}
+                </div>
+                <div class="idea-card-footer" style="margin-top:12px;">
+                  <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
+                  <span>${formatTicketDate(idea.created)}</span>
+                </div>
               </div>
-              <div class="form-group">
-                <label>Description</label>
-                <textarea rows="4" id="inline-idea-desc-${idea.id}">${idea.desc || ''}</textarea>
-              </div>
-              <div class="form-group">
-                <label>Category</label>
-                <input type="text" id="inline-idea-cat-${idea.id}" value="${(idea.category || '').replace(/"/g, '&quot;')}">
-              </div>
-              <div class="form-group">
-                <label>Tags (comma separated)</label>
-                <input type="text" id="inline-idea-tags-${idea.id}" value="${(idea.tags || []).join(', ')}">
-              </div>
-              <div class="form-group">
-                <label>Status</label>
-                <select id="inline-idea-status-${idea.id}" class="idea-status-select">
-                  <option value="brainstorming" ${idea.status === 'brainstorming' ? 'selected' : ''}>💭 Brainstorming</option>
-                  <option value="planned" ${idea.status === 'planned' ? 'selected' : ''}>📋 Planned</option>
-                  <option value="building" ${idea.status === 'building' ? 'selected' : ''}>🔨 Building</option>
-                  <option value="shipped" ${idea.status === 'shipped' ? 'selected' : ''}>🚀 Shipped</option>
-                </select>
-              </div>
-              <button class="idea-save-btn" onclick="saveInlineIdea('${idea.id}')">Save</button>
-              <button class="idea-cancel-btn" onclick="expandedIdeaId=null; renderIdeas();">Cancel</button>
-            </div>
             ` : ''}
           </div>
         `;
       }).join('');
     }
 
+    // ===== PLAN FUNCTIONS =====
+    function togglePhase(ideaId, phaseIndex, checked) {
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea || !idea.plan || !idea.plan[phaseIndex]) return;
+      idea.plan[phaseIndex].done = checked;
+      saveTicketsRemote();
+      renderIdeas();
+    }
+
+    function deletePhase(ideaId, phaseIndex, e) {
+      if (e) e.stopPropagation();
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea || !idea.plan) return;
+      idea.plan.splice(phaseIndex, 1);
+      saveTicketsRemote();
+      renderIdeas();
+    }
+
+    function addPhase(ideaId, e) {
+      if (e) e.stopPropagation();
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea) return;
+      if (!idea.plan) idea.plan = [];
+      idea.plan.push({ name: 'New Phase', desc: '', done: false });
+      saveTicketsRemote();
+      renderIdeas();
+    }
+
+    function editPhaseName(ideaId, phaseIndex, el, e) {
+      if (e) e.stopPropagation();
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea || !idea.plan || !idea.plan[phaseIndex]) return;
+      const phase = idea.plan[phaseIndex];
+      const currentText = phase.name;
+      el.innerHTML = `<input type="text" class="plan-phase-edit-input" value="${currentText.replace(/"/g, '&quot;')}" 
+        onblur="savePhaseField('${ideaId}', ${phaseIndex}, 'name', this.value)"
+        onkeydown="if(event.key==='Enter'){this.blur();}if(event.key==='Escape'){this.value='${currentText.replace(/'/g, "\\'")}';this.blur();}">`;
+      const input = el.querySelector('input');
+      input.focus();
+      input.select();
+    }
+
+    function editPhaseDesc(ideaId, phaseIndex, el, e) {
+      if (e) e.stopPropagation();
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea || !idea.plan || !idea.plan[phaseIndex]) return;
+      const phase = idea.plan[phaseIndex];
+      const currentText = phase.desc || '';
+      el.innerHTML = `<input type="text" class="plan-phase-edit-input" value="${currentText.replace(/"/g, '&quot;')}" placeholder="Add description..."
+        onblur="savePhaseField('${ideaId}', ${phaseIndex}, 'desc', this.value)"
+        onkeydown="if(event.key==='Enter'){this.blur();}if(event.key==='Escape'){this.value='${currentText.replace(/'/g, "\\'")}';this.blur();}">`;
+      const input = el.querySelector('input');
+      input.focus();
+      input.select();
+    }
+
+    function savePhaseField(ideaId, phaseIndex, field, value) {
+      const idea = ideas.find(i => i.id === ideaId);
+      if (!idea || !idea.plan || !idea.plan[phaseIndex]) return;
+      idea.plan[phaseIndex][field] = value.trim();
+      saveTicketsRemote();
+      renderIdeas();
+    }
+
+    // ===== NOTES AUTO-SAVE =====
+    function debounceSaveNotes(ideaId) {
+      if (notesDebounceTimers[ideaId]) clearTimeout(notesDebounceTimers[ideaId]);
+      notesDebounceTimers[ideaId] = setTimeout(() => {
+        const textarea = document.getElementById('idea-notes-' + ideaId);
+        if (!textarea) return;
+        const idea = ideas.find(i => i.id === ideaId);
+        if (!idea) return;
+        idea.notes = textarea.value;
+        saveTicketsRemote();
+        // Show saved indicator
+        const saved = document.getElementById('idea-notes-saved-' + ideaId);
+        if (saved) {
+          saved.classList.add('visible');
+          setTimeout(() => saved.classList.remove('visible'), 2000);
+        }
+      }, 800);
+    }
+
     function toggleIdeaExpand(id, e) {
       // Don't expand if clicking menu or dropdown
-      if (e.target.closest('.idea-card-menu') || e.target.closest('.idea-menu-dropdown') || e.target.closest('.idea-inline-edit')) return;
-      expandedIdeaId = expandedIdeaId === id ? null : id;
+      if (e.target.closest('.idea-card-menu') || e.target.closest('.idea-menu-dropdown') || e.target.closest('.idea-inline-edit') || e.target.closest('.idea-inner-tabs') || e.target.closest('.idea-tab-content')) return;
+      if (expandedIdeaId === id) {
+        expandedIdeaId = null;
+      } else {
+        expandedIdeaId = id;
+        if (!activeIdeaInnerTab[id]) activeIdeaInnerTab[id] = 'description';
+      }
       renderIdeas();
     }
 
