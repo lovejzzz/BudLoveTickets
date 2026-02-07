@@ -1515,6 +1515,10 @@
       flex-wrap: wrap;
     }
 
+    .ideas-sort {
+      display: flex;
+      align-items: center;
+    }
     .ideas-filters {
       display: flex;
       gap: 6px;
@@ -2113,6 +2117,16 @@
         <button class="idea-filter-btn" data-filter="planned">📋 Planned</button>
         <button class="idea-filter-btn" data-filter="building">🔨 Building</button>
         <button class="idea-filter-btn" data-filter="shipped">🚀 Shipped</button>
+      </div>
+      <div class="ideas-sort" id="ideasSort">
+        <label style="color:var(--text-muted);font-size:0.85em;margin-right:6px;">Sort:</label>
+        <select id="ideaSortSelect" onchange="changeIdeaSort(this.value)" style="background:var(--bg-primary);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-family:inherit;font-size:0.85em;cursor:pointer;">
+          <option value="time-desc">🕐 Newest first</option>
+          <option value="time-asc">🕐 Oldest first</option>
+          <option value="title-asc">🔤 A → Z</option>
+          <option value="title-desc">🔤 Z → A</option>
+          <option value="status">📊 By status</option>
+        </select>
       </div>
       <button class="new-idea-btn" onclick="openNewIdeaModal()">+ New Idea</button>
     </div>
@@ -3058,6 +3072,39 @@
 
     // ===== IDEAS =====
     let ideasFilter = 'all';
+    let ideasSortMode = 'time-desc';
+    const statusOrder = { brainstorming: 0, planned: 1, building: 2, shipped: 3 };
+
+    function changeIdeaSort(mode) {
+      ideasSortMode = mode;
+      renderIdeas();
+    }
+
+    function sortIdeas(list) {
+      return list.slice().sort((a, b) => {
+        switch (ideasSortMode) {
+          case 'time-desc': return (b.createdAt || b.id || '0').localeCompare(a.createdAt || a.id || '0');
+          case 'time-asc': return (a.createdAt || a.id || '0').localeCompare(b.createdAt || b.id || '0');
+          case 'title-asc': return (a.title || '').localeCompare(b.title || '');
+          case 'title-desc': return (b.title || '').localeCompare(a.title || '');
+          case 'status': return (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9);
+          default: return 0;
+        }
+      });
+    }
+
+    function formatIdeaTime(idea) {
+      if (idea.createdAt) {
+        try {
+          const d = new Date(idea.createdAt);
+          if (!isNaN(d)) {
+            const pad = n => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+          }
+        } catch {}
+      }
+      return idea.created || '';
+    }
     let expandedIdeaId = null;
     let activeIdeaInnerTab = {}; // { ideaId: 'description' | 'plan' | 'notes' }
     let notesDebounceTimers = {};
@@ -3151,8 +3198,7 @@
 
     function renderIdeas() {
       const container = document.getElementById('ideasGrid');
-      const filtered = (ideasFilter === 'all' ? ideas : ideas.filter(i => i.status === ideasFilter))
-        .slice().sort((a, b) => (b.id || '0').localeCompare(a.id || '0'));
+      const filtered = sortIdeas(ideasFilter === 'all' ? ideas : ideas.filter(i => i.status === ideasFilter));
 
       if (filtered.length === 0) {
         container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">No ideas yet${ideasFilter !== 'all' ? ' with this status' : ''}. Spark one! ✨</div>`;
@@ -3192,7 +3238,7 @@
             ${!isExpanded ? `
               <div class="idea-card-footer">
                 <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
-                <span>${formatTicketDate(idea.created)}</span>
+                <span>${formatIdeaTime(idea)}</span>
               </div>
             ` : ''}
             ${isExpanded ? `
@@ -3207,7 +3253,7 @@
                 </div>
                 <div class="idea-card-footer" style="margin-top:12px;">
                   <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
-                  <span>${formatTicketDate(idea.created)}</span>
+                  <span>${formatIdeaTime(idea)}</span>
                 </div>
               </div>
             ` : ''}
@@ -3395,7 +3441,8 @@
           category,
           status,
           tags,
-          created: new Date().toISOString().split('T')[0]
+          created: new Date().toISOString().split('T')[0],
+          createdAt: new Date().toISOString()
         });
       }
 
