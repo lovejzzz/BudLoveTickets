@@ -1,6 +1,8 @@
 {
+  "framework": null,
   "buildCommand": "",
   "outputDirectory": ".",
+  "cleanUrls": true,
   "functions": {
     "api/tickets.js": {
       "memory": 128,
