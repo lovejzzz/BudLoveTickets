@@ -1582,22 +1582,31 @@
     }
 
     .idea-card {
+      --card-accent: 168,85,247;
       background: var(--bg-card-solid);
       border: 1px solid rgba(255,255,255,0.06);
-      border-left: 3px solid rgba(255,255,255,0.04);
+      border-left: 3px solid rgba(var(--card-accent),0.35);
       border-radius: 12px;
       padding: 16px;
       cursor: pointer;
       transition: all 0.2s ease;
       animation: fadeInUp 0.4s ease-out;
       position: relative;
+      overflow: hidden;
+    }
+
+    .idea-card-accent {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(var(--card-accent),0.8), rgba(var(--card-accent),0.1));
     }
 
     .idea-card:hover {
-      border-color: rgba(168, 85, 247, 0.3);
-      border-left-color: var(--accent);
+      border-color: rgba(var(--card-accent), 0.4);
+      border-left-color: rgba(var(--card-accent), 0.8);
       transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.15), 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 0 20px rgba(var(--card-accent), 0.15), 0 8px 20px rgba(0,0,0,0.3);
     }
 
     .idea-card-top {
@@ -2119,16 +2128,16 @@
         <button class="idea-filter-btn" data-filter="shipped">🚀 Shipped</button>
       </div>
       <div class="ideas-sort" id="ideasSort">
-        <label style="color:var(--text-muted);font-size:0.85em;margin-right:6px;">Sort:</label>
+        <label style="color:var(--text-muted);font-size:0.85em;margin-right:6px;">/label>
         <select id="ideaSortSelect" onchange="changeIdeaSort(this.value)" style="background:var(--bg-primary);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-family:inherit;font-size:0.85em;cursor:pointer;">
-          <option value="time-desc">🕐 Newest first</option>
-          <option value="time-asc">🕐 Oldest first</option>
-          <option value="title-asc">🔤 A → Z</option>
-          <option value="title-desc">🔤 Z → A</option>
-          <option value="status">📊 By status</option>
+          <option value="time-desc">🕐 Newest</option>
+          <option value="time-asc">🕐 Oldest</option>
+          <option value="title-asc">🔤 A-Z</option>
+          <option value="title-desc">🔤 Z-A</option>
+          <option value="status">📊 Status</option>
         </select>
       </div>
-      <button class="new-idea-btn" onclick="openNewIdeaModal()">+ New Idea</button>
+      <button class="new-idea-btn" onclick="openNewIdeaModal()">+</button>
     </div>
     <div class="ideas-grid" id="ideasGrid"></div>
   </div>
@@ -3218,8 +3227,15 @@
           else innerTabContent = renderDescriptionTab(idea);
         }
 
+        const catColors = { MCP:'168,85,247', Creative:'236,72,153', Productivity:'45,212,191', Tool:'249,115,22', UI:'99,102,241' };
+        const catColor = catColors[idea.category] || '168,85,247';
+        const catEmojis = { MCP:'🔌', Creative:'🎨', Productivity:'⚡', Tool:'🛠️', UI:'🖌️' };
+        const heroEmoji = catEmojis[idea.category] || '💡';
+        const progressPct = planCount > 0 ? Math.round((planDone / planCount) * 100) : 0;
+
         return `
-          <div class="idea-card ${isExpanded ? 'expanded' : ''}" data-id="${idea.id}" onclick="toggleIdeaExpand('${idea.id}', event)">
+          <div class="idea-card ${isExpanded ? 'expanded' : ''}" data-id="${idea.id}" onclick="toggleIdeaExpand('${idea.id}', event)" style="--card-accent:${catColor};">
+            <div class="idea-card-accent" style="background:linear-gradient(135deg, rgba(${catColor},0.3), rgba(${catColor},0.05));"></div>
             <div class="idea-card-top">
               <span class="idea-status-badge idea-status-${idea.status}">${IDEA_STATUS_LABELS[idea.status] || idea.status}</span>
               <button class="idea-card-menu" onclick="toggleIdeaMenu(event, '${idea.id}')" title="Menu">⋯</button>
@@ -3228,16 +3244,30 @@
               <button class="card-menu-item" onclick="event.stopPropagation(); openEditIdeaModal('${idea.id}')">✏️ Edit</button>
               <button class="card-menu-item danger" onclick="event.stopPropagation(); deleteIdea('${idea.id}')">🗑️ Delete</button>
             </div>
-            <div class="idea-card-title">${idea.title}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+              <span style="font-size:1.6em;line-height:1;">${heroEmoji}</span>
+              <div class="idea-card-title" style="margin-bottom:0;">${idea.title}</div>
+            </div>
             ${!isExpanded ? `
               <div class="idea-card-desc">${idea.desc || ''}</div>
+            ` : ''}
+            ${planCount > 0 && !isExpanded ? `
+              <div style="margin:8px 0;">
+                <div style="display:flex;justify-content:space-between;font-size:0.75em;color:var(--text-muted);margin-bottom:3px;">
+                  <span>${planDone}/${planCount} phases</span>
+                  <span>${progressPct}%</span>
+                </div>
+                <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;">
+                  <div style="height:100%;width:${progressPct}%;background:linear-gradient(90deg,rgba(${catColor},0.8),rgba(${catColor},0.5));border-radius:4px;transition:width 0.3s;"></div>
+                </div>
+              </div>
             ` : ''}
             <div class="idea-card-tags">
               ${(idea.tags || []).map(t => `<span class="idea-tag">${t}</span>`).join('')}
             </div>
             ${!isExpanded ? `
               <div class="idea-card-footer">
-                <span class="idea-card-category">${idea.category || 'Uncategorized'}</span>
+                <span class="idea-card-category" style="border-color:rgba(${catColor},0.3);color:rgba(${catColor},1);">${idea.category || 'Uncategorized'}</span>
                 <span>${formatIdeaTime(idea)}</span>
               </div>
             ` : ''}
