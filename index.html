@@ -12,15 +12,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0f0f1a;
+      --bg-primary: #0a0a14;
       --bg-secondary: #1a1a2e;
-      --bg-card: linear-gradient(135deg, #1e1e32 0%, #2a2a45 100%);
+      --bg-card: #1a1a2e;
+      --bg-card-solid: #1a1a2e;
       --accent: #a855f7;
       --accent-light: #c084fc;
       --accent-glow: rgba(168, 85, 247, 0.4);
       --text-primary: #f0f0f5;
-      --text-secondary: #9999bb;
-      --text-muted: #666688;
+      --text-secondary: #8888aa;
+      --text-muted: #555577;
       --border: rgba(255,255,255,0.08);
       --border-hover: rgba(168, 85, 247, 0.5);
       --success: #22c55e;
@@ -56,9 +57,9 @@
     
     /* Header */
     .header {
-      background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      background: linear-gradient(180deg, #12122a 0%, var(--bg-primary) 100%);
       padding: 16px 16px 12px;
-      border-bottom: 2px solid var(--accent);
+      border-bottom: 1px solid rgba(168, 85, 247, 0.25);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -140,7 +141,7 @@
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
-      box-shadow: 0 4px 12px rgba(170,51,51,0.4);
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.4);
     }
     
     .tab .badge {
@@ -789,8 +790,8 @@
     
     .kanban-column {
       flex: 1;
-      min-width: 280px;
-      background: var(--bg-card);
+      min-width: 300px;
+      background: rgba(255,255,255,0.02);
       border-radius: 16px;
       padding: 16px;
       border: 1px solid var(--border);
@@ -798,54 +799,62 @@
     }
     
     .kanban-column:hover {
-      border-color: rgba(168, 85, 247, 0.3);
+      border-color: rgba(168, 85, 247, 0.15);
     }
     
     .kanban-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 4px 16px;
-      border-bottom: 2px solid var(--border);
+      padding: 4px 4px 16px;
       margin-bottom: 12px;
     }
     
     .kanban-header h3 {
       margin: 0;
-      font-size: 1em;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
     
     .kanban-count {
-      background: var(--bg);
-      padding: 2px 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 9px;
       border-radius: 10px;
-      font-size: 0.8em;
+      font-size: 0.75em;
+      font-weight: 600;
+      min-width: 22px;
+      text-align: center;
     }
     
     .kanban-cards {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       min-height: 100px;
     }
     
     .kanban-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: var(--bg-card-solid);
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: 12px;
-      padding: 14px;
+      padding: 16px;
       cursor: grab;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       animation: fadeInUp 0.4s ease-out;
+      position: relative;
     }
     
     .kanban-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 8px 24px var(--accent-glow);
+      border-color: rgba(168, 85, 247, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(168, 85, 247, 0.15);
     }
     
     .kanban-card.dragging {
@@ -853,15 +862,156 @@
       transform: rotate(3deg);
     }
     
+    /* Card top row: ID + priority + menu */
+    .kanban-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .kanban-card-top-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .kanban-card-id {
+      font-size: 0.72em;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+    
+    .kanban-card-menu {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2em;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      line-height: 1;
+      opacity: 0;
+    }
+    
+    .kanban-card:hover .kanban-card-menu {
+      opacity: 1;
+    }
+    
+    .kanban-card-menu:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-primary);
+    }
+    
+    /* Card menu dropdown */
+    .card-menu-dropdown {
+      position: absolute;
+      top: 38px;
+      right: 12px;
+      background: #252540;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 4px;
+      z-index: 50;
+      min-width: 140px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      display: none;
+    }
+    
+    .card-menu-dropdown.active {
+      display: block;
+    }
+    
+    .card-menu-item {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.82em;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    
+    .card-menu-item:hover {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--text-primary);
+    }
+    
+    .card-menu-item.danger:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+    
     .kanban-card-title {
       font-weight: 600;
+      font-size: 1em;
       margin-bottom: 6px;
+      color: #fff;
+      line-height: 1.4;
     }
     
     .kanban-card-desc {
-      font-size: 0.85em;
+      font-size: 0.82em;
       color: var(--text-secondary);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    
+    /* Category tag pill */
+    .kanban-card-category {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.7em;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 12px;
+    }
+    
+    /* Card footer */
+    .kanban-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .kanban-card-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.72em;
+      color: var(--text-muted);
+    }
+    
+    .kanban-card-footer-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .kanban-card-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
     }
     
     .kanban-card-meta {
@@ -902,12 +1052,12 @@
     }
     
     .move-btn {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text-secondary);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      color: var(--text-muted);
       cursor: pointer;
-      padding: 2px 8px;
+      padding: 3px 10px;
       font-size: 0.8em;
       transition: all 0.2s;
     }
@@ -919,34 +1069,36 @@
     }
     
     .kanban-card-priority {
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.7em;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.68em;
+      font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
     
-    .priority-high { background: linear-gradient(135deg, #ef476f, #f97316); color: white; }
-    .priority-medium { background: linear-gradient(135deg, #eab308, #fbbf24); color: #222; }
-    .priority-low { background: linear-gradient(135deg, #22c55e, #10b981); color: white; }
+    .priority-high { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .priority-medium { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .priority-low { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
     
     .kanban-add {
       width: 100%;
       padding: 12px;
       margin-top: 12px;
-      background: rgba(168, 85, 247, 0.05);
-      border: 2px dashed rgba(168, 85, 247, 0.3);
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.1);
       border-radius: 10px;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.3s ease;
       font-weight: 500;
+      font-size: 0.85em;
     }
     
     .kanban-add:hover {
       border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(168, 85, 247, 0.1);
-      transform: translateY(-2px);
+      color: var(--accent-light);
+      background: rgba(168, 85, 247, 0.06);
     }
     
     .share-bud-btn {
@@ -1925,6 +2077,47 @@
       }
     }
     
+    function getTicketShortId(id) {
+      return 'BLT-' + (id || '0').slice(-4);
+    }
+    
+    function getTicketAvatar(t) {
+      // Determine avatar initials and color
+      if (t.category && t.category.toLowerCase().includes('skyx')) return { initials: 'SK', color: '#a855f7' };
+      if (t.createdBy === 'bot' || t.createdBy === 'bud') return { initials: 'BL', color: '#a855f7' };
+      return { initials: 'SK', color: '#a855f7' };
+    }
+    
+    function getCategoryLabel(categoryId) {
+      if (!categoryId || categoryId === 'general') return '🌐 General';
+      const cases = getCases();
+      const c = cases.find(cs => cs.id === categoryId);
+      return c ? `${c.icon} ${c.name}` : categoryId;
+    }
+    
+    function formatTicketDate(dateStr) {
+      if (!dateStr) return '';
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      return `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}`;
+    }
+    
+    function toggleCardMenu(e, id) {
+      e.stopPropagation();
+      // Close any open menus
+      document.querySelectorAll('.card-menu-dropdown.active').forEach(m => m.classList.remove('active'));
+      const menu = document.getElementById('menu-' + id);
+      if (menu) menu.classList.add('active');
+      
+      // Close on next click anywhere
+      const closeMenu = () => {
+        menu && menu.classList.remove('active');
+        document.removeEventListener('click', closeMenu);
+      };
+      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+    }
+    
     function renderTickets() {
       const statuses = ['todo', 'doing', 'done'];
       statuses.forEach(status => {
@@ -1936,21 +2129,39 @@
         container.innerHTML = filtered.map(t => {
           const prevStatus = status === 'doing' ? 'todo' : (status === 'done' ? 'doing' : null);
           const nextStatus = status === 'todo' ? 'doing' : (status === 'doing' ? 'done' : null);
+          const shortId = getTicketShortId(t.id);
+          const avatar = getTicketAvatar(t);
+          const catLabel = getCategoryLabel(t.category);
+          const dateStr = formatTicketDate(t.created);
+          
           return `
           <div class="kanban-card" draggable="true" data-id="${t.id}" 
-               ondragstart="dragStart(event)" ondragend="dragEnd(event)"
-               onclick="editTicket('${t.id}')">
-            <div class="kanban-card-title">${t.title}</div>
-            ${t.desc ? `<div class="kanban-card-desc">${t.desc}</div>` : ''}
-            <div class="kanban-card-meta">
-              <div class="kanban-card-move">
-                ${prevStatus ? `<button class="move-btn" onclick="event.stopPropagation(); moveTicket('${t.id}', '${prevStatus}')" title="Move left">◀</button>` : ''}
-                ${nextStatus ? `<button class="move-btn" onclick="event.stopPropagation(); moveTicket('${t.id}', '${nextStatus}')" title="Move right">▶</button>` : ''}
-              </div>
-              <div class="kanban-card-actions">
+               ondragstart="dragStart(event)" ondragend="dragEnd(event)">
+            <div class="kanban-card-top">
+              <div class="kanban-card-top-left">
+                <span class="kanban-card-id">${shortId}</span>
                 ${t.priority ? `<span class="kanban-card-priority priority-${t.priority}">${t.priority}</span>` : ''}
-                <button class="delete-btn" onclick="event.stopPropagation(); deleteTicket('${t.id}')" title="Delete">🗑️</button>
               </div>
+              <button class="kanban-card-menu" onclick="toggleCardMenu(event, '${t.id}')" title="Menu">⋯</button>
+            </div>
+            <div class="card-menu-dropdown" id="menu-${t.id}">
+              <button class="card-menu-item" onclick="event.stopPropagation(); editTicket('${t.id}')">✏️ Edit</button>
+              ${prevStatus ? `<button class="card-menu-item" onclick="event.stopPropagation(); moveTicket('${t.id}', '${prevStatus}')">◀ Move back</button>` : ''}
+              ${nextStatus ? `<button class="card-menu-item" onclick="event.stopPropagation(); moveTicket('${t.id}', '${nextStatus}')">▶ Move forward</button>` : ''}
+              <button class="card-menu-item danger" onclick="event.stopPropagation(); deleteTicket('${t.id}')">🗑️ Delete</button>
+            </div>
+            <div class="kanban-card-title" onclick="editTicket('${t.id}')" style="cursor:pointer;">${t.title}</div>
+            ${t.desc ? `<div class="kanban-card-desc">${t.desc}</div>` : ''}
+            ${t.category && t.category !== 'general' ? `<span class="kanban-card-category">${catLabel}</span>` : ''}
+            <div class="kanban-card-footer">
+              <div class="kanban-card-footer-left">
+                <div class="kanban-card-move">
+                  ${prevStatus ? `<button class="move-btn" onclick="event.stopPropagation(); moveTicket('${t.id}', '${prevStatus}')" title="Move left">◀</button>` : ''}
+                  ${nextStatus ? `<button class="move-btn" onclick="event.stopPropagation(); moveTicket('${t.id}', '${nextStatus}')" title="Move right">▶</button>` : ''}
+                </div>
+                ${dateStr ? `<span class="kanban-card-footer-item">🕐 ${dateStr}</span>` : ''}
+              </div>
+              <div class="kanban-card-avatar" style="background:${avatar.color}">${avatar.initials}</div>
             </div>
           </div>
         `}).join('');

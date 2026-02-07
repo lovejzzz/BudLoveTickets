@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP UI Showcase — Built with Magic MCP</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a14;--card:#12121e;--accent:#a855f7;--pink:#ec4899;--teal:#2dd4bf;--text:#f0f0f5;--muted:#666688;--border:rgba(168,85,247,0.15)}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);padding:40px 24px;min-height:100vh}
+.container{max-width:900px;margin:0 auto}
+h1{font-size:2.2em;text-align:center;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),var(--pink),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:var(--muted);margin-bottom:40px}
+.badge{display:inline-block;padding:4px 12px;background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);border-radius:20px;font-size:0.8em;color:var(--teal)}
+h2{font-size:1.4em;margin:32px 0 16px;color:var(--accent);display:flex;align-items:center;gap:8px}
+.section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px;transition:all 0.3s}
+.section:hover{border-color:var(--accent);box-shadow:0 8px 24px rgba(168,85,247,0.15)}
+.logos{display:flex;gap:24px;flex-wrap:wrap;align-items:center;justify-content:center}
+.logo-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:12px;transition:all 0.3s}
+.logo-item:hover{background:rgba(168,85,247,0.1);transform:scale(1.1)}
+.logo-item span{font-size:0.8em;color:var(--muted)}
+.logo-svg{width:48px;height:48px;display:flex;align-items:center;justify-content:center}
+.logo-svg svg{width:100%;height:100%;fill:var(--text)}
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px}
+.comp-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;transition:all 0.3s}
+.comp-card:hover{border-color:var(--accent);background:rgba(168,85,247,0.05)}
+.comp-card h3{font-size:1em;margin-bottom:12px;color:var(--pink)}
+.comp-card img{width:100%;border-radius:8px;margin-bottom:12px;max-height:200px;object-fit:cover}
+.comp-card pre{background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;overflow-x:auto;font-size:0.75em;color:var(--muted);line-height:1.4}
+.flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin:16px 0}
+.flow-step{padding:6px 14px;background:rgba(168,85,247,0.1);border:1px solid var(--border);border-radius:8px;font-size:0.85em;color:var(--accent)}
+.flow-arrow{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center}
+.stat-val{font-size:1.8em;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{font-size:0.75em;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.footer{text-align:center;margin-top:40px;padding:20px;color:var(--muted);font-size:0.85em;border-top:1px solid rgba(255,255,255,0.04)}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔌 MCP UI Showcase</h1>
+  <p class="subtitle">Every element on this page came from an MCP server <span class="badge">Magic + Filesystem + Memory</span></p>
+
+  <div class="section">
+    <h2>📊 Project Stats <span style="font-size:0.6em;color:var(--muted)">(via Filesystem MCP)</span></h2>
+    <div class="stats">
+      <div><div class="stat-val">2348</div><div class="stat-lbl">Lines of Code</div></div>
+      <div><div class="stat-val">4</div><div class="stat-lbl">MCP Servers Used</div></div>
+      <div><div class="stat-val">3</div><div class="stat-lbl">Components Found</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🎨 Brand Logos <span style="font-size:0.6em;color:var(--muted)">(via Magic MCP logo_search)</span></h2>
+    <div class="logos"><p style="color:var(--muted)">Logos fetched from Magic MCP SVGL integration</p></div>
+  </div>
+
+  <div class="section">
+    <h2>✨ Component Inspirations <span style="font-size:0.6em;color:var(--muted)">(via Magic MCP)</span></h2>
+    <div class="comp-grid"><div class="comp-card">
+      <h3>Default</h3>
+      
+      <pre><code>import { NeonGradientCard } from "@/components/ui/neon-gradient-card"
+
+export function NeonGradientCardDemo() {
+  return (
+    &lt;NeonGradientCard className="max-w-sm items-center justify-center text-ce...</code></pre>
+    </div>
+<div class="comp-card">
+      <h3>default.tsx</h3>
+      
+      <pre><code>// demo.tsx
+
+import { GradientCard } from "@/components/ui/gradient-card"; // Adjust path as needed
+
+// Data for the cards to demonstrate reusability
+const cardData = [
+  {
+    badgeText: "Open / Invi...</code></pre>
+    </div>
+<div class="comp-card">
+      <h3>Default</h3>
+      
+      <pre><code>"use client";
+
+import { Component } from "@/components/ui/animated-card";
+
+const Demo = () => {
+  return (
+    &lt;div className="flex h-full w-full items-center justify-center bg-white dark:bg-black">
+ ...</code></pre>
+    </div></div>
+  </div>
+
+  <div class="section">
+    <h2>🔌 MCP Data Flow</h2>
+    <div class="flow">
+      <span class="flow-step">Magic MCP</span><span class="flow-arrow">→</span>
+      <span class="flow-step">logo_search</span><span class="flow-arrow">→</span>
+      <span class="flow-step">SVG logos</span><span class="flow-arrow">→</span>
+      <span class="flow-step">Filesystem MCP</span><span class="flow-arrow">→</span>
+      <span class="flow-step">write_file</span>
+    </div>
+    <div class="flow">
+      <span class="flow-step">Magic MCP</span><span class="flow-arrow">→</span>
+      <span class="flow-step">inspiration</span><span class="flow-arrow">→</span>
+      <span class="flow-step">React code</span><span class="flow-arrow">→</span>
+      <span class="flow-step">Filesystem MCP</span><span class="flow-arrow">→</span>
+      <span class="flow-step">showcase.html</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Built by <strong>SKYX</strong> & <strong>OpenClaw</strong> using MCP 💜</p>
+    <p style="margin-top:8px">Magic MCP (logos + components) → Filesystem MCP (read project + write output)</p>
+  </div>
+</div>
+</body>
+</html>
