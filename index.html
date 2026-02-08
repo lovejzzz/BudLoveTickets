@@ -2065,6 +2065,7 @@
     .flow-header {
       text-align: center;
       margin-bottom: 32px;
+      position: relative;
     }
 
     .flow-header h2 {
@@ -2080,6 +2081,135 @@
     .flow-header p {
       color: var(--text-secondary);
       font-size: 0.95em;
+    }
+
+    .flow-header-controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .flow-demo-btn {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .flow-demo-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4);
+    }
+
+    .flow-demo-badge {
+      background: linear-gradient(135deg, #f59e0b, #eab308);
+      color: #1a1a2e;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+      animation: demoPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes demoPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.8); }
+    }
+
+    .flow-status-bar {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85em;
+    }
+
+    .flow-status-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .flow-status-live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .flow-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: statusBlink 2s ease-in-out infinite;
+    }
+
+    @keyframes statusBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .flow-status-updated {
+      color: var(--text-muted);
+      font-size: 0.9em;
+    }
+
+    .flow-status-spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(168, 85, 247, 0.2);
+      border-top-color: #a855f7;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .flow-empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-secondary);
+    }
+
+    .flow-empty-icon {
+      font-size: 4em;
+      margin-bottom: 16px;
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .flow-empty-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .flow-empty-desc {
+      font-size: 0.95em;
+      line-height: 1.6;
+      max-width: 400px;
+      margin: 0 auto;
     }
 
     /* Active Workflow */
@@ -2609,21 +2739,28 @@
   <!-- Workflow Visualizer View -->
   <div id="mcpView" class="flow-visualizer hidden">
     <div class="flow-header">
+      <div class="flow-header-controls">
+        <span class="flow-demo-badge hidden" id="flowDemoBadge">DEMO</span>
+        <button class="flow-demo-btn" id="flowDemoBtn" onclick="toggleFlowDemo()">▶ Run Demo</button>
+      </div>
       <h2>⚡ Workflow Visualizer</h2>
       <p>Watch AI agent workflows in beautiful motion</p>
     </div>
-    
-    <!-- Active Workflow -->
-    <div class="flow-active">
-      <div class="flow-active-header">
-        <span class="flow-active-title">🎨 Build Game Sprites</span>
-        <span class="flow-active-status">In Progress</span>
+
+    <!-- Status Bar -->
+    <div class="flow-status-bar">
+      <div class="flow-status-left">
+        <div class="flow-status-live">
+          <span class="flow-status-dot"></span>
+          <span>Live</span>
+        </div>
+        <div class="flow-status-updated" id="flowStatusUpdated">Connecting...</div>
       </div>
-      <div class="flow-canvas" id="flowCanvas">
-        <svg class="flow-svg" id="flowSvg"></svg>
-        <div class="flow-nodes" id="flowNodes"></div>
-      </div>
+      <div class="flow-status-spinner" id="flowStatusSpinner"></div>
     </div>
+    
+    <!-- Active Workflow Container -->
+    <div id="flowActiveContainer"></div>
 
     <!-- Workflow History -->
     <div class="flow-history">
@@ -4197,106 +4334,176 @@
     }
     
     // ===== WORKFLOW VISUALIZER =====
+    const WORKFLOW_BLOB_URL = 'https://jsonblob.com/api/jsonBlob/019c3e83-e367-72fd-afe8-3486a6482e46';
+    
     const DEMO_WORKFLOWS = {
       active: {
         id: 'workflow-1',
         name: '🎨 Build Game Sprites',
-        status: 'in_progress',
+        startedAt: new Date().toISOString(),
         nodes: [
-          { id: 1, icon: '🧠', name: 'Planning', status: 'done', time: '2s ago' },
-          { id: 2, icon: '🎨', name: 'Generate Art', status: 'active', time: '' },
-          { id: 3, icon: '📂', name: 'Save Files', status: 'pending', time: '' },
-          { id: 4, icon: '🔍', name: 'Review', status: 'pending', time: '' },
-          { id: 5, icon: '✅', name: 'Complete', status: 'pending', time: '' }
+          { id: 1, icon: '🧠', label: 'Planning', status: 'done', completedAt: new Date(Date.now() - 5000).toISOString() },
+          { id: 2, icon: '🎨', label: 'Generate Art', status: 'active' },
+          { id: 3, icon: '📂', label: 'Save Files', status: 'pending' },
+          { id: 4, icon: '🔍', label: 'Review', status: 'pending' },
+          { id: 5, icon: '✅', label: 'Complete', status: 'pending' }
         ]
       },
       history: [
         {
-          id: 'workflow-h1',
           name: 'Fix Mouse Shooting',
-          status: 'success',
-          nodeCount: 3,
-          time: '2min ago',
+          completedAt: new Date(Date.now() - 120000).toISOString(),
+          duration: '2m',
           nodes: [
-            { icon: '🐛', name: 'Debug', status: 'done' },
-            { icon: '🔧', name: 'Fix Code', status: 'done' },
-            { icon: '✅', name: 'Test', status: 'done' }
+            { id: 1, icon: '🐛', label: 'Debug', status: 'done' },
+            { id: 2, icon: '🔧', label: 'Fix Code', status: 'done' },
+            { id: 3, icon: '✅', label: 'Test', status: 'done' }
           ]
         },
         {
-          id: 'workflow-h2',
           name: 'Add Weapon System',
-          status: 'success',
-          nodeCount: 5,
-          time: '15min ago',
+          completedAt: new Date(Date.now() - 900000).toISOString(),
+          duration: '8m',
           nodes: [
-            { icon: '📝', name: 'Design', status: 'done' },
-            { icon: '⚙️', name: 'Implement', status: 'done' },
-            { icon: '🎨', name: 'Assets', status: 'done' },
-            { icon: '🧪', name: 'Test', status: 'done' },
-            { icon: '🚀', name: 'Deploy', status: 'done' }
-          ]
-        },
-        {
-          id: 'workflow-h3',
-          name: 'Deploy to Vercel',
-          status: 'success',
-          nodeCount: 4,
-          time: '1hr ago',
-          nodes: [
-            { icon: '📦', name: 'Build', status: 'done' },
-            { icon: '🧪', name: 'Test', status: 'done' },
-            { icon: '🚀', name: 'Deploy', status: 'done' },
-            { icon: '✅', name: 'Verify', status: 'done' }
+            { id: 1, icon: '📝', label: 'Design', status: 'done' },
+            { id: 2, icon: '⚙️', label: 'Implement', status: 'done' },
+            { id: 3, icon: '🎨', label: 'Assets', status: 'done' },
+            { id: 4, icon: '🧪', label: 'Test', status: 'done' },
+            { id: 5, icon: '🚀', label: 'Deploy', status: 'done' }
           ]
         }
       ]
     };
 
     let flowState = {
-      currentWorkflow: null,
+      demoMode: false,
+      workflowData: null,
       historyCollapsed: false,
       expandedHistoryId: null,
-      animationInterval: null
+      animationInterval: null,
+      pollingInterval: null,
+      lastUpdate: null
     };
 
     function initFlowVisualizer() {
-      flowState.currentWorkflow = DEMO_WORKFLOWS.active;
-      renderActiveWorkflow();
-      renderWorkflowHistory();
-      startWorkflowAnimation();
+      // Start polling for real workflow data
+      startWorkflowPolling();
     }
 
-    function renderActiveWorkflow() {
-      const workflow = flowState.currentWorkflow;
-      if (!workflow) return;
+    function startWorkflowPolling() {
+      // Initial fetch
+      fetchWorkflowData();
+      
+      // Poll every 4 seconds
+      if (flowState.pollingInterval) clearInterval(flowState.pollingInterval);
+      flowState.pollingInterval = setInterval(fetchWorkflowData, 4000);
+      
+      // Update "last updated" text every second
+      setInterval(updateLastUpdatedText, 1000);
+    }
 
-      const nodesContainer = document.getElementById('flowNodes');
-      const svgContainer = document.getElementById('flowSvg');
+    async function fetchWorkflowData() {
+      try {
+        const res = await fetch(WORKFLOW_BLOB_URL);
+        const data = await res.json();
+        flowState.workflowData = data;
+        flowState.lastUpdate = Date.now();
+        
+        // If not in demo mode, render the real data
+        if (!flowState.demoMode) {
+          renderWorkflowData(data);
+        }
+        
+        updateStatusBar();
+      } catch (e) {
+        console.error('Failed to fetch workflow data:', e);
+        document.getElementById('flowStatusUpdated').textContent = 'Connection error';
+      }
+    }
+
+    function updateLastUpdatedText() {
+      if (!flowState.lastUpdate) return;
+      const seconds = Math.floor((Date.now() - flowState.lastUpdate) / 1000);
+      const text = seconds === 0 ? 'Just now' : 
+                   seconds === 1 ? '1 second ago' :
+                   seconds < 60 ? `${seconds} seconds ago` :
+                   `${Math.floor(seconds / 60)} minute${Math.floor(seconds / 60) > 1 ? 's' : ''} ago`;
+      document.getElementById('flowStatusUpdated').textContent = `Last updated: ${text}`;
+    }
+
+    function updateStatusBar() {
+      // Status is always "Live" since we're polling
+      const spinner = document.getElementById('flowStatusSpinner');
+      spinner.style.display = 'block';
+      setTimeout(() => spinner.style.display = 'none', 300);
+    }
+
+    function renderWorkflowData(data) {
+      const container = document.getElementById('flowActiveContainer');
+      
+      if (!data || !data.active) {
+        // Show empty state
+        container.innerHTML = `
+          <div class="flow-empty-state">
+            <div class="flow-empty-icon">⚡</div>
+            <div class="flow-empty-title">Waiting for workflow...</div>
+            <div class="flow-empty-desc">When Bud starts working, you'll see the progress here in real-time</div>
+          </div>
+        `;
+        
+        // Render history if available
+        if (data && data.history && data.history.length > 0) {
+          renderWorkflowHistory(data.history);
+        } else {
+          document.getElementById('flowHistoryList').innerHTML = '<div style="color:var(--text-muted);font-size:0.85em;padding:12px;">No workflow history yet</div>';
+        }
+        return;
+      }
+
+      // Render active workflow
+      const workflow = data.active;
+      container.innerHTML = `
+        <div class="flow-active">
+          <div class="flow-active-header">
+            <span class="flow-active-title">${workflow.name}</span>
+            <span class="flow-active-status">In Progress</span>
+          </div>
+          <div class="flow-canvas">
+            <svg class="flow-svg" id="flowSvg"></svg>
+            <div class="flow-nodes" id="flowNodes"></div>
+          </div>
+        </div>
+      `;
 
       // Render nodes
+      const nodesContainer = document.getElementById('flowNodes');
+      const svgContainer = document.getElementById('flowSvg');
+      
       nodesContainer.innerHTML = workflow.nodes.map((node, index) => `
         <div class="flow-node ${node.status}" style="animation-delay: ${index * 0.15}s;">
           <div class="flow-node-icon">${node.icon}</div>
-          <div class="flow-node-name">${node.name}</div>
+          <div class="flow-node-name">${node.label}</div>
           ${node.status === 'active' ? '<div class="flow-node-loader"></div>' : ''}
-          ${node.status === 'done' && node.time ? `<div class="flow-node-time">${node.time}</div>` : ''}
-          ${node.status === 'done' && !node.time ? '<div class="flow-node-checkmark">✓</div>' : ''}
+          ${node.status === 'done' ? '<div class="flow-node-checkmark">✓</div>' : ''}
           ${node.status === 'active' ? '<div class="flow-node-status">Processing...</div>' : ''}
           ${node.status === 'pending' ? '<div class="flow-node-status">Waiting...</div>' : ''}
           ${node.status === 'done' ? '<div class="flow-node-status">Complete</div>' : ''}
         </div>
       `).join('');
 
-      // Draw connections after a brief delay to ensure nodes are rendered
+      // Draw connections
       setTimeout(() => drawFlowConnections(svgContainer, nodesContainer, workflow.nodes), 100);
+
+      // Render history
+      if (data.history && data.history.length > 0) {
+        renderWorkflowHistory(data.history);
+      }
     }
 
     function drawFlowConnections(svg, nodesContainer, nodes) {
       const nodeElements = Array.from(nodesContainer.querySelectorAll('.flow-node'));
       if (nodeElements.length < 2) return;
 
-      // Create SVG content
       let svgContent = `
         <defs>
           <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -4307,7 +4514,6 @@
         </defs>
       `;
 
-      // Draw connections between consecutive nodes
       for (let i = 0; i < nodeElements.length - 1; i++) {
         const fromNode = nodeElements[i];
         const toNode = nodeElements[i + 1];
@@ -4318,24 +4524,18 @@
         const toRect = toNode.getBoundingClientRect();
         const containerRect = nodesContainer.getBoundingClientRect();
 
-        // Calculate positions relative to container
         const x1 = fromRect.right - containerRect.left;
         const y1 = fromRect.top - containerRect.top + fromRect.height / 2;
         const x2 = toRect.left - containerRect.left;
         const y2 = toRect.top - containerRect.top + toRect.height / 2;
 
-        // Create curved path (bezier)
         const midX = (x1 + x2) / 2;
         const path = `M ${x1} ${y1} Q ${midX} ${y1}, ${midX} ${(y1 + y2) / 2} T ${x2} ${y2}`;
 
-        // Determine connection class based on status
         const connectionClass = (fromStatus === 'done' && toStatus !== 'pending') ? 'done' : '';
 
-        svgContent += `
-          <path class="flow-connection ${connectionClass}" d="${path}" />
-        `;
+        svgContent += `<path class="flow-connection ${connectionClass}" d="${path}" />`;
 
-        // Add particle effect for active connections
         if (fromStatus === 'done' && toStatus === 'active') {
           svgContent += `
             <circle class="flow-particle" cx="${x1}" cy="${y1}">
@@ -4348,103 +4548,170 @@
       svg.innerHTML = svgContent;
     }
 
-    function startWorkflowAnimation() {
-      // Simulate workflow progression
+    function toggleFlowDemo() {
+      if (flowState.demoMode) {
+        // Stop demo, return to real data
+        stopDemoAnimation();
+        flowState.demoMode = false;
+        document.getElementById('flowDemoBtn').textContent = '▶ Run Demo';
+        document.getElementById('flowDemoBadge').classList.add('hidden');
+        
+        // Render real data
+        if (flowState.workflowData) {
+          renderWorkflowData(flowState.workflowData);
+        }
+      } else {
+        // Start demo
+        flowState.demoMode = true;
+        document.getElementById('flowDemoBtn').textContent = '⏸ Stop Demo';
+        document.getElementById('flowDemoBadge').classList.remove('hidden');
+        
+        // Start demo animation
+        startDemoAnimation();
+      }
+    }
+
+    function startDemoAnimation() {
+      // Reset to initial demo state
+      flowState.currentWorkflow = JSON.parse(JSON.stringify(DEMO_WORKFLOWS.active));
+      renderDemoWorkflow();
+      renderWorkflowHistory(DEMO_WORKFLOWS.history);
+      
       let stepIndex = 0;
       const steps = [
-        // Initial state shows Planning done, Generate Art active
-        () => {}, // No change, already set
-        // After 3 seconds, complete Generate Art, start Save Files
+        () => {}, // Initial state
         () => {
           if (flowState.currentWorkflow && flowState.currentWorkflow.nodes[1]) {
             flowState.currentWorkflow.nodes[1].status = 'done';
-            flowState.currentWorkflow.nodes[1].time = '1s ago';
             flowState.currentWorkflow.nodes[2].status = 'active';
-            renderActiveWorkflow();
+            renderDemoWorkflow();
           }
         },
-        // After 3 more seconds, complete Save Files, start Review
         () => {
           if (flowState.currentWorkflow && flowState.currentWorkflow.nodes[2]) {
             flowState.currentWorkflow.nodes[2].status = 'done';
-            flowState.currentWorkflow.nodes[2].time = 'just now';
             flowState.currentWorkflow.nodes[3].status = 'active';
-            renderActiveWorkflow();
+            renderDemoWorkflow();
           }
         },
-        // After 3 more seconds, complete Review, start Complete
         () => {
           if (flowState.currentWorkflow && flowState.currentWorkflow.nodes[3]) {
             flowState.currentWorkflow.nodes[3].status = 'done';
-            flowState.currentWorkflow.nodes[3].time = 'just now';
             flowState.currentWorkflow.nodes[4].status = 'active';
-            renderActiveWorkflow();
+            renderDemoWorkflow();
           }
         },
-        // After 3 more seconds, complete workflow
         () => {
           if (flowState.currentWorkflow && flowState.currentWorkflow.nodes[4]) {
             flowState.currentWorkflow.nodes[4].status = 'done';
-            flowState.currentWorkflow.nodes[4].time = 'just now';
-            renderActiveWorkflow();
-            showToast('✅ Workflow completed!');
-            // Reset after a delay
+            renderDemoWorkflow();
+            showToast('✅ Demo workflow completed!');
             setTimeout(() => {
-              flowState.currentWorkflow = JSON.parse(JSON.stringify(DEMO_WORKFLOWS.active));
-              renderActiveWorkflow();
-              stepIndex = 0;
-              startWorkflowAnimation();
+              if (flowState.demoMode) {
+                flowState.currentWorkflow = JSON.parse(JSON.stringify(DEMO_WORKFLOWS.active));
+                renderDemoWorkflow();
+                stepIndex = 0;
+                startDemoAnimation();
+              }
             }, 4000);
           }
         }
       ];
 
-      // Clear any existing animation
       if (flowState.animationInterval) {
         clearInterval(flowState.animationInterval);
       }
 
-      // Run through steps
       const runStep = () => {
-        if (stepIndex < steps.length) {
+        if (stepIndex < steps.length && flowState.demoMode) {
           steps[stepIndex]();
           stepIndex++;
         }
       };
 
-      // Start after 2 seconds, then every 3 seconds
       setTimeout(() => {
-        flowState.animationInterval = setInterval(runStep, 3000);
+        if (flowState.demoMode) {
+          flowState.animationInterval = setInterval(runStep, 3000);
+        }
       }, 2000);
     }
 
-    function renderWorkflowHistory() {
-      const container = document.getElementById('flowHistoryList');
-      const history = DEMO_WORKFLOWS.history;
-
-      container.innerHTML = history.map(workflow => `
-        <div class="flow-history-item ${flowState.expandedHistoryId === workflow.id ? 'expanded' : ''}" 
-             onclick="toggleHistoryItem('${workflow.id}')">
-          <div class="flow-history-item-header">
-            <span class="flow-history-item-title">${workflow.name}</span>
-            <span class="flow-history-item-time">${workflow.time}</span>
+    function renderDemoWorkflow() {
+      const container = document.getElementById('flowActiveContainer');
+      const workflow = flowState.currentWorkflow;
+      
+      container.innerHTML = `
+        <div class="flow-active">
+          <div class="flow-active-header">
+            <span class="flow-active-title">${workflow.name}</span>
+            <span class="flow-active-status">In Progress</span>
           </div>
-          <div class="flow-history-item-meta">
-            <span>${workflow.nodeCount} nodes</span>
-            <span class="flow-history-item-status ${workflow.status}">${workflow.status === 'success' ? '✓ Success' : '✗ Failed'}</span>
-          </div>
-          <div class="flow-history-item-workflow">
-            <div class="flow-history-mini-nodes">
-              ${workflow.nodes.map(node => `
-                <div class="flow-history-mini-node ${node.status}">
-                  <span>${node.icon}</span>
-                  <span>${node.name}</span>
-                </div>
-              `).join('')}
-            </div>
+          <div class="flow-canvas">
+            <svg class="flow-svg" id="flowSvg"></svg>
+            <div class="flow-nodes" id="flowNodes"></div>
           </div>
         </div>
+      `;
+
+      const nodesContainer = document.getElementById('flowNodes');
+      const svgContainer = document.getElementById('flowSvg');
+      
+      nodesContainer.innerHTML = workflow.nodes.map((node, index) => `
+        <div class="flow-node ${node.status}" style="animation-delay: ${index * 0.15}s;">
+          <div class="flow-node-icon">${node.icon}</div>
+          <div class="flow-node-name">${node.label}</div>
+          ${node.status === 'active' ? '<div class="flow-node-loader"></div>' : ''}
+          ${node.status === 'done' ? '<div class="flow-node-checkmark">✓</div>' : ''}
+          ${node.status === 'active' ? '<div class="flow-node-status">Processing...</div>' : ''}
+          ${node.status === 'pending' ? '<div class="flow-node-status">Waiting...</div>' : ''}
+          ${node.status === 'done' ? '<div class="flow-node-status">Complete</div>' : ''}
+        </div>
       `).join('');
+
+      setTimeout(() => drawFlowConnections(svgContainer, nodesContainer, workflow.nodes), 100);
+    }
+
+    function stopDemoAnimation() {
+      if (flowState.animationInterval) {
+        clearInterval(flowState.animationInterval);
+        flowState.animationInterval = null;
+      }
+    }
+
+    function renderWorkflowHistory(history) {
+      const container = document.getElementById('flowHistoryList');
+      
+      if (!history || history.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:0.85em;padding:12px;">No workflow history yet</div>';
+        return;
+      }
+
+      container.innerHTML = history.map((workflow, idx) => {
+        const time = workflow.completedAt ? new Date(workflow.completedAt).toLocaleString() : 'Unknown';
+        return `
+          <div class="flow-history-item ${flowState.expandedHistoryId === idx ? 'expanded' : ''}" 
+               onclick="toggleHistoryItem(${idx})">
+            <div class="flow-history-item-header">
+              <span class="flow-history-item-title">${workflow.name}</span>
+              <span class="flow-history-item-time">${workflow.duration || ''}</span>
+            </div>
+            <div class="flow-history-item-meta">
+              <span>${workflow.nodes.length} nodes</span>
+              <span class="flow-history-item-status success">✓ Success</span>
+            </div>
+            <div class="flow-history-item-workflow">
+              <div class="flow-history-mini-nodes">
+                ${workflow.nodes.map(node => `
+                  <div class="flow-history-mini-node ${node.status}">
+                    <span>${node.icon}</span>
+                    <span>${node.label}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function toggleHistoryItem(id) {
@@ -4453,7 +4720,13 @@
       } else {
         flowState.expandedHistoryId = id;
       }
-      renderWorkflowHistory();
+      
+      // Re-render with current data
+      if (flowState.demoMode) {
+        renderWorkflowHistory(DEMO_WORKFLOWS.history);
+      } else if (flowState.workflowData && flowState.workflowData.history) {
+        renderWorkflowHistory(flowState.workflowData.history);
+      }
     }
 
     function toggleFlowHistory() {
