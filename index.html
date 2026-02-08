@@ -5359,6 +5359,20 @@
       }
     };
 
+    function sizeCanvas(canvas, height) {
+      height = height || 400;
+      const w = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
+      canvas.width = w * (window.devicePixelRatio || 1);
+      canvas.height = height * (window.devicePixelRatio || 1);
+      canvas.style.width = w + 'px';
+      canvas.style.height = height + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      canvas._w = w;
+      canvas._h = height;
+      return ctx;
+    }
+
     function initPlayground() {
       if (playgroundState.initialized) return;
       playgroundState.initialized = true;
@@ -5567,7 +5581,7 @@
       container.innerHTML = '<canvas class="pg-canvas" id="pgWaveCanvas"></canvas>';
       const canvas = document.getElementById('pgWaveCanvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
       canvas.height = 400;
       
       function animate() {
@@ -5638,13 +5652,33 @@
       container.innerHTML = '<canvas class="pg-canvas" id="pgParticleCanvas" style="cursor:crosshair"></canvas>';
       const canvas = document.getElementById('pgParticleCanvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
       canvas.height = 400;
       
       playgroundState.data.particles = [];
       
+      function addTouchSupport(canvas, handler) {
+        canvas.addEventListener('click', handler);
+        canvas.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          const fakeEvent = { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY };
+          handler(fakeEvent);
+        }, {passive: false});
+      }
+      
       if (option === 'constellation') {
-        canvas.addEventListener('click', (e) => {
+        // Seed initial particles
+        for (let i = 0; i < 8; i++) {
+          playgroundState.data.particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            life: 60 + Math.random() * 40,
+            size: Math.random() * 3 + 2
+          });
+        }
+        addTouchSupport(canvas, (e) => {
           const rect = canvas.getBoundingClientRect();
           for (let i = 0; i < 3; i++) {
             playgroundState.data.particles.push({
@@ -5696,7 +5730,19 @@
         }
         animate();
       } else if (option === 'fireworks') {
-        canvas.addEventListener('click', (e) => {
+        // Seed an initial firework
+        setTimeout(() => {
+          const x = canvas.width / 2, y = canvas.height / 2;
+          for (let i = 0; i < 30; i++) {
+            const angle = (i / 30) * Math.PI * 2;
+            playgroundState.data.particles.push({
+              x, y, vx: Math.cos(angle) * (2 + Math.random() * 2), vy: Math.sin(angle) * (2 + Math.random() * 2),
+              life: 40 + Math.random() * 20, size: 2 + Math.random() * 2,
+              hue: Math.random() * 360
+            });
+          }
+        }, 100);
+        addTouchSupport(canvas, (e) => {
           const rect = canvas.getBoundingClientRect();
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top;
@@ -5822,7 +5868,7 @@
       `;
       const canvas = document.getElementById('pgBubbleCanvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
       canvas.height = 400;
       
       playgroundState.data.bubbles = [];
@@ -5925,7 +5971,7 @@
         container.innerHTML = '<canvas class="pg-canvas" id="pgRhythmCanvas"></canvas>';
         const canvas = document.getElementById('pgRhythmCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
+        canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
         canvas.height = 400;
         
         function animate() {
@@ -5959,7 +6005,7 @@
         container.innerHTML = '<canvas class="pg-canvas" id="pgRhythmCanvas"></canvas>';
         const canvas = document.getElementById('pgRhythmCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
+        canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
         canvas.height = 400;
         
         function animate() {
@@ -5989,7 +6035,7 @@
       container.innerHTML = '<canvas class="pg-canvas" id="pgMeshCanvas"></canvas>';
       const canvas = document.getElementById('pgMeshCanvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
       canvas.height = 400;
       
       if (option === 'blob') {
@@ -6106,7 +6152,7 @@
         const canvas = document.getElementById('pgClockCanvas');
         const dateEl = document.getElementById('pgClockDate');
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
+        canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
         canvas.height = 400;
         
         const cx = canvas.width / 2;
@@ -6210,7 +6256,7 @@
         container.innerHTML = '<canvas class="pg-canvas" id="pgBinaryCanvas"></canvas>';
         const canvas = document.getElementById('pgBinaryCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
+        canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 300;
         canvas.height = 400;
         
         function animate() {
