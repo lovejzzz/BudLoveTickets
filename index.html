@@ -2054,6 +2054,527 @@
       outline: none;
       border-color: var(--accent);
     }
+
+    /* ===== MCP PLAYGROUND ===== */
+    .mcp-playground {
+      padding: 20px 16px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .mcp-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .mcp-header h2 {
+      font-size: 1.5em;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--accent), #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .mcp-header p {
+      color: var(--text-secondary);
+    }
+
+    /* Connection Panel */
+    .mcp-connection-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr auto auto;
+      gap: 16px;
+      align-items: end;
+    }
+
+    @media (max-width: 768px) {
+      .mcp-connection-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mcp-server-select label,
+    .mcp-custom-command label {
+      display: block;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .mcp-server-select select,
+    .mcp-custom-command input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.95em;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .mcp-server-select select:focus,
+    .mcp-custom-command input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .mcp-custom-command {
+      grid-column: span 2;
+    }
+
+    .mcp-connect-btn {
+      padding: 10px 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.95em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .mcp-connect-btn:hover {
+      background: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .mcp-connect-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .mcp-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    .mcp-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      transition: background 0.3s;
+    }
+
+    .mcp-status.connected .mcp-status-dot {
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    }
+
+    .mcp-status-text {
+      font-size: 0.85em;
+      color: var(--text-secondary);
+    }
+
+    /* Main Content Area */
+    .mcp-content {
+      display: grid;
+      grid-template-columns: 40% 60%;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .mcp-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Tools Browser */
+    .mcp-tools-browser {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 600px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mcp-tools-header {
+      margin-bottom: 16px;
+    }
+
+    .mcp-tools-header h3 {
+      font-size: 1.1em;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .mcp-search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+      font-size: 0.85em;
+      outline: none;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .mcp-search-input:focus {
+      border-color: var(--accent);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .mcp-tools-list {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(168, 85, 247, 0.35) transparent;
+    }
+
+    .mcp-tools-list::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .mcp-tools-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .mcp-tools-list::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.35);
+      border-radius: 10px;
+    }
+
+    .mcp-tool-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mcp-tool-item:hover {
+      border-color: var(--accent);
+      background: rgba(168, 85, 247, 0.08);
+      transform: translateX(4px);
+    }
+
+    .mcp-tool-item.selected {
+      border-color: var(--accent);
+      background: rgba(168, 85, 247, 0.15);
+    }
+
+    .mcp-tool-name {
+      font-weight: 600;
+      font-size: 0.95em;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .mcp-tool-desc {
+      font-size: 0.8em;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Tool Tester */
+    .mcp-tool-tester {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 600px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mcp-tester-header h3 {
+      font-size: 1.1em;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .mcp-tester-content {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(168, 85, 247, 0.35) transparent;
+    }
+
+    .mcp-tool-detail {
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    .mcp-tool-detail-header {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mcp-tool-detail-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .mcp-tool-detail-desc {
+      font-size: 0.9em;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .mcp-params-form {
+      margin-bottom: 20px;
+    }
+
+    .mcp-param-group {
+      margin-bottom: 16px;
+    }
+
+    .mcp-param-label {
+      display: block;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .mcp-param-label .required {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+
+    .mcp-param-input,
+    .mcp-param-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.9em;
+      font-family: 'Courier New', monospace;
+      outline: none;
+    }
+
+    .mcp-param-input:focus,
+    .mcp-param-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .mcp-param-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .mcp-param-hint {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .mcp-execute-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--accent) 0%, #60a5fa 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      margin-bottom: 20px;
+    }
+
+    .mcp-execute-btn:hover {
+      transform: scale(1.02) translateY(-2px);
+      box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4);
+    }
+
+    .mcp-execute-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .mcp-results-panel {
+      background: #0a0a14;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+
+    .mcp-results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .mcp-results-title {
+      font-size: 0.85em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .mcp-results-copy {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .mcp-results-copy:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .mcp-results-content {
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      padding: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+      line-height: 1.5;
+      color: #aaa;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .mcp-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+
+    .mcp-loading-spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    /* History Panel */
+    .mcp-history {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s;
+    }
+
+    .mcp-history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .mcp-history-header h3 {
+      font-size: 1em;
+      color: var(--text-primary);
+    }
+
+    .mcp-history-toggle {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: transform 0.3s;
+      font-family: inherit;
+    }
+
+    .mcp-history.collapsed .mcp-history-toggle {
+      transform: rotate(-90deg);
+    }
+
+    .mcp-history.collapsed .mcp-history-list {
+      display: none;
+    }
+
+    .mcp-history-list {
+      margin-top: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .mcp-history-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mcp-history-item:hover {
+      border-color: var(--accent);
+      background: rgba(168, 85, 247, 0.08);
+    }
+
+    .mcp-history-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .mcp-history-tool {
+      font-weight: 600;
+      font-size: 0.9em;
+      color: var(--text-primary);
+    }
+
+    .mcp-history-time {
+      font-size: 0.75em;
+      color: var(--text-muted);
+    }
+
+    .mcp-history-params {
+      font-size: 0.8em;
+      color: var(--text-secondary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mcp-empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
@@ -2070,6 +2591,7 @@
       <button class="tab active" data-project="tickets" tabindex="0">🎫 Tickets</button>
       <button class="tab" data-project="cases" tabindex="0">📁 Cases</button>
       <button class="tab" data-project="ideas" tabindex="0">💡 Ideas</button>
+      <button class="tab" data-project="mcp" tabindex="0">🔌 MCP</button>
     </div>
   </div>
   
@@ -2158,6 +2680,74 @@
       <button class="new-idea-btn" onclick="openNewIdeaModal()">+</button>
     </div>
     <div class="ideas-grid" id="ideasGrid"></div>
+  </div>
+
+  <!-- MCP Playground View -->
+  <div id="mcpView" class="mcp-playground hidden">
+    <div class="mcp-header">
+      <h2>🔌 MCP Playground</h2>
+      <p>Explore and test Model Context Protocol servers</p>
+    </div>
+    
+    <!-- Server Connection Panel -->
+    <div class="mcp-connection-panel">
+      <div class="mcp-server-select">
+        <label>Server</label>
+        <select id="mcpServerSelect" onchange="selectMCPServer(this.value)">
+          <option value="">Select a server...</option>
+          <option value="filesystem">📂 Filesystem</option>
+          <option value="memory">🧠 Memory</option>
+          <option value="github">🐙 GitHub</option>
+          <option value="magic">✨ Magic UI</option>
+          <option value="godot">🎮 Godot</option>
+          <option value="custom">⚙️ Custom...</option>
+        </select>
+      </div>
+      <div class="mcp-custom-command hidden" id="mcpCustomCommand">
+        <label>Command</label>
+        <input type="text" id="mcpCommandInput" placeholder="npx @anthropic/mcp-server ...">
+      </div>
+      <button class="mcp-connect-btn" id="mcpConnectBtn" onclick="connectMCP()">Connect</button>
+      <div class="mcp-status" id="mcpStatus">
+        <span class="mcp-status-dot"></span>
+        <span class="mcp-status-text">Disconnected</span>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="mcp-content">
+      <!-- Tools Browser (Left) -->
+      <div class="mcp-tools-browser">
+        <div class="mcp-tools-header">
+          <h3>Tools</h3>
+          <input type="text" class="mcp-search-input" id="mcpToolSearch" placeholder="Search tools..." oninput="filterMCPTools(this.value)">
+        </div>
+        <div class="mcp-tools-list" id="mcpToolsList">
+          <div class="mcp-empty-state">Connect to a server to see available tools</div>
+        </div>
+      </div>
+
+      <!-- Tool Tester (Right) -->
+      <div class="mcp-tool-tester">
+        <div class="mcp-tester-header">
+          <h3>Tool Tester</h3>
+        </div>
+        <div class="mcp-tester-content" id="mcpTesterContent">
+          <div class="mcp-empty-state">Select a tool to test it</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Panel (Bottom, collapsible) -->
+    <div class="mcp-history">
+      <div class="mcp-history-header" onclick="toggleMCPHistory()">
+        <h3>📜 History</h3>
+        <button class="mcp-history-toggle">▼</button>
+      </div>
+      <div class="mcp-history-list" id="mcpHistoryList">
+        <div class="mcp-empty-state">No executions yet</div>
+      </div>
+    </div>
   </div>
 
   <!-- Idea Modal -->
@@ -2377,6 +2967,8 @@
             navigateToView('cases');
           } else if (project === 'ideas') {
             navigateToView('ideas');
+          } else if (project === 'mcp') {
+            navigateToView('mcp');
           } else if (project === 'all') {
             navigateToView('all');
           }
@@ -2395,7 +2987,8 @@
                         (view === 'timeline' && t.dataset.project === 'timeline') ||
                         (view === 'tickets' && t.dataset.project === 'tickets') ||
                         (view === 'cases' && t.dataset.project === 'cases') ||
-                        (view === 'ideas' && t.dataset.project === 'ideas');
+                        (view === 'ideas' && t.dataset.project === 'ideas') ||
+                        (view === 'mcp' && t.dataset.project === 'mcp');
         t.classList.toggle('active', isActive);
       });
       
@@ -2407,6 +3000,7 @@
       document.getElementById('casesView').classList.add('hidden');
       document.getElementById('caseDetailView').classList.add('hidden');
       document.getElementById('ideasView').classList.add('hidden');
+      document.getElementById('mcpView').classList.add('hidden');
       
       // Show appropriate view
       if (view === 'all') {
@@ -2424,6 +3018,9 @@
       } else if (view === 'ideas') {
         document.getElementById('ideasView').classList.remove('hidden');
         renderIdeas();
+      } else if (view === 'mcp') {
+        document.getElementById('mcpView').classList.remove('hidden');
+        initMCPPlayground();
       } else if (view === 'caseDetail' && project) {
         document.getElementById('caseDetailView').classList.remove('hidden');
         renderCaseDetail(project);
@@ -3714,6 +4311,440 @@
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
     
+    // ===== MCP PLAYGROUND =====
+    const MCP_SERVERS = {
+      filesystem: {
+        name: 'Filesystem',
+        icon: '📂',
+        desc: '14 file tools',
+        command: 'npx @anthropic/mcp-filesystem /path/to/allowed/directory',
+        tools: [
+          { name: 'read_file', description: 'Read the complete contents of a file from the file system', 
+            params: { path: { type: 'string', description: 'Path to the file to read', required: true } } },
+          { name: 'write_file', description: 'Create a new file or overwrite an existing file with new content',
+            params: { path: { type: 'string', description: 'Path where the file should be written', required: true },
+                     content: { type: 'string', description: 'Content to write to the file', required: true } } },
+          { name: 'list_directory', description: 'Get a detailed listing of all files and directories in a specified path',
+            params: { path: { type: 'string', description: 'Path to the directory to list', required: true } } },
+          { name: 'search_files', description: 'Recursively search for files and directories matching a pattern',
+            params: { path: { type: 'string', description: 'Starting directory path', required: true },
+                     pattern: { type: 'string', description: 'Search pattern (glob format)', required: true } } },
+          { name: 'move_file', description: 'Move or rename files and directories',
+            params: { source: { type: 'string', description: 'Source path', required: true },
+                     destination: { type: 'string', description: 'Destination path', required: true } } }
+        ]
+      },
+      memory: {
+        name: 'Memory',
+        icon: '🧠',
+        desc: '9 memory tools',
+        command: 'npx @anthropic/mcp-memory',
+        tools: [
+          { name: 'store', description: 'Store a piece of information in memory',
+            params: { key: { type: 'string', description: 'Unique identifier for this memory', required: true },
+                     value: { type: 'string', description: 'The information to store', required: true } } },
+          { name: 'retrieve', description: 'Retrieve information from memory by key',
+            params: { key: { type: 'string', description: 'The key to retrieve', required: true } } },
+          { name: 'search', description: 'Search through stored memories',
+            params: { query: { type: 'string', description: 'Search query', required: true } } },
+          { name: 'list_memories', description: 'List all stored memory keys',
+            params: {} },
+          { name: 'delete', description: 'Delete a memory by key',
+            params: { key: { type: 'string', description: 'The key to delete', required: true } } }
+        ]
+      },
+      github: {
+        name: 'GitHub',
+        icon: '🐙',
+        desc: '26 repo tools',
+        command: 'npx @anthropic/mcp-github',
+        tools: [
+          { name: 'create_repo', description: 'Create a new GitHub repository',
+            params: { name: { type: 'string', description: 'Repository name', required: true },
+                     description: { type: 'string', description: 'Repository description', required: false },
+                     private: { type: 'boolean', description: 'Make repository private', required: false } } },
+          { name: 'list_repos', description: 'List repositories for the authenticated user',
+            params: { type: { type: 'string', description: 'Repository type: all, owner, member', required: false } } },
+          { name: 'create_issue', description: 'Create a new issue in a repository',
+            params: { owner: { type: 'string', description: 'Repository owner', required: true },
+                     repo: { type: 'string', description: 'Repository name', required: true },
+                     title: { type: 'string', description: 'Issue title', required: true },
+                     body: { type: 'string', description: 'Issue description', required: false } } },
+          { name: 'search_code', description: 'Search code across GitHub',
+            params: { query: { type: 'string', description: 'Search query', required: true } } },
+          { name: 'create_pull_request', description: 'Create a new pull request',
+            params: { owner: { type: 'string', description: 'Repository owner', required: true },
+                     repo: { type: 'string', description: 'Repository name', required: true },
+                     title: { type: 'string', description: 'Pull request title', required: true },
+                     head: { type: 'string', description: 'The branch with changes', required: true },
+                     base: { type: 'string', description: 'The branch to merge into', required: true } } }
+        ]
+      },
+      magic: {
+        name: 'Magic UI',
+        icon: '✨',
+        desc: '21 component tools',
+        command: 'npx @21st-dev/magic',
+        tools: [
+          { name: 'create_button', description: 'Generate a button component',
+            params: { variant: { type: 'string', description: 'Button variant: primary, secondary, ghost', required: true },
+                     text: { type: 'string', description: 'Button text', required: true } } },
+          { name: 'create_card', description: 'Generate a card component',
+            params: { title: { type: 'string', description: 'Card title', required: false },
+                     content: { type: 'string', description: 'Card content', required: true } } },
+          { name: 'create_form', description: 'Generate a form component',
+            params: { fields: { type: 'array', description: 'Form fields configuration (JSON)', required: true } } },
+          { name: 'create_modal', description: 'Generate a modal dialog component',
+            params: { title: { type: 'string', description: 'Modal title', required: true },
+                     size: { type: 'string', description: 'Modal size: sm, md, lg, xl', required: false } } },
+          { name: 'create_table', description: 'Generate a data table component',
+            params: { columns: { type: 'array', description: 'Table columns (JSON)', required: true },
+                     data: { type: 'array', description: 'Table data (JSON)', required: true } } }
+        ]
+      },
+      godot: {
+        name: 'Godot',
+        icon: '🎮',
+        desc: '14 game dev tools',
+        command: 'node ~/godot-mcp/build/index.js',
+        tools: [
+          { name: 'create_scene', description: 'Create a new Godot scene',
+            params: { name: { type: 'string', description: 'Scene name', required: true },
+                     type: { type: 'string', description: 'Scene type: 2D, 3D, UI', required: true } } },
+          { name: 'add_node', description: 'Add a node to a scene',
+            params: { scene: { type: 'string', description: 'Scene path', required: true },
+                     nodeType: { type: 'string', description: 'Node type (e.g., Sprite2D, RigidBody2D)', required: true },
+                     name: { type: 'string', description: 'Node name', required: true } } },
+          { name: 'create_script', description: 'Create a GDScript file',
+            params: { path: { type: 'string', description: 'Script path', required: true },
+                     className: { type: 'string', description: 'Class name', required: false } } },
+          { name: 'export_game', description: 'Export the game for a platform',
+            params: { platform: { type: 'string', description: 'Platform: windows, linux, mac, web, android, ios', required: true },
+                     outputPath: { type: 'string', description: 'Output path', required: true } } }
+        ]
+      }
+    };
+
+    let mcpState = {
+      connected: false,
+      currentServer: null,
+      selectedTool: null,
+      history: []
+    };
+
+    function initMCPPlayground() {
+      // Initialize on first load
+      if (!mcpState.initialized) {
+        mcpState.initialized = true;
+        renderMCPToolsList();
+      }
+    }
+
+    function selectMCPServer(serverId) {
+      const customCommand = document.getElementById('mcpCustomCommand');
+      const commandInput = document.getElementById('mcpCommandInput');
+      
+      if (serverId === 'custom') {
+        customCommand.classList.remove('hidden');
+        commandInput.focus();
+      } else {
+        customCommand.classList.add('hidden');
+        if (serverId && MCP_SERVERS[serverId]) {
+          commandInput.value = MCP_SERVERS[serverId].command;
+        }
+      }
+      
+      mcpState.currentServer = serverId;
+    }
+
+    function connectMCP() {
+      const serverId = document.getElementById('mcpServerSelect').value;
+      if (!serverId) {
+        showToast('⚠️ Please select a server');
+        return;
+      }
+
+      const status = document.getElementById('mcpStatus');
+      const statusText = status.querySelector('.mcp-status-text');
+      
+      // Simulate connection (frontend-only for now)
+      statusText.textContent = 'Connecting...';
+      
+      setTimeout(() => {
+        mcpState.connected = true;
+        mcpState.currentServer = serverId;
+        status.classList.add('connected');
+        statusText.textContent = serverId === 'custom' ? 'Connected (Custom)' : `Connected to ${MCP_SERVERS[serverId]?.name || serverId}`;
+        renderMCPToolsList();
+        showToast('✅ Connected to MCP server');
+      }, 800);
+    }
+
+    function renderMCPToolsList() {
+      const container = document.getElementById('mcpToolsList');
+      
+      if (!mcpState.connected || !mcpState.currentServer) {
+        container.innerHTML = '<div class="mcp-empty-state">Connect to a server to see available tools</div>';
+        return;
+      }
+
+      const server = mcpState.currentServer === 'custom' ? null : MCP_SERVERS[mcpState.currentServer];
+      if (!server || !server.tools) {
+        container.innerHTML = '<div class="mcp-empty-state">No tools available</div>';
+        return;
+      }
+
+      const tools = server.tools;
+      container.innerHTML = tools.map(tool => `
+        <div class="mcp-tool-item ${mcpState.selectedTool?.name === tool.name ? 'selected' : ''}" 
+             onclick="selectMCPTool('${tool.name}')">
+          <div class="mcp-tool-name">${tool.name}</div>
+          <div class="mcp-tool-desc">${tool.description}</div>
+        </div>
+      `).join('');
+    }
+
+    function filterMCPTools(query) {
+      const items = document.querySelectorAll('.mcp-tool-item');
+      const lowerQuery = query.toLowerCase();
+      
+      items.forEach(item => {
+        const name = item.querySelector('.mcp-tool-name').textContent.toLowerCase();
+        const desc = item.querySelector('.mcp-tool-desc').textContent.toLowerCase();
+        const matches = name.includes(lowerQuery) || desc.includes(lowerQuery);
+        item.style.display = matches ? 'block' : 'none';
+      });
+    }
+
+    function selectMCPTool(toolName) {
+      const server = MCP_SERVERS[mcpState.currentServer];
+      if (!server) return;
+      
+      const tool = server.tools.find(t => t.name === toolName);
+      if (!tool) return;
+      
+      mcpState.selectedTool = tool;
+      renderMCPToolsList();
+      renderMCPToolTester(tool);
+    }
+
+    function renderMCPToolTester(tool) {
+      const container = document.getElementById('mcpTesterContent');
+      
+      const params = tool.params || {};
+      const paramKeys = Object.keys(params);
+      
+      let paramsHtml = '';
+      if (paramKeys.length > 0) {
+        paramsHtml = `
+          <div class="mcp-params-form" id="mcpParamsForm">
+            ${paramKeys.map(key => {
+              const param = params[key];
+              const isRequired = param.required !== false;
+              const inputId = `mcp-param-${key}`;
+              
+              return `
+                <div class="mcp-param-group">
+                  <label class="mcp-param-label" for="${inputId}">
+                    ${key}
+                    ${isRequired ? '<span class="required">*</span>' : ''}
+                  </label>
+                  ${param.type === 'array' || param.type === 'object' || key.includes('data') || key.includes('fields') || key.includes('columns') ? `
+                    <textarea class="mcp-param-textarea" id="${inputId}" 
+                      placeholder='${param.description || ''} (JSON format)'
+                      ${isRequired ? 'required' : ''}></textarea>
+                  ` : param.type === 'boolean' ? `
+                    <select class="mcp-param-input" id="${inputId}" ${isRequired ? 'required' : ''}>
+                      <option value="">Select...</option>
+                      <option value="true">true</option>
+                      <option value="false">false</option>
+                    </select>
+                  ` : `
+                    <input type="text" class="mcp-param-input" id="${inputId}" 
+                      placeholder="${param.description || ''}"
+                      ${isRequired ? 'required' : ''}>
+                  `}
+                  ${param.description ? `<div class="mcp-param-hint">${param.description}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+      
+      container.innerHTML = `
+        <div class="mcp-tool-detail">
+          <div class="mcp-tool-detail-header">
+            <div class="mcp-tool-detail-title">${tool.name}</div>
+            <div class="mcp-tool-detail-desc">${tool.description}</div>
+          </div>
+          
+          ${paramsHtml}
+          
+          <button class="mcp-execute-btn" onclick="executeMCPTool()">Execute Tool</button>
+          
+          <div id="mcpResults"></div>
+        </div>
+      `;
+    }
+
+    function executeMCPTool() {
+      if (!mcpState.selectedTool) return;
+      
+      const tool = mcpState.selectedTool;
+      const params = {};
+      
+      // Gather params from form
+      const paramKeys = Object.keys(tool.params || {});
+      for (const key of paramKeys) {
+        const input = document.getElementById(`mcp-param-${key}`);
+        if (input) {
+          let value = input.value.trim();
+          
+          // Handle JSON inputs
+          if (input.classList.contains('mcp-param-textarea')) {
+            if (value) {
+              try {
+                value = JSON.parse(value);
+              } catch (e) {
+                showToast('❌ Invalid JSON in ' + key);
+                return;
+              }
+            }
+          }
+          
+          // Handle boolean
+          if (value === 'true') value = true;
+          if (value === 'false') value = false;
+          
+          if (value !== '') {
+            params[key] = value;
+          }
+        }
+      }
+      
+      // Show loading
+      const resultsContainer = document.getElementById('mcpResults');
+      resultsContainer.innerHTML = `
+        <div class="mcp-loading">
+          <div class="mcp-loading-spinner"></div>
+          <p style="margin-top: 16px">Executing ${tool.name}...</p>
+        </div>
+      `;
+      
+      // Simulate execution (MVP: show message)
+      setTimeout(() => {
+        const demoResult = {
+          success: true,
+          message: 'Connect to OpenClaw to execute MCP tools',
+          tool: tool.name,
+          params: params,
+          note: 'This is a frontend-only demo. To actually execute MCP tools, integrate with OpenClaw backend.'
+        };
+        
+        displayMCPResults(demoResult);
+        addToMCPHistory(tool.name, params, demoResult);
+      }, 1000);
+    }
+
+    function displayMCPResults(result) {
+      const resultsContainer = document.getElementById('mcpResults');
+      
+      resultsContainer.innerHTML = `
+        <div class="mcp-results-panel">
+          <div class="mcp-results-header">
+            <div class="mcp-results-title">Results</div>
+            <button class="mcp-results-copy" onclick="copyMCPResults()">Copy</button>
+          </div>
+          <div class="mcp-results-content" id="mcpResultsContent">${JSON.stringify(result, null, 2)}</div>
+        </div>
+      `;
+    }
+
+    function copyMCPResults() {
+      const content = document.getElementById('mcpResultsContent').textContent;
+      navigator.clipboard.writeText(content).then(() => {
+        showToast('📋 Results copied to clipboard');
+      }).catch(() => {
+        showToast('❌ Failed to copy');
+      });
+    }
+
+    function addToMCPHistory(toolName, params, result) {
+      const historyItem = {
+        tool: toolName,
+        params: params,
+        result: result,
+        timestamp: new Date().toISOString()
+      };
+      
+      mcpState.history.unshift(historyItem);
+      if (mcpState.history.length > 20) {
+        mcpState.history = mcpState.history.slice(0, 20);
+      }
+      
+      renderMCPHistory();
+    }
+
+    function renderMCPHistory() {
+      const container = document.getElementById('mcpHistoryList');
+      
+      if (mcpState.history.length === 0) {
+        container.innerHTML = '<div class="mcp-empty-state">No executions yet</div>';
+        return;
+      }
+      
+      container.innerHTML = mcpState.history.map((item, index) => {
+        const time = new Date(item.timestamp).toLocaleTimeString();
+        const paramsPreview = JSON.stringify(item.params).substring(0, 60) + (JSON.stringify(item.params).length > 60 ? '...' : '');
+        
+        return `
+          <div class="mcp-history-item" onclick="rerunMCPFromHistory(${index})">
+            <div class="mcp-history-item-header">
+              <span class="mcp-history-tool">${item.tool}</span>
+              <span class="mcp-history-time">${time}</span>
+            </div>
+            <div class="mcp-history-params">${paramsPreview}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function rerunMCPFromHistory(index) {
+      const item = mcpState.history[index];
+      if (!item) return;
+      
+      // Find and select the tool
+      const server = MCP_SERVERS[mcpState.currentServer];
+      if (!server) return;
+      
+      const tool = server.tools.find(t => t.name === item.tool);
+      if (!tool) return;
+      
+      selectMCPTool(tool.name);
+      
+      // Pre-fill the params
+      setTimeout(() => {
+        Object.keys(item.params).forEach(key => {
+          const input = document.getElementById(`mcp-param-${key}`);
+          if (input) {
+            const value = item.params[key];
+            if (typeof value === 'object') {
+              input.value = JSON.stringify(value, null, 2);
+            } else {
+              input.value = value;
+            }
+          }
+        });
+        showToast('🔄 Parameters loaded from history');
+      }, 100);
+    }
+
+    function toggleMCPHistory() {
+      const history = document.querySelector('.mcp-history');
+      history.classList.toggle('collapsed');
+    }
+
     // ===== INIT =====
     loadData();
     connectWebSocket();
