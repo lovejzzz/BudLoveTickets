@@ -5243,6 +5243,661 @@
       flowState.historyCollapsed = !flowState.historyCollapsed;
     }
 
+    // ===== PLAYGROUND =====
+    let playgroundState = {
+      colorMixer: { r: 168, g: 85, b: 247 },
+      typographyMode: 0,
+      rhythmPattern: 0,
+      bubbles: [],
+      particles: [],
+      meshBlobs: [],
+      heroParticles: [],
+      animationFrames: {}
+    };
+
+    function initPlayground() {
+      // Only init once
+      if (playgroundState.initialized) return;
+      playgroundState.initialized = true;
+
+      console.log('🎪 Initializing Playground...');
+      
+      // Hero Particles
+      initHeroParticles();
+      
+      // Color Mixer
+      initColorMixer();
+      
+      // Wave Generator
+      initWaveGenerator();
+      
+      // Particle Canvas
+      initParticleCanvas();
+      
+      // Typography
+      initTypography();
+      
+      // Bubble Pop
+      initBubblePop();
+      
+      // Rhythm Bars
+      initRhythmBars();
+      
+      // Gradient Mesh
+      initGradientMesh();
+      
+      // Live Clock
+      initLiveClock();
+    }
+
+    // Hero Particles
+    function initHeroParticles() {
+      const canvas = document.getElementById('heroParticles');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      const particleCount = 30;
+      playgroundState.heroParticles = [];
+
+      for (let i = 0; i < particleCount; i++) {
+        playgroundState.heroParticles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speedX: (Math.random() - 0.5) * 0.5,
+          speedY: (Math.random() - 0.5) * 0.5,
+          opacity: Math.random() * 0.5 + 0.2
+        });
+      }
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        playgroundState.heroParticles.forEach(p => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          
+          if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+          
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(168, 85, 247, ${p.opacity})`;
+          ctx.fill();
+        });
+        
+        playgroundState.animationFrames.hero = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Color Mixer
+    function initColorMixer() {
+      const sliderR = document.getElementById('sliderR');
+      const sliderG = document.getElementById('sliderG');
+      const sliderB = document.getElementById('sliderB');
+      const valueR = document.getElementById('valueR');
+      const valueG = document.getElementById('valueG');
+      const valueB = document.getElementById('valueB');
+      const colorPreview = document.getElementById('colorPreview');
+      const hexDisplay = document.getElementById('hexDisplay');
+
+      function updateColor() {
+        const r = parseInt(sliderR.value);
+        const g = parseInt(sliderG.value);
+        const b = parseInt(sliderB.value);
+        
+        playgroundState.colorMixer = { r, g, b };
+        
+        valueR.textContent = r;
+        valueG.textContent = g;
+        valueB.textContent = b;
+        
+        const color = `rgb(${r}, ${g}, ${b})`;
+        colorPreview.style.background = color;
+        colorPreview.style.boxShadow = `0 8px 24px rgba(${r}, ${g}, ${b}, 0.4)`;
+        
+        const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+        hexDisplay.textContent = hex;
+        
+        // Glow the sliders
+        sliderR.style.background = `linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(${r},0,0,0.5) 100%)`;
+        sliderG.style.background = `linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,${g},0,0.5) 100%)`;
+        sliderB.style.background = `linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,0,${b},0.5) 100%)`;
+      }
+
+      sliderR.addEventListener('input', updateColor);
+      sliderG.addEventListener('input', updateColor);
+      sliderB.addEventListener('input', updateColor);
+      
+      hexDisplay.addEventListener('click', () => {
+        navigator.clipboard.writeText(hexDisplay.textContent);
+        showToast('🎨 Color copied to clipboard!');
+      });
+
+      updateColor();
+    }
+
+    // Wave Generator
+    function initWaveGenerator() {
+      const svg = document.getElementById('waveSvg');
+      if (!svg) return;
+      
+      let mouseX = 200;
+      let mouseY = 75;
+      
+      svg.addEventListener('mousemove', (e) => {
+        const rect = svg.getBoundingClientRect();
+        mouseX = ((e.clientX - rect.left) / rect.width) * 400;
+        mouseY = ((e.clientY - rect.top) / rect.height) * 150;
+      });
+      
+      svg.addEventListener('touchmove', (e) => {
+        const rect = svg.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouseX = ((touch.clientX - rect.left) / rect.width) * 400;
+        mouseY = ((touch.clientY - rect.top) / rect.height) * 150;
+      });
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        const points = [];
+        const segments = 50;
+        const time = Date.now() / 1000;
+        
+        const amplitude = Math.max(10, mouseY / 3);
+        const frequency = Math.max(0.02, mouseX / 10000);
+        
+        for (let i = 0; i <= segments; i++) {
+          const x = (i / segments) * 400;
+          const y = 75 + Math.sin(i * frequency + time) * amplitude;
+          points.push(`${x},${y}`);
+        }
+        
+        const pathData = `M 0,150 L ${points.join(' L ')} L 400,150 Z`;
+        
+        let path = svg.querySelector('path');
+        if (!path) {
+          path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          
+          const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+          const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+          gradient.setAttribute('id', 'waveGradient');
+          gradient.setAttribute('x1', '0%');
+          gradient.setAttribute('y1', '0%');
+          gradient.setAttribute('x2', '100%');
+          gradient.setAttribute('y2', '0%');
+          
+          const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stop1.setAttribute('offset', '0%');
+          stop1.setAttribute('style', 'stop-color:#a855f7;stop-opacity:0.8');
+          
+          const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stop2.setAttribute('offset', '50%');
+          stop2.setAttribute('style', 'stop-color:#ec4899;stop-opacity:0.8');
+          
+          const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+          stop3.setAttribute('offset', '100%');
+          stop3.setAttribute('style', 'stop-color:#f59e0b;stop-opacity:0.8');
+          
+          gradient.appendChild(stop1);
+          gradient.appendChild(stop2);
+          gradient.appendChild(stop3);
+          defs.appendChild(gradient);
+          svg.appendChild(defs);
+          
+          path.setAttribute('fill', 'url(#waveGradient)');
+          svg.appendChild(path);
+        }
+        
+        path.setAttribute('d', pathData);
+        
+        playgroundState.animationFrames.wave = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Particle Canvas
+    function initParticleCanvas() {
+      const canvas = document.getElementById('particleCanvasEl');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        spawnParticles(x, y);
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        spawnParticles(x, y);
+      });
+
+      function spawnParticles(x, y) {
+        const hue = (x / canvas.width) * 360;
+        for (let i = 0; i < 5; i++) {
+          playgroundState.particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            life: 1,
+            size: Math.random() * 4 + 2,
+            hue
+          });
+        }
+      }
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Update particles
+        playgroundState.particles = playgroundState.particles.filter(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= 0.01;
+          
+          if (p.life <= 0) return false;
+          
+          // Draw particle
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${p.life})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = `hsla(${p.hue}, 80%, 60%, ${p.life})`;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          
+          return true;
+        });
+        
+        // Draw connections
+        for (let i = 0; i < playgroundState.particles.length; i++) {
+          for (let j = i + 1; j < playgroundState.particles.length; j++) {
+            const p1 = playgroundState.particles[i];
+            const p2 = playgroundState.particles[j];
+            const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+            
+            if (dist < 100) {
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `rgba(168, 85, 247, ${(1 - dist / 100) * 0.3 * Math.min(p1.life, p2.life)})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+        }
+        
+        playgroundState.animationFrames.particle = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Typography
+    function initTypography() {
+      const display = document.getElementById('typographyDisplay');
+      if (!display) return;
+      
+      const modes = ['normal', 'wavy', 'glitch', 'bounce', 'rainbow'];
+      
+      display.addEventListener('click', () => {
+        playgroundState.typographyMode = (playgroundState.typographyMode + 1) % modes.length;
+        display.className = 'typography-display ' + modes[playgroundState.typographyMode];
+      });
+    }
+
+    // Bubble Pop
+    function initBubblePop() {
+      const canvas = document.getElementById('bubbleCanvas');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      
+      let score = 0;
+      const scoreEl = document.getElementById('bubbleScore');
+
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        playgroundState.bubbles = playgroundState.bubbles.filter(b => {
+          const dist = Math.hypot(b.x - x, b.y - y);
+          if (dist < b.size) {
+            score++;
+            scoreEl.textContent = score;
+            // Pop animation
+            for (let i = 0; i < 8; i++) {
+              const angle = (i / 8) * Math.PI * 2;
+              playgroundState.particles.push({
+                x: b.x,
+                y: b.y,
+                vx: Math.cos(angle) * 3,
+                vy: Math.sin(angle) * 3,
+                life: 0.5,
+                size: 2,
+                hue: 280
+              });
+            }
+            return false;
+          }
+          return true;
+        });
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        
+        playgroundState.bubbles = playgroundState.bubbles.filter(b => {
+          const dist = Math.hypot(b.x - x, b.y - y);
+          if (dist < b.size) {
+            score++;
+            scoreEl.textContent = score;
+            return false;
+          }
+          return true;
+        });
+      });
+
+      function spawnBubble() {
+        if (state.currentView !== 'playground') return;
+        if (playgroundState.bubbles.length < 8) {
+          playgroundState.bubbles.push({
+            x: Math.random() * canvas.width,
+            y: canvas.height + 30,
+            size: Math.random() * 20 + 15,
+            speed: Math.random() * 1 + 0.5,
+            opacity: Math.random() * 0.3 + 0.4
+          });
+        }
+        setTimeout(spawnBubble, 1500);
+      }
+      spawnBubble();
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        playgroundState.bubbles = playgroundState.bubbles.filter(b => {
+          b.y -= b.speed;
+          
+          if (b.y < -50) return false;
+          
+          // Draw bubble
+          const gradient = ctx.createRadialGradient(b.x - b.size * 0.3, b.y - b.size * 0.3, 0, b.x, b.y, b.size);
+          gradient.addColorStop(0, `rgba(255, 255, 255, ${b.opacity})`);
+          gradient.addColorStop(0.5, `rgba(168, 85, 247, ${b.opacity * 0.5})`);
+          gradient.addColorStop(1, `rgba(168, 85, 247, ${b.opacity * 0.2})`);
+          
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+          ctx.fillStyle = gradient;
+          ctx.fill();
+          
+          // Highlight
+          ctx.beginPath();
+          ctx.arc(b.x - b.size * 0.3, b.y - b.size * 0.3, b.size * 0.3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.6})`;
+          ctx.fill();
+          
+          return true;
+        });
+        
+        playgroundState.animationFrames.bubble = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Rhythm Bars
+    function initRhythmBars() {
+      const container = document.getElementById('rhythmContainer');
+      if (!container) return;
+      
+      const barCount = 12;
+      const bars = [];
+      
+      for (let i = 0; i < barCount; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'rhythm-bar';
+        container.appendChild(bar);
+        bars.push(bar);
+      }
+
+      const patterns = [
+        () => Math.random() * 80 + 20,
+        (i, t) => Math.sin(i * 0.5 + t) * 40 + 50,
+        (i, t) => Math.abs(Math.sin(i * 0.3 + t)) * 80 + 10,
+        (i, t) => (i % 2 ? Math.sin(t) : Math.cos(t)) * 40 + 50
+      ];
+      
+      let currentPattern = 0;
+
+      container.addEventListener('click', () => {
+        currentPattern = (currentPattern + 1) % patterns.length;
+      });
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        const t = Date.now() / 500;
+        const pattern = patterns[currentPattern];
+        
+        bars.forEach((bar, i) => {
+          const height = pattern(i, t);
+          bar.style.height = `${height}%`;
+        });
+        
+        playgroundState.animationFrames.rhythm = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Gradient Mesh
+    function initGradientMesh() {
+      const canvas = document.getElementById('meshCanvas');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      const blobCount = 4;
+      const blobs = [];
+      
+      for (let i = 0; i < blobCount; i++) {
+        blobs.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          color: `hsl(${Math.random() * 360}, 80%, 60%)`
+        });
+      }
+
+      let mouseX = canvas.width / 2;
+      let mouseY = canvas.height / 2;
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        blobs.forEach(blob => {
+          // Move toward mouse
+          const dx = mouseX - blob.x;
+          const dy = mouseY - blob.y;
+          const dist = Math.hypot(dx, dy);
+          
+          if (dist > 10) {
+            blob.vx += (dx / dist) * 0.02;
+            blob.vy += (dy / dist) * 0.02;
+          }
+          
+          blob.vx *= 0.95;
+          blob.vy *= 0.95;
+          
+          blob.x += blob.vx;
+          blob.y += blob.vy;
+          
+          // Bounce
+          if (blob.x < 0 || blob.x > canvas.width) blob.vx *= -1;
+          if (blob.y < 0 || blob.y > canvas.height) blob.vy *= -1;
+          
+          // Draw blob
+          const gradient = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, 80);
+          gradient.addColorStop(0, blob.color);
+          gradient.addColorStop(1, 'transparent');
+          
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+        
+        playgroundState.animationFrames.mesh = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Live Clock
+    function initLiveClock() {
+      const canvas = document.getElementById('clockCanvas');
+      const dateEl = document.getElementById('clockDate');
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = Math.min(cx, cy) - 10;
+
+      function animate() {
+        if (state.currentView !== 'playground') return;
+        
+        const now = new Date();
+        const hours = now.getHours() % 12;
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const milliseconds = now.getMilliseconds();
+        
+        // Update date
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        dateEl.textContent = dateStr;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Clock face (liquid glass)
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Hour markers
+        for (let i = 0; i < 12; i++) {
+          const angle = (i * 30 - 90) * Math.PI / 180;
+          const x1 = cx + Math.cos(angle) * (radius - 10);
+          const y1 = cy + Math.sin(angle) * (radius - 10);
+          const x2 = cx + Math.cos(angle) * (radius - 15);
+          const y2 = cy + Math.sin(angle) * (radius - 15);
+          
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+        
+        // Hour hand
+        const hourAngle = ((hours + minutes / 60) * 30 - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(
+          cx + Math.cos(hourAngle) * (radius * 0.5),
+          cy + Math.sin(hourAngle) * (radius * 0.5)
+        );
+        ctx.strokeStyle = '#a855f7';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#a855f7';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        
+        // Minute hand
+        const minuteAngle = ((minutes + seconds / 60) * 6 - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(
+          cx + Math.cos(minuteAngle) * (radius * 0.7),
+          cy + Math.sin(minuteAngle) * (radius * 0.7)
+        );
+        ctx.strokeStyle = '#ec4899';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#ec4899';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        
+        // Second hand (smooth continuous rotation)
+        const secondAngle = ((seconds + milliseconds / 1000) * 6 - 90) * Math.PI / 180;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(
+          cx + Math.cos(secondAngle) * (radius * 0.9),
+          cy + Math.sin(secondAngle) * (radius * 0.9)
+        );
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#f59e0b';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        
+        // Center dot
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        
+        playgroundState.animationFrames.clock = requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
     // ===== INIT =====
     loadData();
     connectWebSocket();
