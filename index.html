@@ -4912,7 +4912,7 @@
 
     async function fetchWorkflowData() {
       try {
-        const res = await fetch(WORKFLOW_BLOB_URL);
+        const res = await fetch(WORKFLOW_BLOB_URL + '?t=' + Date.now(), {cache: 'no-store'});
         const data = await res.json();
         flowState.workflowData = data;
         flowState.lastUpdate = Date.now();
