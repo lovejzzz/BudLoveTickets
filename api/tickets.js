@@ -1,4 +1,4 @@
-const BLOB_URL = 'https://jsonblob.com/api/jsonBlob/019c347e-db34-702c-93a1-6c1277dc8843';
+const BLOB_URL = 'https://jsonblob.com/api/jsonBlob/019c3e49-a047-7123-978b-7d7576ebc622';
 
 export default async function handler(req, res) {
   // CORS headers
