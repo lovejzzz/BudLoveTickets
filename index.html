@@ -2737,13 +2737,8 @@
   <!-- Workflow Visualizer View -->
   <div id="mcpView" class="flow-visualizer hidden">
     <div class="flow-header">
-      <div class="flow-header-controls">
-        <span class="flow-demo-badge hidden" id="flowDemoBadge">DEMO</span>
-        <button class="flow-demo-btn" onclick="fetchWorkflowData()" title="Refresh workflow status" style="margin-right:8px;">🔄 Refresh</button>
-        <button class="flow-demo-btn" id="flowDemoBtn" onclick="toggleFlowDemo()">▶ Run Demo</button>
-      </div>
       <h2>⚡ Workflow Visualizer</h2>
-      <p>Watch AI agent workflows in beautiful motion</p>
+      <p>Watch AI agent workflows in real-time</p>
     </div>
 
     <!-- Status Bar -->
@@ -2755,7 +2750,11 @@
         </div>
         <div class="flow-status-updated" id="flowStatusUpdated">Connecting...</div>
       </div>
-      <div class="flow-status-spinner" id="flowStatusSpinner"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="flow-demo-badge hidden" id="flowDemoBadge">DEMO</span>
+        <button onclick="fetchWorkflowData()" title="Refresh" style="background:none;border:1px solid rgba(255,255,255,0.15);color:var(--text-secondary);padding:4px 10px;border-radius:12px;cursor:pointer;font-size:0.8em;">🔄</button>
+        <button id="flowDemoBtn" onclick="toggleFlowDemo()" title="Run Demo" style="background:none;border:1px solid rgba(255,255,255,0.15);color:var(--text-secondary);padding:4px 10px;border-radius:12px;cursor:pointer;font-size:0.8em;">▶</button>
+      </div>
     </div>
     
     <!-- Active Workflow Container -->
