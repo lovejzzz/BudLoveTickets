@@ -2627,6 +2627,424 @@
       border-color: rgba(34, 197, 94, 0.3);
       background: rgba(34, 197, 94, 0.05);
     }
+
+    /* ===== PLAYGROUND STYLES ===== */
+    .playground-container {
+      padding: 32px 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: calc(100vh - 120px);
+    }
+
+    /* Hero Section */
+    .playground-hero {
+      position: relative;
+      text-align: center;
+      padding: 60px 24px;
+      margin-bottom: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15),
+                  inset 0 4px 20px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .playground-hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .hero-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .playground-title {
+      position: relative;
+      z-index: 2;
+      font-size: 3em;
+      font-weight: 700;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #a855f7, #ec4899, #f59e0b);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 6s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .playground-subtitle {
+      position: relative;
+      z-index: 2;
+      font-size: 1.2em;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* Bento Grid */
+    .playground-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      grid-auto-rows: 200px;
+    }
+
+    @media (max-width: 1024px) {
+      .playground-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 180px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .playground-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 200px;
+      }
+    }
+
+    /* Playground Cards */
+    .playground-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 20px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15),
+                  inset 0 4px 20px rgba(255, 255, 255, 0.05);
+      animation: cardEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    .playground-card:nth-child(1) { animation-delay: 0.1s; }
+    .playground-card:nth-child(2) { animation-delay: 0.2s; }
+    .playground-card:nth-child(3) { animation-delay: 0.3s; }
+    .playground-card:nth-child(4) { animation-delay: 0.4s; }
+    .playground-card:nth-child(5) { animation-delay: 0.5s; }
+    .playground-card:nth-child(6) { animation-delay: 0.6s; }
+    .playground-card:nth-child(7) { animation-delay: 0.7s; }
+    .playground-card:nth-child(8) { animation-delay: 0.8s; }
+
+    @keyframes cardEntrance {
+      0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .playground-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .playground-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(168, 85, 247, 0.25),
+                  inset 0 4px 20px rgba(255, 255, 255, 0.08);
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+
+    .playground-card:hover::after {
+      opacity: 1;
+    }
+
+    .card-large { grid-column: span 2; grid-row: span 2; }
+    .card-medium-h { grid-column: span 2; grid-row: span 1; }
+    .card-medium-v { grid-column: span 1; grid-row: span 2; }
+    .card-small { grid-column: span 1; grid-row: span 1; }
+
+    @media (max-width: 1024px) {
+      .card-large { grid-column: span 2; grid-row: span 2; }
+      .card-medium-h { grid-column: span 2; grid-row: span 1; }
+      .card-medium-v { grid-column: span 1; grid-row: span 2; }
+    }
+
+    @media (max-width: 600px) {
+      .card-large,
+      .card-medium-h,
+      .card-medium-v,
+      .card-small {
+        grid-column: span 1;
+        grid-row: span 1;
+      }
+    }
+
+    .card-title {
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-hint {
+      font-size: 0.75em;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 2;
+      margin-top: 4px;
+    }
+
+    /* Color Mixer */
+    .color-preview {
+      width: 100%;
+      height: 140px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      background: rgb(168, 85, 247);
+      transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    .color-sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slider-group label {
+      font-weight: 600;
+      width: 20px;
+      color: var(--text-primary);
+    }
+
+    .slider-group span {
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .color-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .color-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.2s;
+    }
+
+    .color-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .color-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .hex-display {
+      font-size: 1.1em;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hex-display:hover {
+      background: rgba(0, 0, 0, 0.3);
+      transform: scale(1.05);
+    }
+
+    /* Wave Generator */
+    .wave-svg {
+      width: 100%;
+      height: calc(100% - 40px);
+      margin-top: 8px;
+    }
+
+    /* Particle Canvas */
+    #particleCanvasEl,
+    #bubbleCanvas,
+    #meshCanvas,
+    #clockCanvas {
+      width: 100%;
+      height: calc(100% - 70px);
+      border-radius: 12px;
+      cursor: crosshair;
+    }
+
+    #clockCanvas {
+      height: calc(100% - 90px);
+    }
+
+    /* Typography Playground */
+    .typography-display {
+      font-size: 2.5em;
+      font-weight: 700;
+      text-align: center;
+      padding: 30px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      z-index: 2;
+    }
+
+    .typography-display.wavy {
+      animation: typographyWavy 1.5s ease-in-out infinite;
+    }
+
+    @keyframes typographyWavy {
+      0%, 100% { transform: translateY(0); }
+      25% { transform: translateY(-5px); }
+      75% { transform: translateY(5px); }
+    }
+
+    .typography-display.glitch {
+      animation: typographyGlitch 0.3s linear infinite;
+    }
+
+    @keyframes typographyGlitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    .typography-display.bounce {
+      animation: typographyBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+
+    @keyframes typographyBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .typography-display.rainbow {
+      background: linear-gradient(135deg, #a855f7, #ec4899, #f59e0b, #22c55e, #3b82f6);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 2s ease infinite;
+    }
+
+    /* Bubble Pop */
+    .bubble-score {
+      text-align: center;
+      font-size: 1.1em;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Rhythm Bars */
+    .rhythm-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      height: calc(100% - 60px);
+      padding: 0 20px;
+      cursor: pointer;
+    }
+
+    .rhythm-bar {
+      flex: 1;
+      max-width: 30px;
+      background: linear-gradient(180deg, #a855f7, #ec4899);
+      border-radius: 8px 8px 0 0;
+      transition: height 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      will-change: height;
+      transform: translateZ(0);
+      box-shadow: 0 -4px 20px rgba(168, 85, 247, 0.4);
+    }
+
+    /* Clock */
+    .clock-date {
+      text-align: center;
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      .playground-card,
+      .playground-title,
+      .typography-display,
+      .rhythm-bar {
+        animation: none !important;
+        transition: none !important;
+      }
+      .hero-particles,
+      #particleCanvasEl {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2644,6 +3062,7 @@
       <button class="tab" data-project="cases" tabindex="0">📁 Cases</button>
       <button class="tab" data-project="ideas" tabindex="0">💡 Ideas</button>
       <button class="tab" data-project="mcp" tabindex="0">⚡ Flow</button>
+      <button class="tab" data-project="playground" tabindex="0">🎪 Play</button>
     </div>
   </div>
   
@@ -2767,6 +3186,90 @@
         <button class="flow-history-toggle">▼</button>
       </div>
       <div class="flow-history-list" id="flowHistoryList"></div>
+    </div>
+  </div>
+
+  <!-- Playground View -->
+  <div id="playgroundView" class="playground-container hidden">
+    <!-- Hero Section -->
+    <div class="playground-hero">
+      <h1 class="playground-title">🎪 Playground</h1>
+      <p class="playground-subtitle">A space to experiment, create, and grow</p>
+      <canvas id="heroParticles" class="hero-particles"></canvas>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="playground-grid">
+      <!-- Color Mixer (2x2 large) -->
+      <div class="playground-card card-large" id="colorMixer">
+        <h3 class="card-title">🎨 Color Mixer</h3>
+        <div class="color-preview" id="colorPreview"></div>
+        <div class="color-sliders">
+          <div class="slider-group">
+            <label>R</label>
+            <input type="range" min="0" max="255" value="168" class="color-slider" id="sliderR">
+            <span id="valueR">168</span>
+          </div>
+          <div class="slider-group">
+            <label>G</label>
+            <input type="range" min="0" max="255" value="85" class="color-slider" id="sliderG">
+            <span id="valueG">85</span>
+          </div>
+          <div class="slider-group">
+            <label>B</label>
+            <input type="range" min="0" max="255" value="247" class="color-slider" id="sliderB">
+            <span id="valueB">247</span>
+          </div>
+        </div>
+        <div class="hex-display" id="hexDisplay" title="Click to copy">#a855f7</div>
+      </div>
+
+      <!-- Wave Generator (2x1 medium) -->
+      <div class="playground-card card-medium-h" id="waveGenerator">
+        <h3 class="card-title">🌊 Wave Generator</h3>
+        <svg id="waveSvg" class="wave-svg" viewBox="0 0 400 150"></svg>
+      </div>
+
+      <!-- Particle Canvas (1x2 tall) -->
+      <div class="playground-card card-medium-v" id="particleCanvas">
+        <h3 class="card-title">💫 Particle Canvas</h3>
+        <p class="card-hint">Click to spawn particles</p>
+        <canvas id="particleCanvasEl"></canvas>
+      </div>
+
+      <!-- Typography Playground (1x1) -->
+      <div class="playground-card card-small" id="typographyPlay">
+        <h3 class="card-title">🔤 Typography</h3>
+        <div class="typography-display" id="typographyDisplay">Hello!</div>
+        <p class="card-hint">Click to cycle styles</p>
+      </div>
+
+      <!-- Bubble Pop (1x1) -->
+      <div class="playground-card card-small" id="bubblePop">
+        <h3 class="card-title">🫧 Bubble Pop</h3>
+        <canvas id="bubbleCanvas"></canvas>
+        <div class="bubble-score">Score: <span id="bubbleScore">0</span></div>
+      </div>
+
+      <!-- Rhythm Bars (2x1) -->
+      <div class="playground-card card-medium-h" id="rhythmBars">
+        <h3 class="card-title">🎵 Rhythm Bars</h3>
+        <p class="card-hint">Click to change rhythm</p>
+        <div class="rhythm-container" id="rhythmContainer"></div>
+      </div>
+
+      <!-- Gradient Mesh (1x1) -->
+      <div class="playground-card card-small" id="gradientMesh">
+        <h3 class="card-title">🌈 Gradient Mesh</h3>
+        <canvas id="meshCanvas"></canvas>
+      </div>
+
+      <!-- Live Clock (1x1) -->
+      <div class="playground-card card-small" id="liveClock">
+        <h3 class="card-title">⏰ Live Clock</h3>
+        <canvas id="clockCanvas"></canvas>
+        <div class="clock-date" id="clockDate"></div>
+      </div>
     </div>
   </div>
 
@@ -2989,6 +3492,8 @@
             navigateToView('ideas');
           } else if (project === 'mcp') {
             navigateToView('mcp');
+          } else if (project === 'playground') {
+            navigateToView('playground');
           } else if (project === 'all') {
             navigateToView('all');
           }
@@ -3008,7 +3513,8 @@
                         (view === 'tickets' && t.dataset.project === 'tickets') ||
                         (view === 'cases' && t.dataset.project === 'cases') ||
                         (view === 'ideas' && t.dataset.project === 'ideas') ||
-                        (view === 'mcp' && t.dataset.project === 'mcp');
+                        (view === 'mcp' && t.dataset.project === 'mcp') ||
+                        (view === 'playground' && t.dataset.project === 'playground');
         t.classList.toggle('active', isActive);
       });
       
@@ -3021,6 +3527,7 @@
       document.getElementById('caseDetailView').classList.add('hidden');
       document.getElementById('ideasView').classList.add('hidden');
       document.getElementById('mcpView').classList.add('hidden');
+      document.getElementById('playgroundView').classList.add('hidden');
       
       // Show appropriate view
       if (view === 'all') {
@@ -3041,6 +3548,9 @@
       } else if (view === 'mcp') {
         document.getElementById('mcpView').classList.remove('hidden');
         initFlowVisualizer();
+      } else if (view === 'playground') {
+        document.getElementById('playgroundView').classList.remove('hidden');
+        initPlayground();
       } else if (view === 'caseDetail' && project) {
         document.getElementById('caseDetailView').classList.remove('hidden');
         renderCaseDetail(project);
@@ -4739,3 +5249,4 @@
   </script>
 </body>
 </html>
+<!-- deploy 1770578347 -->
