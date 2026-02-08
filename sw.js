@@ -1,5 +1,5 @@
 // Bud Love Tickets Service Worker v6.0
-const CACHE_NAME = 'bud-love-tickets-v6';
+const CACHE_NAME = 'bud-love-tickets-v7';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -47,6 +47,9 @@ self.addEventListener('fetch', (event) => {
   
   // Skip WebSocket
   if (url.protocol === 'ws:' || url.protocol === 'wss:') return;
+  
+  // Skip external API calls (jsonblob, etc) - don't cache these
+  if (url.hostname !== location.hostname) return;
   
   // API requests - network only with timeout, then cache
   if (url.pathname.startsWith('/api/')) {
