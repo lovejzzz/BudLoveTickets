@@ -2741,6 +2741,7 @@
     <div class="flow-header">
       <div class="flow-header-controls">
         <span class="flow-demo-badge hidden" id="flowDemoBadge">DEMO</span>
+        <button class="flow-demo-btn" onclick="fetchWorkflowData()" title="Refresh workflow status" style="margin-right:8px;">🔄 Refresh</button>
         <button class="flow-demo-btn" id="flowDemoBtn" onclick="toggleFlowDemo()">▶ Run Demo</button>
       </div>
       <h2>⚡ Workflow Visualizer</h2>
@@ -4394,9 +4395,9 @@
       // Initial fetch
       fetchWorkflowData();
       
-      // Poll every 4 seconds
+      // Light auto-poll every 30 seconds (just enough to stay updated without waste)
       if (flowState.pollingInterval) clearInterval(flowState.pollingInterval);
-      flowState.pollingInterval = setInterval(fetchWorkflowData, 4000);
+      flowState.pollingInterval = setInterval(fetchWorkflowData, 30000);
       
       // Update "last updated" text every second
       setInterval(updateLastUpdatedText, 1000);
