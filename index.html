@@ -2628,57 +2628,32 @@
       background: rgba(34, 197, 94, 0.05);
     }
 
-    /* ===== PLAYGROUND STYLES ===== */
-    .playground-container {
-      padding: 32px 20px;
-      max-width: 1400px;
+    /* ===== PLAYGROUND V2 - APPLE-STYLE SCROLL SECTIONS ===== */
+    .pg-container {
+      padding: 0;
+      max-width: 100%;
       margin: 0 auto;
-      min-height: calc(100vh - 120px);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     /* Hero Section */
-    .playground-hero {
+    .pg-hero {
       position: relative;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 60px 24px;
-      margin-bottom: 40px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 24px;
-      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15),
-                  inset 0 4px 20px rgba(255, 255, 255, 0.05);
-      overflow: hidden;
+      padding: 80px 24px 60px;
+      background: linear-gradient(180deg, rgba(168, 85, 247, 0.1) 0%, transparent 100%);
     }
 
-    .playground-hero::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-      border-radius: inherit;
-      pointer-events: none;
-    }
-
-    .hero-particles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-
-    .playground-title {
-      position: relative;
-      z-index: 2;
-      font-size: 3em;
+    .pg-hero h2 {
+      font-size: 3.5em;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       background: linear-gradient(135deg, #a855f7, #ec4899, #f59e0b);
       background-size: 200% 200%;
       -webkit-background-clip: text;
@@ -2691,186 +2666,195 @@
       50% { background-position: 100% 50%; }
     }
 
-    .playground-subtitle {
-      position: relative;
-      z-index: 2;
+    .pg-hero p {
       font-size: 1.2em;
       color: var(--text-secondary);
-      font-weight: 400;
+      margin-bottom: 40px;
     }
 
-    /* Bento Grid */
-    .playground-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      grid-auto-rows: 200px;
+    .pg-scroll-hint {
+      font-size: 2em;
+      color: var(--accent);
+      animation: bounce 2s ease-in-out infinite;
     }
 
-    @media (max-width: 1024px) {
-      .playground-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 180px;
-      }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
     }
 
-    @media (max-width: 600px) {
-      .playground-grid {
-        grid-template-columns: 1fr;
-        grid-auto-rows: 200px;
-      }
+    /* Sections Container */
+    .pg-sections {
+      padding: 0;
     }
 
-    /* Playground Cards */
-    .playground-card {
-      position: relative;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 24px;
-      padding: 20px;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15),
-                  inset 0 4px 20px rgba(255, 255, 255, 0.05);
-      animation: cardEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-    }
-
-    .playground-card:nth-child(1) { animation-delay: 0.1s; }
-    .playground-card:nth-child(2) { animation-delay: 0.2s; }
-    .playground-card:nth-child(3) { animation-delay: 0.3s; }
-    .playground-card:nth-child(4) { animation-delay: 0.4s; }
-    .playground-card:nth-child(5) { animation-delay: 0.5s; }
-    .playground-card:nth-child(6) { animation-delay: 0.6s; }
-    .playground-card:nth-child(7) { animation-delay: 0.7s; }
-    .playground-card:nth-child(8) { animation-delay: 0.8s; }
-
-    @keyframes cardEntrance {
-      0% {
-        opacity: 0;
-        transform: scale(0.9) translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    .playground-card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-      border-radius: inherit;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .playground-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 12px 40px rgba(168, 85, 247, 0.25),
-                  inset 0 4px 20px rgba(255, 255, 255, 0.08);
-      border-color: rgba(168, 85, 247, 0.4);
-    }
-
-    .playground-card:hover::after {
-      opacity: 1;
-    }
-
-    .card-large { grid-column: span 2; grid-row: span 2; }
-    .card-medium-h { grid-column: span 2; grid-row: span 1; }
-    .card-medium-v { grid-column: span 1; grid-row: span 2; }
-    .card-small { grid-column: span 1; grid-row: span 1; }
-
-    @media (max-width: 1024px) {
-      .card-large { grid-column: span 2; grid-row: span 2; }
-      .card-medium-h { grid-column: span 2; grid-row: span 1; }
-      .card-medium-v { grid-column: span 1; grid-row: span 2; }
-    }
-
-    @media (max-width: 600px) {
-      .card-large,
-      .card-medium-h,
-      .card-medium-v,
-      .card-small {
-        grid-column: span 1;
-        grid-row: span 1;
-      }
-    }
-
-    .card-title {
-      font-size: 1em;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .card-hint {
-      font-size: 0.75em;
-      color: var(--text-muted);
-      position: relative;
-      z-index: 2;
-      margin-top: 4px;
-    }
-
-    /* Color Mixer */
-    .color-preview {
-      width: 100%;
-      height: 140px;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      background: rgb(168, 85, 247);
-      transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
-      position: relative;
-      z-index: 2;
-    }
-
-    .color-sliders {
+    /* Individual Section */
+    .pg-section {
+      min-height: 70vh;
+      padding: 80px 24px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .slider-group {
-      display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .slider-group label {
-      font-weight: 600;
-      width: 20px;
+    .pg-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pg-section-header {
+      text-align: center;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-out 0.2s;
+    }
+
+    .pg-section.visible .pg-section-header {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pg-section-emoji {
+      font-size: 3em;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .pg-section-header h3 {
+      font-size: 2em;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .pg-section-desc {
+      font-size: 1em;
+      color: var(--text-secondary);
+    }
+
+    /* Section Options */
+    .pg-section-options {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-out 0.3s;
+    }
+
+    .pg-section.visible .pg-section-options {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pg-option {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    .pg-option:hover {
+      background: rgba(255, 255, 255, 0.1);
       color: var(--text-primary);
     }
 
-    .slider-group span {
-      font-size: 0.85em;
-      color: var(--text-secondary);
-      min-width: 40px;
-      text-align: right;
+    .pg-option.active {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: rgba(168, 85, 247, 0.5);
+      color: #a855f7;
     }
 
-    .color-slider {
+    /* Section Content */
+    .pg-section-content {
+      width: 100%;
+      max-width: 900px;
+      min-height: 400px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-out 0.4s;
+    }
+
+    .pg-section.visible .pg-section-content {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .pg-section-content > div {
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Canvas Elements */
+    .pg-canvas {
+      width: 100%;
+      height: 400px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+    }
+
+    /* Color Mixer Styles */
+    .pg-color-preview {
+      width: 100%;
+      height: 200px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      transition: background-color 0.3s;
+      box-shadow: 0 8px 32px rgba(168, 85, 247, 0.3);
+    }
+
+    .pg-color-sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .pg-slider-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pg-slider-group label {
+      font-weight: 600;
+      width: 30px;
+      color: var(--text-primary);
+    }
+
+    .pg-slider-group input[type="range"] {
       flex: 1;
       -webkit-appearance: none;
       height: 8px;
       border-radius: 4px;
       background: rgba(255, 255, 255, 0.1);
       outline: none;
-      transition: all 0.3s;
     }
 
-    .color-slider::-webkit-slider-thumb {
+    .pg-slider-group input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 20px;
       height: 20px;
@@ -2878,171 +2862,227 @@
       background: #fff;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      transition: all 0.2s;
     }
 
-    .color-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
+    .pg-slider-group span {
+      font-size: 0.9em;
+      color: var(--text-secondary);
+      min-width: 40px;
+      text-align: right;
     }
 
-    .color-slider::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #fff;
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .hex-display {
-      font-size: 1.1em;
+    .pg-hex-display {
+      text-align: center;
+      font-size: 1.5em;
       font-weight: 600;
       color: var(--text-primary);
-      text-align: center;
-      padding: 8px;
+      padding: 12px;
       background: rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s;
-      position: relative;
-      z-index: 2;
     }
 
-    .hex-display:hover {
+    .pg-hex-display:hover {
       background: rgba(0, 0, 0, 0.3);
       transform: scale(1.05);
     }
 
-    /* Wave Generator */
-    .wave-svg {
-      width: 100%;
-      height: calc(100% - 40px);
-      margin-top: 8px;
+    /* Color Wheel */
+    .pg-color-wheel {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      background: conic-gradient(
+        hsl(0, 100%, 50%),
+        hsl(60, 100%, 50%),
+        hsl(120, 100%, 50%),
+        hsl(180, 100%, 50%),
+        hsl(240, 100%, 50%),
+        hsl(300, 100%, 50%),
+        hsl(360, 100%, 50%)
+      );
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(168, 85, 247, 0.3);
     }
 
-    /* Particle Canvas */
-    #particleCanvasEl,
-    #bubbleCanvas,
-    #meshCanvas,
-    #clockCanvas {
-      width: 100%;
-      height: calc(100% - 70px);
+    /* Palette Colors */
+    .pg-palette-colors {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .pg-palette-color {
+      width: 100px;
+      height: 100px;
       border-radius: 12px;
-      cursor: crosshair;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    #clockCanvas {
-      height: calc(100% - 90px);
+    .pg-palette-color:hover {
+      transform: scale(1.1);
     }
 
-    /* Typography Playground */
-    .typography-display {
-      font-size: 2.5em;
-      font-weight: 700;
-      text-align: center;
-      padding: 30px 0;
+    .pg-palette-btn {
+      display: block;
+      margin: 0 auto;
+      padding: 12px 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1em;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
-      position: relative;
-      z-index: 2;
+      font-family: inherit;
     }
 
-    .typography-display.wavy {
+    .pg-palette-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
+    }
+
+    /* Typography Styles */
+    .pg-typography-text {
+      font-size: 4em;
+      font-weight: 700;
+      text-align: center;
+      padding: 60px 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-primary);
+    }
+
+    .pg-typography-text.wavy {
       animation: typographyWavy 1.5s ease-in-out infinite;
     }
 
     @keyframes typographyWavy {
       0%, 100% { transform: translateY(0); }
-      25% { transform: translateY(-5px); }
-      75% { transform: translateY(5px); }
+      25% { transform: translateY(-10px); }
+      75% { transform: translateY(10px); }
     }
 
-    .typography-display.glitch {
+    .pg-typography-text.glitch {
       animation: typographyGlitch 0.3s linear infinite;
     }
 
     @keyframes typographyGlitch {
       0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(-2px, -2px); }
-      60% { transform: translate(2px, 2px); }
-      80% { transform: translate(2px, -2px); }
+      20% { transform: translate(-3px, 3px); }
+      40% { transform: translate(-3px, -3px); }
+      60% { transform: translate(3px, 3px); }
+      80% { transform: translate(3px, -3px); }
       100% { transform: translate(0); }
     }
 
-    .typography-display.bounce {
+    .pg-typography-text.bounce {
       animation: typographyBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     }
 
     @keyframes typographyBounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
+      50% { transform: translateY(-30px); }
     }
 
-    .typography-display.rainbow {
-      background: linear-gradient(135deg, #a855f7, #ec4899, #f59e0b, #22c55e, #3b82f6);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientShift 2s ease infinite;
+    .pg-kinetic-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 40px 20px;
     }
 
-    /* Bubble Pop */
-    .bubble-score {
-      text-align: center;
-      font-size: 1.1em;
-      font-weight: 600;
+    .pg-kinetic-letter {
+      font-size: 3em;
+      font-weight: 700;
       color: var(--text-primary);
-      margin-top: 8px;
-      position: relative;
-      z-index: 2;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .pg-kinetic-letter:nth-child(1) { animation-delay: 0s; }
+    .pg-kinetic-letter:nth-child(2) { animation-delay: 0.1s; }
+    .pg-kinetic-letter:nth-child(3) { animation-delay: 0.2s; }
+    .pg-kinetic-letter:nth-child(4) { animation-delay: 0.3s; }
+    .pg-kinetic-letter:nth-child(5) { animation-delay: 0.4s; }
+    .pg-kinetic-letter:nth-child(6) { animation-delay: 0.5s; }
+    .pg-kinetic-letter:nth-child(7) { animation-delay: 0.6s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      33% { transform: translateY(-15px) rotate(2deg); }
+      66% { transform: translateY(5px) rotate(-2deg); }
+    }
+
+    /* Bubble Score */
+    .pg-bubble-score {
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 20px;
     }
 
     /* Rhythm Bars */
-    .rhythm-container {
+    .pg-rhythm-container {
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      gap: 8px;
-      height: calc(100% - 60px);
-      padding: 0 20px;
+      gap: 12px;
+      height: 300px;
+      padding: 20px;
       cursor: pointer;
     }
 
-    .rhythm-bar {
+    .pg-rhythm-bar {
       flex: 1;
-      max-width: 30px;
+      max-width: 40px;
       background: linear-gradient(180deg, #a855f7, #ec4899);
       border-radius: 8px 8px 0 0;
       transition: height 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      will-change: height;
-      transform: translateZ(0);
       box-shadow: 0 -4px 20px rgba(168, 85, 247, 0.4);
     }
 
-    /* Clock */
-    .clock-date {
-      text-align: center;
-      font-size: 0.85em;
-      color: var(--text-secondary);
-      margin-top: 8px;
+    .pg-rhythm-circular {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
       position: relative;
-      z-index: 2;
     }
 
-    /* Reduced motion support */
+    /* Clock Date */
+    .pg-clock-date {
+      text-align: center;
+      font-size: 1.1em;
+      color: var(--text-secondary);
+      margin-top: 16px;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .pg-hero h2 { font-size: 2.5em; }
+      .pg-section { min-height: 60vh; padding: 60px 20px; }
+      .pg-section-header h3 { font-size: 1.5em; }
+      .pg-typography-text { font-size: 2.5em; }
+      .pg-color-wheel { width: 250px; height: 250px; }
+    }
+
+    /* Reduced Motion */
     @media (prefers-reduced-motion: reduce) {
-      .playground-card,
-      .playground-title,
-      .typography-display,
-      .rhythm-bar {
-        animation: none !important;
+      .pg-section,
+      .pg-section-header,
+      .pg-section-options,
+      .pg-section-content {
         transition: none !important;
-      }
-      .hero-particles,
-      #particleCanvasEl {
-        display: none;
+        animation: none !important;
       }
     }
   </style>
@@ -3190,85 +3230,136 @@
   </div>
 
   <!-- Playground View -->
-  <div id="playgroundView" class="playground-container hidden">
+  <div id="playgroundView" class="pg-container hidden">
     <!-- Hero Section -->
-    <div class="playground-hero">
-      <h1 class="playground-title">🎪 Playground</h1>
-      <p class="playground-subtitle">A space to experiment, create, and grow</p>
-      <canvas id="heroParticles" class="hero-particles"></canvas>
+    <div class="pg-hero">
+      <h2>🎪 Playground</h2>
+      <p>Scroll to explore interactive experiments</p>
+      <div class="pg-scroll-hint">
+        <span>↓</span>
+      </div>
     </div>
 
-    <!-- Bento Grid -->
-    <div class="playground-grid">
-      <!-- Color Mixer (2x2 large) -->
-      <div class="playground-card card-large" id="colorMixer">
-        <h3 class="card-title">🎨 Color Mixer</h3>
-        <div class="color-preview" id="colorPreview"></div>
-        <div class="color-sliders">
-          <div class="slider-group">
-            <label>R</label>
-            <input type="range" min="0" max="255" value="168" class="color-slider" id="sliderR">
-            <span id="valueR">168</span>
-          </div>
-          <div class="slider-group">
-            <label>G</label>
-            <input type="range" min="0" max="255" value="85" class="color-slider" id="sliderG">
-            <span id="valueG">85</span>
-          </div>
-          <div class="slider-group">
-            <label>B</label>
-            <input type="range" min="0" max="255" value="247" class="color-slider" id="sliderB">
-            <span id="valueB">247</span>
-          </div>
+    <!-- Scroll Sections -->
+    <div class="pg-sections">
+      <!-- 1. Color Mixer -->
+      <div class="pg-section" data-section="color">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">🎨</span>
+          <h3>Color Mixer</h3>
+          <p class="pg-section-desc">Blend colors in real-time</p>
         </div>
-        <div class="hex-display" id="hexDisplay" title="Click to copy">#a855f7</div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="sliders">Sliders</button>
+          <button class="pg-option" data-option="wheel">Wheel</button>
+          <button class="pg-option" data-option="palette">Palette</button>
+        </div>
+        <div class="pg-section-content" id="colorContent"></div>
       </div>
 
-      <!-- Wave Generator (2x1 medium) -->
-      <div class="playground-card card-medium-h" id="waveGenerator">
-        <h3 class="card-title">🌊 Wave Generator</h3>
-        <svg id="waveSvg" class="wave-svg" viewBox="0 0 400 150"></svg>
+      <!-- 2. Wave Generator -->
+      <div class="pg-section" data-section="wave">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">🌊</span>
+          <h3>Wave Generator</h3>
+          <p class="pg-section-desc">Visual soundwaves and patterns</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="sine">Sine Wave</button>
+          <button class="pg-option" data-option="noise">Noise</button>
+          <button class="pg-option" data-option="stacked">Stacked</button>
+        </div>
+        <div class="pg-section-content" id="waveContent"></div>
       </div>
 
-      <!-- Particle Canvas (1x2 tall) -->
-      <div class="playground-card card-medium-v" id="particleCanvas">
-        <h3 class="card-title">💫 Particle Canvas</h3>
-        <p class="card-hint">Click to spawn particles</p>
-        <canvas id="particleCanvasEl"></canvas>
+      <!-- 3. Particle Canvas -->
+      <div class="pg-section" data-section="particle">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">💫</span>
+          <h3>Particle Canvas</h3>
+          <p class="pg-section-desc">Interactive particle systems</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="constellation">Constellation</button>
+          <button class="pg-option" data-option="fireworks">Fireworks</button>
+          <button class="pg-option" data-option="galaxy">Galaxy</button>
+        </div>
+        <div class="pg-section-content" id="particleContent"></div>
       </div>
 
-      <!-- Typography Playground (1x1) -->
-      <div class="playground-card card-small" id="typographyPlay">
-        <h3 class="card-title">🔤 Typography</h3>
-        <div class="typography-display" id="typographyDisplay">Hello!</div>
-        <p class="card-hint">Click to cycle styles</p>
+      <!-- 4. Typography Lab -->
+      <div class="pg-section" data-section="typography">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">🔤</span>
+          <h3>Typography Lab</h3>
+          <p class="pg-section-desc">Animated text experiments</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="morph">Style Morph</button>
+          <button class="pg-option" data-option="kinetic">Kinetic</button>
+          <button class="pg-option" data-option="typewriter">Typewriter</button>
+        </div>
+        <div class="pg-section-content" id="typographyContent"></div>
       </div>
 
-      <!-- Bubble Pop (1x1) -->
-      <div class="playground-card card-small" id="bubblePop">
-        <h3 class="card-title">🫧 Bubble Pop</h3>
-        <canvas id="bubbleCanvas"></canvas>
-        <div class="bubble-score">Score: <span id="bubbleScore">0</span></div>
+      <!-- 5. Bubble Pop -->
+      <div class="pg-section" data-section="bubble">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">🫧</span>
+          <h3>Bubble Pop</h3>
+          <p class="pg-section-desc">Pop bubbles and rack up points</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="classic">Classic</button>
+          <button class="pg-option" data-option="chain">Chain Reaction</button>
+          <button class="pg-option" data-option="gravity">Gravity</button>
+        </div>
+        <div class="pg-section-content" id="bubbleContent"></div>
       </div>
 
-      <!-- Rhythm Bars (2x1) -->
-      <div class="playground-card card-medium-h" id="rhythmBars">
-        <h3 class="card-title">🎵 Rhythm Bars</h3>
-        <p class="card-hint">Click to change rhythm</p>
-        <div class="rhythm-container" id="rhythmContainer"></div>
+      <!-- 6. Rhythm Bars -->
+      <div class="pg-section" data-section="rhythm">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">🎵</span>
+          <h3>Rhythm Bars</h3>
+          <p class="pg-section-desc">Visual music equalizer</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="equalizer">Equalizer</button>
+          <button class="pg-option" data-option="circular">Circular</button>
+          <button class="pg-option" data-option="waveform">Waveform</button>
+        </div>
+        <div class="pg-section-content" id="rhythmContent"></div>
       </div>
 
-      <!-- Gradient Mesh (1x1) -->
-      <div class="playground-card card-small" id="gradientMesh">
-        <h3 class="card-title">🌈 Gradient Mesh</h3>
-        <canvas id="meshCanvas"></canvas>
+      <!-- 7. Gradient Mesh -->
+      <div class="pg-section" data-section="mesh">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">🌈</span>
+          <h3>Gradient Mesh</h3>
+          <p class="pg-section-desc">Fluid color animations</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="blob">Blob</button>
+          <button class="pg-option" data-option="aurora">Aurora</button>
+          <button class="pg-option" data-option="plasma">Plasma</button>
+        </div>
+        <div class="pg-section-content" id="meshContent"></div>
       </div>
 
-      <!-- Live Clock (1x1) -->
-      <div class="playground-card card-small" id="liveClock">
-        <h3 class="card-title">⏰ Live Clock</h3>
-        <canvas id="clockCanvas"></canvas>
-        <div class="clock-date" id="clockDate"></div>
+      <!-- 8. Live Clock -->
+      <div class="pg-section" data-section="clock">
+        <div class="pg-section-header">
+          <span class="pg-section-emoji">⏰</span>
+          <h3>Live Clock</h3>
+          <p class="pg-section-desc">Time in beautiful forms</p>
+        </div>
+        <div class="pg-section-options">
+          <button class="pg-option active" data-option="analog">Analog</button>
+          <button class="pg-option" data-option="flip">Digital Flip</button>
+          <button class="pg-option" data-option="binary">Binary</button>
+        </div>
+        <div class="pg-section-content" id="clockContent"></div>
       </div>
     </div>
   </div>
@@ -5243,659 +5334,928 @@
       flowState.historyCollapsed = !flowState.historyCollapsed;
     }
 
-    // ===== PLAYGROUND =====
+    // ===== PLAYGROUND V2 - APPLE-STYLE SCROLL SECTIONS =====
     let playgroundState = {
-      colorMixer: { r: 168, g: 85, b: 247 },
-      typographyMode: 0,
-      rhythmPattern: 0,
-      bubbles: [],
-      particles: [],
-      meshBlobs: [],
-      heroParticles: [],
-      animationFrames: {}
+      initialized: false,
+      currentOptions: {
+        color: 'sliders',
+        wave: 'sine',
+        particle: 'constellation',
+        typography: 'morph',
+        bubble: 'classic',
+        rhythm: 'equalizer',
+        mesh: 'blob',
+        clock: 'analog'
+      },
+      animations: {},
+      data: {
+        color: { r: 168, g: 85, b: 247 },
+        particles: [],
+        bubbles: [],
+        score: 0,
+        typographyMode: 0,
+        typewriterText: '',
+        typewriterIndex: 0
+      }
     };
 
     function initPlayground() {
-      // Only init once
       if (playgroundState.initialized) return;
       playgroundState.initialized = true;
 
-      console.log('🎪 Initializing Playground...');
+      console.log('🎪 Initializing Playground V2...');
       
-      // Hero Particles
-      initHeroParticles();
-      
-      // Color Mixer
-      initColorMixer();
-      
-      // Wave Generator
-      initWaveGenerator();
-      
-      // Particle Canvas
-      initParticleCanvas();
-      
-      // Typography
-      initTypography();
-      
-      // Bubble Pop
-      initBubblePop();
-      
-      // Rhythm Bars
-      initRhythmBars();
-      
-      // Gradient Mesh
-      initGradientMesh();
-      
-      // Live Clock
-      initLiveClock();
+      // Setup IntersectionObserver for scroll animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      document.querySelectorAll('.pg-section').forEach(el => observer.observe(el));
+
+      // Setup option switchers
+      document.querySelectorAll('.pg-section').forEach(section => {
+        const sectionType = section.dataset.section;
+        const options = section.querySelectorAll('.pg-option');
+        
+        options.forEach(option => {
+          option.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('active'));
+            option.classList.add('active');
+            playgroundState.currentOptions[sectionType] = option.dataset.option;
+            renderSection(sectionType);
+          });
+        });
+      });
+
+      // Initial render of all sections
+      renderAllSections();
     }
 
-    // Hero Particles
-    function initHeroParticles() {
-      const canvas = document.getElementById('heroParticles');
-      if (!canvas) return;
-      
+    function renderAllSections() {
+      renderSection('color');
+      renderSection('wave');
+      renderSection('particle');
+      renderSection('typography');
+      renderSection('bubble');
+      renderSection('rhythm');
+      renderSection('mesh');
+      renderSection('clock');
+    }
+
+    function renderSection(type) {
+      const option = playgroundState.currentOptions[type];
+      const container = document.getElementById(`${type}Content`);
+      if (!container) return;
+
+      // Stop existing animations for this section
+      if (playgroundState.animations[type]) {
+        cancelAnimationFrame(playgroundState.animations[type]);
+      }
+
+      // Render based on type and option
+      switch(type) {
+        case 'color':
+          renderColorMixer(container, option);
+          break;
+        case 'wave':
+          renderWaveGenerator(container, option);
+          break;
+        case 'particle':
+          renderParticleCanvas(container, option);
+          break;
+        case 'typography':
+          renderTypography(container, option);
+          break;
+        case 'bubble':
+          renderBubblePop(container, option);
+          break;
+        case 'rhythm':
+          renderRhythmBars(container, option);
+          break;
+        case 'mesh':
+          renderGradientMesh(container, option);
+          break;
+        case 'clock':
+          renderClock(container, option);
+          break;
+      }
+    }
+
+    // ===== COLOR MIXER =====
+    function renderColorMixer(container, option) {
+      if (option === 'sliders') {
+        container.innerHTML = `
+          <div class="pg-color-preview" id="pgColorPreview"></div>
+          <div class="pg-color-sliders">
+            <div class="pg-slider-group">
+              <label>R</label>
+              <input type="range" min="0" max="255" value="${playgroundState.data.color.r}" id="pgSliderR">
+              <span id="pgValueR">${playgroundState.data.color.r}</span>
+            </div>
+            <div class="pg-slider-group">
+              <label>G</label>
+              <input type="range" min="0" max="255" value="${playgroundState.data.color.g}" id="pgSliderG">
+              <span id="pgValueG">${playgroundState.data.color.g}</span>
+            </div>
+            <div class="pg-slider-group">
+              <label>B</label>
+              <input type="range" min="0" max="255" value="${playgroundState.data.color.b}" id="pgSliderB">
+              <span id="pgValueB">${playgroundState.data.color.b}</span>
+            </div>
+          </div>
+          <div class="pg-hex-display" id="pgHexDisplay">#a855f7</div>
+        `;
+        
+        const preview = document.getElementById('pgColorPreview');
+        const sliderR = document.getElementById('pgSliderR');
+        const sliderG = document.getElementById('pgSliderG');
+        const sliderB = document.getElementById('pgSliderB');
+        const hexDisplay = document.getElementById('pgHexDisplay');
+        
+        const updateColor = () => {
+          const r = parseInt(sliderR.value);
+          const g = parseInt(sliderG.value);
+          const b = parseInt(sliderB.value);
+          playgroundState.data.color = { r, g, b };
+          
+          document.getElementById('pgValueR').textContent = r;
+          document.getElementById('pgValueG').textContent = g;
+          document.getElementById('pgValueB').textContent = b;
+          
+          preview.style.background = `rgb(${r}, ${g}, ${b})`;
+          const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
+          hexDisplay.textContent = hex;
+        };
+        
+        sliderR.addEventListener('input', updateColor);
+        sliderG.addEventListener('input', updateColor);
+        sliderB.addEventListener('input', updateColor);
+        hexDisplay.addEventListener('click', () => {
+          navigator.clipboard.writeText(hexDisplay.textContent);
+          showToast('🎨 Color copied!');
+        });
+        
+        updateColor();
+      } else if (option === 'wheel') {
+        container.innerHTML = `
+          <div class="pg-color-wheel" id="pgColorWheel"></div>
+          <div class="pg-hex-display" id="pgHexDisplay">#a855f7</div>
+        `;
+        
+        const wheel = document.getElementById('pgColorWheel');
+        const hexDisplay = document.getElementById('pgHexDisplay');
+        
+        wheel.addEventListener('click', (e) => {
+          const rect = wheel.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const angle = Math.atan2(y - rect.height / 2, x - rect.width / 2) * 180 / Math.PI + 180;
+          const hue = angle;
+          const color = `hsl(${hue}, 80%, 60%)`;
+          hexDisplay.textContent = hslToHex(hue, 80, 60);
+          hexDisplay.style.color = color;
+        });
+        
+        hexDisplay.addEventListener('click', () => {
+          navigator.clipboard.writeText(hexDisplay.textContent);
+          showToast('🎨 Color copied!');
+        });
+      } else if (option === 'palette') {
+        const palette = generatePalette();
+        container.innerHTML = `
+          <div class="pg-palette-colors">
+            ${palette.map(c => `<div class="pg-palette-color" style="background: ${c}" onclick="copyColor('${c}')"></div>`).join('')}
+          </div>
+          <button class="pg-palette-btn" onclick="renderSection('color')">🎲 Regenerate</button>
+        `;
+      }
+    }
+
+    function generatePalette() {
+      const baseHue = Math.random() * 360;
+      return [
+        `hsl(${baseHue}, 80%, 60%)`,
+        `hsl(${(baseHue + 30) % 360}, 80%, 60%)`,
+        `hsl(${(baseHue + 60) % 360}, 80%, 60%)`,
+        `hsl(${(baseHue + 180) % 360}, 80%, 60%)`,
+        `hsl(${(baseHue + 240) % 360}, 80%, 60%)`
+      ];
+    }
+
+    function hslToHex(h, s, l) {
+      l /= 100;
+      const a = s * Math.min(l, 1 - l) / 100;
+      const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+      };
+      return `#${f(0)}${f(8)}${f(4)}`;
+    }
+
+    function copyColor(color) {
+      navigator.clipboard.writeText(color);
+      showToast('🎨 Color copied!');
+    }
+
+    // ===== WAVE GENERATOR =====
+    function renderWaveGenerator(container, option) {
+      container.innerHTML = '<canvas class="pg-canvas" id="pgWaveCanvas"></canvas>';
+      const canvas = document.getElementById('pgWaveCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-
-      const particleCount = 30;
-      playgroundState.heroParticles = [];
-
-      for (let i = 0; i < particleCount; i++) {
-        playgroundState.heroParticles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          opacity: Math.random() * 0.5 + 0.2
-        });
-      }
-
+      canvas.height = 400;
+      
       function animate() {
         if (state.currentView !== 'playground') return;
-        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        playgroundState.heroParticles.forEach(p => {
-          p.x += p.speedX;
-          p.y += p.speedY;
-          
-          if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-          if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-          
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(168, 85, 247, ${p.opacity})`;
-          ctx.fill();
-        });
-        
-        playgroundState.animationFrames.hero = requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
-    // Color Mixer
-    function initColorMixer() {
-      const sliderR = document.getElementById('sliderR');
-      const sliderG = document.getElementById('sliderG');
-      const sliderB = document.getElementById('sliderB');
-      const valueR = document.getElementById('valueR');
-      const valueG = document.getElementById('valueG');
-      const valueB = document.getElementById('valueB');
-      const colorPreview = document.getElementById('colorPreview');
-      const hexDisplay = document.getElementById('hexDisplay');
-
-      function updateColor() {
-        const r = parseInt(sliderR.value);
-        const g = parseInt(sliderG.value);
-        const b = parseInt(sliderB.value);
-        
-        playgroundState.colorMixer = { r, g, b };
-        
-        valueR.textContent = r;
-        valueG.textContent = g;
-        valueB.textContent = b;
-        
-        const color = `rgb(${r}, ${g}, ${b})`;
-        colorPreview.style.background = color;
-        colorPreview.style.boxShadow = `0 8px 24px rgba(${r}, ${g}, ${b}, 0.4)`;
-        
-        const hex = '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-        hexDisplay.textContent = hex;
-        
-        // Glow the sliders
-        sliderR.style.background = `linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(${r},0,0,0.5) 100%)`;
-        sliderG.style.background = `linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,${g},0,0.5) 100%)`;
-        sliderB.style.background = `linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0,0,${b},0.5) 100%)`;
-      }
-
-      sliderR.addEventListener('input', updateColor);
-      sliderG.addEventListener('input', updateColor);
-      sliderB.addEventListener('input', updateColor);
-      
-      hexDisplay.addEventListener('click', () => {
-        navigator.clipboard.writeText(hexDisplay.textContent);
-        showToast('🎨 Color copied to clipboard!');
-      });
-
-      updateColor();
-    }
-
-    // Wave Generator
-    function initWaveGenerator() {
-      const svg = document.getElementById('waveSvg');
-      if (!svg) return;
-      
-      let mouseX = 200;
-      let mouseY = 75;
-      
-      svg.addEventListener('mousemove', (e) => {
-        const rect = svg.getBoundingClientRect();
-        mouseX = ((e.clientX - rect.left) / rect.width) * 400;
-        mouseY = ((e.clientY - rect.top) / rect.height) * 150;
-      });
-      
-      svg.addEventListener('touchmove', (e) => {
-        const rect = svg.getBoundingClientRect();
-        const touch = e.touches[0];
-        mouseX = ((touch.clientX - rect.left) / rect.width) * 400;
-        mouseY = ((touch.clientY - rect.top) / rect.height) * 150;
-      });
-
-      function animate() {
-        if (state.currentView !== 'playground') return;
-        
-        const points = [];
-        const segments = 50;
         const time = Date.now() / 1000;
         
-        const amplitude = Math.max(10, mouseY / 3);
-        const frequency = Math.max(0.02, mouseX / 10000);
-        
-        for (let i = 0; i <= segments; i++) {
-          const x = (i / segments) * 400;
-          const y = 75 + Math.sin(i * frequency + time) * amplitude;
-          points.push(`${x},${y}`);
+        if (option === 'sine') {
+          drawSineWave(ctx, canvas, time);
+        } else if (option === 'noise') {
+          drawNoiseWave(ctx, canvas, time);
+        } else if (option === 'stacked') {
+          drawStackedWaves(ctx, canvas, time);
         }
         
-        const pathData = `M 0,150 L ${points.join(' L ')} L 400,150 Z`;
-        
-        let path = svg.querySelector('path');
-        if (!path) {
-          path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          
-          const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-          const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-          gradient.setAttribute('id', 'waveGradient');
-          gradient.setAttribute('x1', '0%');
-          gradient.setAttribute('y1', '0%');
-          gradient.setAttribute('x2', '100%');
-          gradient.setAttribute('y2', '0%');
-          
-          const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-          stop1.setAttribute('offset', '0%');
-          stop1.setAttribute('style', 'stop-color:#a855f7;stop-opacity:0.8');
-          
-          const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-          stop2.setAttribute('offset', '50%');
-          stop2.setAttribute('style', 'stop-color:#ec4899;stop-opacity:0.8');
-          
-          const stop3 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-          stop3.setAttribute('offset', '100%');
-          stop3.setAttribute('style', 'stop-color:#f59e0b;stop-opacity:0.8');
-          
-          gradient.appendChild(stop1);
-          gradient.appendChild(stop2);
-          gradient.appendChild(stop3);
-          defs.appendChild(gradient);
-          svg.appendChild(defs);
-          
-          path.setAttribute('fill', 'url(#waveGradient)');
-          svg.appendChild(path);
-        }
-        
-        path.setAttribute('d', pathData);
-        
-        playgroundState.animationFrames.wave = requestAnimationFrame(animate);
+        playgroundState.animations.wave = requestAnimationFrame(animate);
       }
       animate();
     }
 
-    // Particle Canvas
-    function initParticleCanvas() {
-      const canvas = document.getElementById('particleCanvasEl');
-      if (!canvas) return;
+    function drawSineWave(ctx, canvas, time) {
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height / 2);
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + Math.sin(x * 0.02 + time * 2) * 60;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawNoiseWave(ctx, canvas, time) {
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height / 2);
+      for (let x = 0; x < canvas.width; x++) {
+        const noise = Math.sin(x * 0.01 + time) * Math.cos(x * 0.02 + time * 0.5);
+        const y = canvas.height / 2 + noise * 80;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#ec4899';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawStackedWaves(ctx, canvas, time) {
+      const waves = [
+        { color: '#a855f7', offset: 0, amp: 40, freq: 0.02 },
+        { color: '#ec4899', offset: 0.5, amp: 50, freq: 0.015 },
+        { color: '#f59e0b', offset: 1, amp: 30, freq: 0.025 }
+      ];
       
+      waves.forEach(wave => {
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        for (let x = 0; x < canvas.width; x++) {
+          const y = canvas.height / 2 + Math.sin(x * wave.freq + time * 2 + wave.offset) * wave.amp;
+          ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = wave.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+    }
+
+    // ===== PARTICLE CANVAS =====
+    function renderParticleCanvas(container, option) {
+      container.innerHTML = '<canvas class="pg-canvas" id="pgParticleCanvas" style="cursor:crosshair"></canvas>';
+      const canvas = document.getElementById('pgParticleCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-
-      canvas.addEventListener('click', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        spawnParticles(x, y);
-      });
-
-      canvas.addEventListener('touchstart', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        spawnParticles(x, y);
-      });
-
-      function spawnParticles(x, y) {
-        const hue = (x / canvas.width) * 360;
-        for (let i = 0; i < 5; i++) {
-          playgroundState.particles.push({
-            x, y,
-            vx: (Math.random() - 0.5) * 2,
-            vy: (Math.random() - 0.5) * 2,
-            life: 1,
-            size: Math.random() * 4 + 2,
-            hue
-          });
-        }
-      }
-
-      function animate() {
-        if (state.currentView !== 'playground') return;
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Update particles
-        playgroundState.particles = playgroundState.particles.filter(p => {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.life -= 0.01;
-          
-          if (p.life <= 0) return false;
-          
-          // Draw particle
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${p.life})`;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = `hsla(${p.hue}, 80%, 60%, ${p.life})`;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-          
-          return true;
+      canvas.height = 400;
+      
+      playgroundState.data.particles = [];
+      
+      if (option === 'constellation') {
+        canvas.addEventListener('click', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          for (let i = 0; i < 3; i++) {
+            playgroundState.data.particles.push({
+              x: e.clientX - rect.left + (Math.random() - 0.5) * 20,
+              y: e.clientY - rect.top + (Math.random() - 0.5) * 20,
+              vx: (Math.random() - 0.5) * 0.5,
+              vy: (Math.random() - 0.5) * 0.5,
+              life: 100,
+              size: Math.random() * 3 + 2
+            });
+          }
         });
         
-        // Draw connections
-        for (let i = 0; i < playgroundState.particles.length; i++) {
-          for (let j = i + 1; j < playgroundState.particles.length; j++) {
-            const p1 = playgroundState.particles[i];
-            const p2 = playgroundState.particles[j];
-            const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          playgroundState.data.particles = playgroundState.data.particles.filter(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life--;
+            if (p.life <= 0) return false;
             
-            if (dist < 100) {
-              ctx.beginPath();
-              ctx.moveTo(p1.x, p1.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = `rgba(168, 85, 247, ${(1 - dist / 100) * 0.3 * Math.min(p1.life, p2.life)})`;
-              ctx.lineWidth = 1;
-              ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(168, 85, 247, ${p.life / 100})`;
+            ctx.fill();
+            return true;
+          });
+          
+          // Draw connections
+          for (let i = 0; i < playgroundState.data.particles.length; i++) {
+            for (let j = i + 1; j < playgroundState.data.particles.length; j++) {
+              const p1 = playgroundState.data.particles[i];
+              const p2 = playgroundState.data.particles[j];
+              const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+              if (dist < 100) {
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = `rgba(168, 85, 247, ${(1 - dist / 100) * 0.3})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              }
             }
           }
+          
+          playgroundState.animations.particle = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'fireworks') {
+        canvas.addEventListener('click', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          for (let i = 0; i < 30; i++) {
+            const angle = (i / 30) * Math.PI * 2;
+            playgroundState.data.particles.push({
+              x, y,
+              vx: Math.cos(angle) * (Math.random() * 3 + 2),
+              vy: Math.sin(angle) * (Math.random() * 3 + 2),
+              life: 60,
+              size: Math.random() * 3 + 1,
+              hue: Math.random() * 360
+            });
+          }
+        });
+        
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          playgroundState.data.particles = playgroundState.data.particles.filter(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.1; // Gravity
+            p.life--;
+            if (p.life <= 0) return false;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${p.life / 60})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = `hsl(${p.hue}, 80%, 60%)`;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            return true;
+          });
+          
+          playgroundState.animations.particle = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'galaxy') {
+        const center = { x: canvas.width / 2, y: canvas.height / 2 };
+        for (let i = 0; i < 100; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist = Math.random() * 150 + 30;
+          playgroundState.data.particles.push({
+            angle,
+            dist,
+            speed: 0.01 + Math.random() * 0.02,
+            size: Math.random() * 2 + 1,
+            hue: (angle * 180 / Math.PI) % 360
+          });
         }
         
-        playgroundState.animationFrames.particle = requestAnimationFrame(animate);
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.fillStyle = 'rgba(10, 10, 20, 0.1)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          playgroundState.data.particles.forEach(p => {
+            p.angle += p.speed;
+            const x = center.x + Math.cos(p.angle) * p.dist;
+            const y = center.y + Math.sin(p.angle) * p.dist;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${p.hue}, 80%, 60%)`;
+            ctx.fill();
+          });
+          
+          playgroundState.animations.particle = requestAnimationFrame(animate);
+        }
+        animate();
       }
-      animate();
     }
 
-    // Typography
-    function initTypography() {
-      const display = document.getElementById('typographyDisplay');
-      if (!display) return;
-      
-      const modes = ['normal', 'wavy', 'glitch', 'bounce', 'rainbow'];
-      
-      display.addEventListener('click', () => {
-        playgroundState.typographyMode = (playgroundState.typographyMode + 1) % modes.length;
-        display.className = 'typography-display ' + modes[playgroundState.typographyMode];
-      });
+    // ===== TYPOGRAPHY =====
+    function renderTypography(container, option) {
+      if (option === 'morph') {
+        container.innerHTML = '<div class="pg-typography-text" id="pgTypoText">Hello!</div><p style="text-align:center;color:var(--text-muted);margin-top:12px;">Click to cycle styles</p>';
+        const text = document.getElementById('pgTypoText');
+        const modes = ['', 'wavy', 'glitch', 'bounce'];
+        let currentMode = 0;
+        text.addEventListener('click', () => {
+          currentMode = (currentMode + 1) % modes.length;
+          text.className = 'pg-typography-text ' + modes[currentMode];
+        });
+      } else if (option === 'kinetic') {
+        const letters = 'ANIMATE'.split('');
+        container.innerHTML = `
+          <div class="pg-kinetic-container">
+            ${letters.map(l => `<span class="pg-kinetic-letter">${l}</span>`).join('')}
+          </div>
+        `;
+      } else if (option === 'typewriter') {
+        container.innerHTML = '<div class="pg-typography-text" id="pgTypewriter"></div>';
+        const fullText = 'Hello, world! Welcome to the playground...';
+        let index = 0;
+        const el = document.getElementById('pgTypewriter');
+        
+        function type() {
+          if (state.currentView !== 'playground') return;
+          if (index < fullText.length) {
+            el.textContent = fullText.substring(0, index + 1) + '|';
+            index++;
+            setTimeout(type, 100);
+          } else {
+            setTimeout(() => {
+              index = 0;
+              type();
+            }, 2000);
+          }
+        }
+        type();
+      }
     }
 
-    // Bubble Pop
-    function initBubblePop() {
-      const canvas = document.getElementById('bubbleCanvas');
-      if (!canvas) return;
-      
+    // ===== BUBBLE POP =====
+    function renderBubblePop(container, option) {
+      container.innerHTML = `
+        <canvas class="pg-canvas" id="pgBubbleCanvas" style="cursor:pointer"></canvas>
+        <div class="pg-bubble-score">Score: <span id="pgBubbleScore">0</span></div>
+      `;
+      const canvas = document.getElementById('pgBubbleCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.height = 400;
       
-      let score = 0;
-      const scoreEl = document.getElementById('bubbleScore');
-
+      playgroundState.data.bubbles = [];
+      playgroundState.data.score = 0;
+      
       canvas.addEventListener('click', (e) => {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
-        playgroundState.bubbles = playgroundState.bubbles.filter(b => {
+        playgroundState.data.bubbles = playgroundState.data.bubbles.filter(b => {
           const dist = Math.hypot(b.x - x, b.y - y);
           if (dist < b.size) {
-            score++;
-            scoreEl.textContent = score;
-            // Pop animation
-            for (let i = 0; i < 8; i++) {
-              const angle = (i / 8) * Math.PI * 2;
-              playgroundState.particles.push({
-                x: b.x,
-                y: b.y,
-                vx: Math.cos(angle) * 3,
-                vy: Math.sin(angle) * 3,
-                life: 0.5,
-                size: 2,
-                hue: 280
+            playgroundState.data.score++;
+            document.getElementById('pgBubbleScore').textContent = playgroundState.data.score;
+            if (option === 'chain') {
+              // Spawn nearby pops
+              playgroundState.data.bubbles.forEach(b2 => {
+                if (Math.hypot(b.x - b2.x, b.y - b2.y) < 80) {
+                  b2.pop = true;
+                }
               });
             }
             return false;
           }
-          return true;
+          return !b.pop;
         });
       });
-
-      canvas.addEventListener('touchstart', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        const x = touch.clientX - rect.left;
-        const y = touch.clientY - rect.top;
-        
-        playgroundState.bubbles = playgroundState.bubbles.filter(b => {
-          const dist = Math.hypot(b.x - x, b.y - y);
-          if (dist < b.size) {
-            score++;
-            scoreEl.textContent = score;
-            return false;
-          }
-          return true;
-        });
-      });
-
+      
       function spawnBubble() {
-        if (state.currentView !== 'playground') return;
-        if (playgroundState.bubbles.length < 8) {
-          playgroundState.bubbles.push({
-            x: Math.random() * canvas.width,
-            y: canvas.height + 30,
-            size: Math.random() * 20 + 15,
-            speed: Math.random() * 1 + 0.5,
-            opacity: Math.random() * 0.3 + 0.4
-          });
-        }
-        setTimeout(spawnBubble, 1500);
+        if (state.currentView !== 'playground' || playgroundState.data.bubbles.length >= 8) return;
+        playgroundState.data.bubbles.push({
+          x: Math.random() * canvas.width,
+          y: canvas.height + 30,
+          size: Math.random() * 20 + 15,
+          speed: Math.random() * 1 + 0.5,
+          pop: false
+        });
+        setTimeout(spawnBubble, 1200);
       }
       spawnBubble();
-
+      
       function animate() {
         if (state.currentView !== 'playground') return;
-        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        playgroundState.bubbles = playgroundState.bubbles.filter(b => {
-          b.y -= b.speed;
+        playgroundState.data.bubbles = playgroundState.data.bubbles.filter(b => {
+          if (option === 'gravity') {
+            b.vy = (b.vy || 0) - 0.1;
+            b.y += b.vy;
+            if (b.y > canvas.height) b.vy = -Math.abs(b.vy) * 0.8;
+          } else {
+            b.y -= b.speed;
+          }
           
           if (b.y < -50) return false;
           
-          // Draw bubble
           const gradient = ctx.createRadialGradient(b.x - b.size * 0.3, b.y - b.size * 0.3, 0, b.x, b.y, b.size);
-          gradient.addColorStop(0, `rgba(255, 255, 255, ${b.opacity})`);
-          gradient.addColorStop(0.5, `rgba(168, 85, 247, ${b.opacity * 0.5})`);
-          gradient.addColorStop(1, `rgba(168, 85, 247, ${b.opacity * 0.2})`);
+          gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+          gradient.addColorStop(0.5, 'rgba(168, 85, 247, 0.4)');
+          gradient.addColorStop(1, 'rgba(168, 85, 247, 0.1)');
           
           ctx.beginPath();
           ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
           ctx.fillStyle = gradient;
           ctx.fill();
           
-          // Highlight
-          ctx.beginPath();
-          ctx.arc(b.x - b.size * 0.3, b.y - b.size * 0.3, b.size * 0.3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255, 255, 255, ${b.opacity * 0.6})`;
-          ctx.fill();
-          
           return true;
         });
         
-        playgroundState.animationFrames.bubble = requestAnimationFrame(animate);
+        playgroundState.animations.bubble = requestAnimationFrame(animate);
       }
       animate();
     }
 
-    // Rhythm Bars
-    function initRhythmBars() {
-      const container = document.getElementById('rhythmContainer');
-      if (!container) return;
-      
-      const barCount = 12;
-      const bars = [];
-      
-      for (let i = 0; i < barCount; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'rhythm-bar';
-        container.appendChild(bar);
-        bars.push(bar);
-      }
-
-      const patterns = [
-        () => Math.random() * 80 + 20,
-        (i, t) => Math.sin(i * 0.5 + t) * 40 + 50,
-        (i, t) => Math.abs(Math.sin(i * 0.3 + t)) * 80 + 10,
-        (i, t) => (i % 2 ? Math.sin(t) : Math.cos(t)) * 40 + 50
-      ];
-      
-      let currentPattern = 0;
-
-      container.addEventListener('click', () => {
-        currentPattern = (currentPattern + 1) % patterns.length;
-      });
-
-      function animate() {
-        if (state.currentView !== 'playground') return;
-        
-        const t = Date.now() / 500;
-        const pattern = patterns[currentPattern];
-        
-        bars.forEach((bar, i) => {
-          const height = pattern(i, t);
-          bar.style.height = `${height}%`;
-        });
-        
-        playgroundState.animationFrames.rhythm = requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
-    // Gradient Mesh
-    function initGradientMesh() {
-      const canvas = document.getElementById('meshCanvas');
-      if (!canvas) return;
-      
-      const ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-
-      const blobCount = 4;
-      const blobs = [];
-      
-      for (let i = 0; i < blobCount; i++) {
-        blobs.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          color: `hsl(${Math.random() * 360}, 80%, 60%)`
-        });
-      }
-
-      let mouseX = canvas.width / 2;
-      let mouseY = canvas.height / 2;
-
-      canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
-      });
-
-      function animate() {
-        if (state.currentView !== 'playground') return;
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        blobs.forEach(blob => {
-          // Move toward mouse
-          const dx = mouseX - blob.x;
-          const dy = mouseY - blob.y;
-          const dist = Math.hypot(dx, dy);
-          
-          if (dist > 10) {
-            blob.vx += (dx / dist) * 0.02;
-            blob.vy += (dy / dist) * 0.02;
-          }
-          
-          blob.vx *= 0.95;
-          blob.vy *= 0.95;
-          
-          blob.x += blob.vx;
-          blob.y += blob.vy;
-          
-          // Bounce
-          if (blob.x < 0 || blob.x > canvas.width) blob.vx *= -1;
-          if (blob.y < 0 || blob.y > canvas.height) blob.vy *= -1;
-          
-          // Draw blob
-          const gradient = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, 80);
-          gradient.addColorStop(0, blob.color);
-          gradient.addColorStop(1, 'transparent');
-          
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        });
-        
-        playgroundState.animationFrames.mesh = requestAnimationFrame(animate);
-      }
-      animate();
-    }
-
-    // Live Clock
-    function initLiveClock() {
-      const canvas = document.getElementById('clockCanvas');
-      const dateEl = document.getElementById('clockDate');
-      if (!canvas) return;
-      
-      const ctx = canvas.getContext('2d');
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-      const radius = Math.min(cx, cy) - 10;
-
-      function animate() {
-        if (state.currentView !== 'playground') return;
-        
-        const now = new Date();
-        const hours = now.getHours() % 12;
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-        const milliseconds = now.getMilliseconds();
-        
-        // Update date
-        const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-        dateEl.textContent = dateStr;
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Clock face (liquid glass)
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        // Hour markers
+    // ===== RHYTHM BARS =====
+    function renderRhythmBars(container, option) {
+      if (option === 'equalizer') {
+        container.innerHTML = '<div class="pg-rhythm-container" id="pgRhythmContainer"></div>';
+        const rhythmContainer = document.getElementById('pgRhythmContainer');
+        const bars = [];
         for (let i = 0; i < 12; i++) {
-          const angle = (i * 30 - 90) * Math.PI / 180;
-          const x1 = cx + Math.cos(angle) * (radius - 10);
-          const y1 = cy + Math.sin(angle) * (radius - 10);
-          const x2 = cx + Math.cos(angle) * (radius - 15);
-          const y2 = cy + Math.sin(angle) * (radius - 15);
-          
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-          ctx.lineWidth = 2;
-          ctx.stroke();
+          const bar = document.createElement('div');
+          bar.className = 'pg-rhythm-bar';
+          rhythmContainer.appendChild(bar);
+          bars.push(bar);
         }
         
-        // Hour hand
-        const hourAngle = ((hours + minutes / 60) * 30 - 90) * Math.PI / 180;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(
-          cx + Math.cos(hourAngle) * (radius * 0.5),
-          cy + Math.sin(hourAngle) * (radius * 0.5)
-        );
-        ctx.strokeStyle = '#a855f7';
-        ctx.lineWidth = 4;
-        ctx.lineCap = 'round';
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#a855f7';
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          const time = Date.now() / 500;
+          bars.forEach((bar, i) => {
+            const height = Math.abs(Math.sin(i * 0.5 + time)) * 80 + 20;
+            bar.style.height = `${height}%`;
+          });
+          playgroundState.animations.rhythm = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'circular') {
+        container.innerHTML = '<canvas class="pg-canvas" id="pgRhythmCanvas"></canvas>';
+        const canvas = document.getElementById('pgRhythmCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 400;
         
-        // Minute hand
-        const minuteAngle = ((minutes + seconds / 60) * 6 - 90) * Math.PI / 180;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(
-          cx + Math.cos(minuteAngle) * (radius * 0.7),
-          cy + Math.sin(minuteAngle) * (radius * 0.7)
-        );
-        ctx.strokeStyle = '#ec4899';
-        ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = '#ec4899';
-        ctx.stroke();
-        ctx.shadowBlur = 0;
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const cx = canvas.width / 2;
+          const cy = canvas.height / 2;
+          const time = Date.now() / 500;
+          
+          for (let i = 0; i < 24; i++) {
+            const angle = (i / 24) * Math.PI * 2 - Math.PI / 2;
+            const length = Math.abs(Math.sin(i * 0.3 + time)) * 80 + 30;
+            const x = cx + Math.cos(angle) * 50;
+            const y = cy + Math.sin(angle) * 50;
+            const x2 = cx + Math.cos(angle) * (50 + length);
+            const y2 = cy + Math.sin(angle) * (50 + length);
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = `hsl(${(i / 24) * 360}, 80%, 60%)`;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+          }
+          
+          playgroundState.animations.rhythm = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'waveform') {
+        container.innerHTML = '<canvas class="pg-canvas" id="pgRhythmCanvas"></canvas>';
+        const canvas = document.getElementById('pgRhythmCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 400;
         
-        // Second hand (smooth continuous rotation)
-        const secondAngle = ((seconds + milliseconds / 1000) * 6 - 90) * Math.PI / 180;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(
-          cx + Math.cos(secondAngle) * (radius * 0.9),
-          cy + Math.sin(secondAngle) * (radius * 0.9)
-        );
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = '#f59e0b';
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-        
-        // Center dot
-        ctx.beginPath();
-        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-        
-        playgroundState.animationFrames.clock = requestAnimationFrame(animate);
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.fillStyle = 'rgba(10, 10, 20, 0.1)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          const time = Date.now() / 100;
+          ctx.beginPath();
+          ctx.moveTo(0, canvas.height / 2);
+          for (let x = 0; x < canvas.width; x++) {
+            const y = canvas.height / 2 + Math.sin((x + time) * 0.05) * 60;
+            ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = '#a855f7';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          playgroundState.animations.rhythm = requestAnimationFrame(animate);
+        }
+        animate();
       }
-      animate();
+    }
+
+    // ===== GRADIENT MESH =====
+    function renderGradientMesh(container, option) {
+      container.innerHTML = '<canvas class="pg-canvas" id="pgMeshCanvas"></canvas>';
+      const canvas = document.getElementById('pgMeshCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth;
+      canvas.height = 400;
+      
+      if (option === 'blob') {
+        const blobs = [];
+        for (let i = 0; i < 4; i++) {
+          blobs.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            hue: Math.random() * 360
+          });
+        }
+        
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          blobs.forEach(blob => {
+            blob.x += blob.vx;
+            blob.y += blob.vy;
+            if (blob.x < 0 || blob.x > canvas.width) blob.vx *= -1;
+            if (blob.y < 0 || blob.y > canvas.height) blob.vy *= -1;
+            
+            const gradient = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, 100);
+            gradient.addColorStop(0, `hsl(${blob.hue}, 80%, 60%)`);
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          });
+          
+          playgroundState.animations.mesh = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'aurora') {
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          const time = Date.now() / 2000;
+          
+          for (let i = 0; i < 5; i++) {
+            const y = (Math.sin(time + i) * 0.5 + 0.5) * canvas.height;
+            const gradient = ctx.createLinearGradient(0, y - 50, 0, y + 50);
+            gradient.addColorStop(0, 'transparent');
+            gradient.addColorStop(0.5, `hsla(${(time * 50 + i * 60) % 360}, 80%, 60%, 0.3)`);
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, y - 50, canvas.width, 100);
+          }
+          
+          playgroundState.animations.mesh = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'plasma') {
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          const time = Date.now() / 1000;
+          const imageData = ctx.createImageData(canvas.width, canvas.height);
+          
+          for (let x = 0; x < canvas.width; x += 4) {
+            for (let y = 0; y < canvas.height; y += 4) {
+              const value = Math.sin(x * 0.01 + time) + Math.sin(y * 0.01 + time) + Math.sin((x + y) * 0.01 + time);
+              const hue = (value * 50 + time * 50) % 360;
+              const rgb = hslToRgb(hue / 360, 0.8, 0.6);
+              
+              for (let dx = 0; dx < 4; dx++) {
+                for (let dy = 0; dy < 4; dy++) {
+                  const i = ((y + dy) * canvas.width + (x + dx)) * 4;
+                  imageData.data[i] = rgb[0];
+                  imageData.data[i + 1] = rgb[1];
+                  imageData.data[i + 2] = rgb[2];
+                  imageData.data[i + 3] = 255;
+                }
+              }
+            }
+          }
+          
+          ctx.putImageData(imageData, 0, 0);
+          playgroundState.animations.mesh = requestAnimationFrame(animate);
+        }
+        animate();
+      }
+    }
+
+    function hslToRgb(h, s, l) {
+      let r, g, b;
+      if (s === 0) {
+        r = g = b = l;
+      } else {
+        const hue2rgb = (p, q, t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    }
+
+    // ===== CLOCK =====
+    function renderClock(container, option) {
+      if (option === 'analog') {
+        container.innerHTML = `
+          <canvas class="pg-canvas" id="pgClockCanvas"></canvas>
+          <div class="pg-clock-date" id="pgClockDate"></div>
+        `;
+        const canvas = document.getElementById('pgClockCanvas');
+        const dateEl = document.getElementById('pgClockDate');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 400;
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const radius = Math.min(cx, cy) - 20;
+        
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          const now = new Date();
+          const hours = now.getHours() % 12;
+          const minutes = now.getMinutes();
+          const seconds = now.getSeconds();
+          
+          dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+          
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // Clock face
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          // Hour markers
+          for (let i = 0; i < 12; i++) {
+            const angle = (i * 30 - 90) * Math.PI / 180;
+            const x1 = cx + Math.cos(angle) * (radius - 10);
+            const y1 = cy + Math.sin(angle) * (radius - 10);
+            const x2 = cx + Math.cos(angle) * (radius - 20);
+            const y2 = cy + Math.sin(angle) * (radius - 20);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+          
+          // Hands
+          const hourAngle = ((hours + minutes / 60) * 30 - 90) * Math.PI / 180;
+          const minuteAngle = ((minutes + seconds / 60) * 6 - 90) * Math.PI / 180;
+          const secondAngle = (seconds * 6 - 90) * Math.PI / 180;
+          
+          // Hour hand
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(hourAngle) * (radius * 0.5), cy + Math.sin(hourAngle) * (radius * 0.5));
+          ctx.strokeStyle = '#a855f7';
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#a855f7';
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          
+          // Minute hand
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(minuteAngle) * (radius * 0.7), cy + Math.sin(minuteAngle) * (radius * 0.7));
+          ctx.strokeStyle = '#ec4899';
+          ctx.lineWidth = 4;
+          ctx.lineCap = 'round';
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = '#ec4899';
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          
+          // Second hand
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(secondAngle) * (radius * 0.9), cy + Math.sin(secondAngle) * (radius * 0.9));
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+          
+          // Center dot
+          ctx.beginPath();
+          ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#fff';
+          ctx.fill();
+          
+          playgroundState.animations.clock = requestAnimationFrame(animate);
+        }
+        animate();
+      } else if (option === 'flip') {
+        container.innerHTML = '<div class="pg-clock-date" id="pgFlipClock" style="font-size:4em;font-weight:700;text-align:center;padding:60px 20px;color:var(--text-primary);"></div>';
+        const clockEl = document.getElementById('pgFlipClock');
+        
+        function update() {
+          if (state.currentView !== 'playground') return;
+          const now = new Date();
+          clockEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          setTimeout(update, 1000);
+        }
+        update();
+      } else if (option === 'binary') {
+        container.innerHTML = '<canvas class="pg-canvas" id="pgBinaryCanvas"></canvas>';
+        const canvas = document.getElementById('pgBinaryCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 400;
+        
+        function animate() {
+          if (state.currentView !== 'playground') return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          const now = new Date();
+          const hours = now.getHours();
+          const minutes = now.getMinutes();
+          const seconds = now.getSeconds();
+          
+          const cx = canvas.width / 2;
+          const cy = canvas.height / 2;
+          
+          // Draw binary representation
+          [hours, minutes, seconds].forEach((value, row) => {
+            for (let bit = 0; bit < 6; bit++) {
+              const isOn = (value >> bit) & 1;
+              const x = cx - 80 + bit * 30;
+              const y = cy - 60 + row * 50;
+              
+              ctx.beginPath();
+              ctx.arc(x, y, 8, 0, Math.PI * 2);
+              ctx.fillStyle = isOn ? '#a855f7' : 'rgba(255, 255, 255, 0.1)';
+              if (isOn) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#a855f7';
+              }
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            }
+          });
+          
+          // Labels
+          ctx.font = '12px Space Grotesk';
+          ctx.fillStyle = 'var(--text-secondary)';
+          ctx.textAlign = 'right';
+          ctx.fillText('H', cx - 100, cy - 50);
+          ctx.fillText('M', cx - 100, cy);
+          ctx.fillText('S', cx - 100, cy + 50);
+          
+          playgroundState.animations.clock = requestAnimationFrame(animate);
+        }
+        animate();
+      }
     }
 
     // ===== INIT =====
