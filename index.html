@@ -3113,6 +3113,151 @@
         animation: none !important;
       }
     }
+
+    /* ===== Premium Tickets UX Overhaul ===== */
+    :root {
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-md: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.375rem;
+    }
+
+    .search-input:focus-visible,
+    .tab:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    .kanban-card:focus-visible {
+      outline: 2px solid var(--accent-light);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.18);
+    }
+
+    .tickets-shell {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .tickets-hero {
+      border: 1px solid rgba(168, 85, 247, 0.28);
+      background: radial-gradient(circle at top right, rgba(168, 85, 247, 0.16), transparent 45%), linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(10, 10, 20, 0.95));
+      border-radius: var(--radius-lg);
+      padding: clamp(16px, 2.4vw, 28px);
+    }
+
+    .tickets-hero h2 { font-size: var(--text-xl); margin-bottom: 6px; }
+    .tickets-hero p { color: var(--text-secondary); font-size: var(--text-sm); }
+
+    .tickets-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--space-4);
+    }
+
+    .quick-add {
+      display: flex;
+      gap: var(--space-2);
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .quick-add-input {
+      flex: 1;
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-primary);
+      padding: 10px 12px;
+      font-family: inherit;
+    }
+
+    .quick-add-btn,
+    .pill-btn {
+      min-height: 42px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      background: rgba(168, 85, 247, 0.16);
+      color: #f6eeff;
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .ticket-status-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--text-secondary);
+      font-size: var(--text-xs);
+    }
+
+    .sync-pill {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .sync-pill.syncing { color: #fcd34d; border-color: rgba(252, 211, 77, 0.6); }
+    .sync-pill.error { color: #fca5a5; border-color: rgba(252, 165, 165, 0.7); }
+
+    .kanban { padding: 4px; min-height: auto; }
+
+    .kanban-column {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(4px);
+    }
+
+    .kanban-cards { min-height: 130px; }
+
+    .kanban-card {
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .kanban-card:active { cursor: grabbing; }
+
+    .kanban-column.drag-over {
+      border-color: rgba(192, 132, 252, 0.7);
+      box-shadow: inset 0 0 0 1px rgba(192, 132, 252, 0.5);
+    }
+
+    .empty-state {
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+      font-size: var(--text-sm);
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 900px) {
+      .tickets-toolbar { align-items: stretch; }
+      .quick-add { min-width: 100%; }
+      .kanban { gap: 12px; }
+      .kanban-column { min-width: 85vw; scroll-snap-align: start; }
+      #ticketsView { overflow-x: auto; scroll-snap-type: x mandatory; }
+    }
+
   </style>
 </head>
 <body>
@@ -3122,7 +3267,7 @@
     <div class="header-top">
       <div class="logo">💜 Bud Love Tickets</div>
       <div class="search-container">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search..." autocomplete="off">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search..." autocomplete="off" aria-label="Search tickets and projects">
       </div>
     </div>
     <div class="tabs" id="tabs">
@@ -3150,30 +3295,50 @@
   
   <div id="timelineView" class="timeline hidden"></div>
   
-  <div id="ticketsView" class="kanban hidden">
-    <div class="kanban-column" data-status="todo">
-      <div class="kanban-header">
-        <h3>📋 To Do</h3>
-        <span class="kanban-count" id="todoCount">0</span>
+  <div id="ticketsView" class="kanban hidden" aria-label="Tickets board">
+    <div class="tickets-shell">
+      <section class="tickets-hero" aria-label="Tickets onboarding">
+        <h2>Ship together, with less chaos.</h2>
+        <p>Capture fast, prioritize intentionally, and drag tickets across your flow. Keyboard shortcuts: <strong>N</strong> new ticket, <strong>Shift+N</strong> quick add to Doing, <strong>/</strong> search.</p>
+        <div class="tickets-toolbar">
+          <div class="quick-add">
+            <input id="quickAddInput" class="quick-add-input" type="text" placeholder="Quick add a ticket…" aria-label="Quick add ticket title" />
+            <button class="quick-add-btn" onclick="quickAddTicket()" aria-label="Add ticket quickly">Quick Add</button>
+          </div>
+          <button class="pill-btn" onclick="shareWithBud()" aria-label="Share current doing tickets with Bud">Share Doing → Bud</button>
+        </div>
+        <div class="ticket-status-row">
+          <span id="ticketSummary">No tickets yet — start with a quick add.</span>
+          <span class="sync-pill" id="syncStatusPill" aria-live="polite">Synced</span>
+        </div>
+      </section>
+
+      <div class="kanban" aria-label="Drag and drop ticket columns">
+        <div class="kanban-column" data-status="todo">
+          <div class="kanban-header">
+            <h3>📋 To Do</h3>
+            <span class="kanban-count" id="todoCount">0</span>
+          </div>
+          <div class="kanban-cards" id="todoCards" aria-label="To do tickets"></div>
+          <button class="kanban-add" onclick="addTicket('todo')" aria-label="Add ticket to to do">+ Add ticket</button>
+        </div>
+        <div class="kanban-column" data-status="doing">
+          <div class="kanban-header">
+            <h3>🔨 Doing</h3>
+            <span class="kanban-count" id="doingCount">0</span>
+          </div>
+          <div class="kanban-cards" id="doingCards" aria-label="Doing tickets"></div>
+          <button class="kanban-add" onclick="addTicket('doing')" aria-label="Add ticket to doing">+ Add ticket</button>
+        </div>
+        <div class="kanban-column" data-status="done">
+          <div class="kanban-header">
+            <h3>✅ Done</h3>
+            <span class="kanban-count" id="doneCount">0</span>
+          </div>
+          <div class="kanban-cards" id="doneCards" aria-label="Done tickets"></div>
+          <button class="kanban-add" onclick="addTicket('done')" aria-label="Add ticket to done">+ Add ticket</button>
+        </div>
       </div>
-      <div class="kanban-cards" id="todoCards"></div>
-      <button class="kanban-add" onclick="addTicket('todo')">+ Add ticket</button>
-    </div>
-    <div class="kanban-column" data-status="doing">
-      <div class="kanban-header">
-        <h3>🔨 Doing</h3>
-        <span class="kanban-count" id="doingCount">0</span>
-      </div>
-      <div class="kanban-cards" id="doingCards"></div>
-      <button class="kanban-add" onclick="addTicket('doing')">+ Add ticket</button>
-    </div>
-    <div class="kanban-column" data-status="done">
-      <div class="kanban-header">
-        <h3>✅ Done</h3>
-        <span class="kanban-count" id="doneCount">0</span>
-      </div>
-      <div class="kanban-cards" id="doneCards"></div>
-      <button class="kanban-add" onclick="addTicket('done')">+ Add ticket</button>
     </div>
   </div>
   
@@ -4012,15 +4177,29 @@
       { id: 'idea-seed-3', title: 'Pulse Dashboard', desc: 'Personal command center connecting Discord, GitHub, tickets, calendar into one live dashboard. Mission control for your digital life.', category: 'Tool', status: 'brainstorming', tags: ['dashboard', 'integration'], created: '2026-02-07', plan: [], notes: '' }
     ];
 
+    function updateSyncStatus(status = 'synced', label = null) {
+      syncState = status;
+      const pill = document.getElementById('syncStatusPill');
+      if (!pill) return;
+      pill.classList.remove('syncing', 'error');
+      if (status === 'syncing') pill.classList.add('syncing');
+      if (status === 'error') pill.classList.add('error');
+      pill.textContent = label || (status === 'syncing' ? 'Syncing…' : status === 'error' ? 'Sync failed' : 'Synced');
+    }
+
     async function saveTicketsRemote() {
+      updateSyncStatus('syncing');
       try {
         await fetch(TICKETS_API, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tickets, ideas })
         });
+        updateSyncStatus('synced');
         console.log('Data saved!');
       } catch (e) {
+        updateSyncStatus('error');
+        showToast('⚠️ Could not sync changes. Will retry on next update.');
         console.error('Failed to save:', e);
       }
     }
@@ -4099,13 +4278,15 @@
         const count = document.getElementById(status + 'Count');
         const filtered = tickets.filter(t => t.status === status);
         count.textContent = filtered.length;
+        count.setAttribute('aria-label', `${filtered.length} tickets`);
         
         // Build "X completed" label for done column
         const doneLabel = (status === 'done' && filtered.length > 0)
           ? `<div class="done-completed-label">${filtered.length} completed</div>`
           : '';
         
-        container.innerHTML = doneLabel + filtered.map(t => {
+        const emptyState = filtered.length === 0 ? `<div class="empty-state">${status === 'todo' ? 'No tickets yet. Add your first task.' : status === 'doing' ? 'Nothing in progress. Move a task here to focus.' : 'No completed tickets yet. Ship one 💜'}</div>` : '';
+        container.innerHTML = doneLabel + emptyState + filtered.map(t => {
           const prevStatus = status === 'doing' ? 'todo' : (status === 'done' ? 'doing' : null);
           const nextStatus = status === 'todo' ? 'doing' : (status === 'doing' ? 'done' : null);
           const shortId = getTicketShortId(t.id);
@@ -4114,7 +4295,7 @@
           const dateStr = formatTicketDate(t.created);
           
           return `
-          <div class="kanban-card" draggable="true" data-id="${t.id}" 
+          <div class="kanban-card" draggable="true" data-id="${t.id}" tabindex="0" role="article" aria-label="Ticket ${t.title}"
                ondragstart="dragStart(event)" ondragend="dragEnd(event)">
             <div class="kanban-card-top">
               <div class="kanban-card-top-left">
@@ -4146,10 +4327,16 @@
         `}).join('');
       });
       
+      const total = tickets.length;
+      const doing = tickets.filter(t => t.status === 'doing').length;
+      const done = tickets.filter(t => t.status === 'done').length;
+      const summary = document.getElementById('ticketSummary');
+      if (summary) summary.textContent = total === 0 ? 'No tickets yet — start with a quick add.' : `${doing} in progress • ${done} done • ${total} total`;
+
       // Setup drop zones
       document.querySelectorAll('.kanban-cards').forEach(zone => {
-        zone.ondragover = e => { e.preventDefault(); zone.classList.add('drop-zone'); };
-        zone.ondragleave = () => zone.classList.remove('drop-zone');
+        zone.ondragover = e => { e.preventDefault(); zone.classList.add('drop-zone'); zone.closest('.kanban-column')?.classList.add('drag-over'); };
+        zone.ondragleave = () => { zone.classList.remove('drop-zone'); zone.closest('.kanban-column')?.classList.remove('drag-over'); };
         zone.ondrop = e => dropTicket(e, zone);
       });
       
@@ -4160,6 +4347,7 @@
     let draggedId = null;
     let touchStartY = 0;
     let touchedCard = null;
+    let syncState = 'synced';
     
     function dragStart(e) {
       draggedId = e.target.dataset.id;
@@ -4174,6 +4362,7 @@
     async function dropTicket(e, zone) {
       e.preventDefault();
       zone.classList.remove('drop-zone');
+      zone.closest('.kanban-column')?.classList.remove('drag-over');
       const newStatus = zone.closest('.kanban-column').dataset.status;
       
       if (draggedId) {
@@ -4192,6 +4381,30 @@
       // Touch drag is complex on mobile - using move buttons instead
     }
     
+    function quickAddTicket(status = 'todo') {
+      const input = document.getElementById('quickAddInput');
+      if (!input) return;
+      const title = input.value.trim();
+      if (!title) {
+        showToast('✍️ Add a title first');
+        input.focus();
+        return;
+      }
+      tickets.push({
+        id: Date.now().toString(),
+        title,
+        desc: '',
+        status,
+        priority: 'medium',
+        category: 'general',
+        created: new Date().toISOString().split('T')[0]
+      });
+      input.value = '';
+      saveTicketsRemote();
+      renderTickets();
+      showToast('✅ Ticket added');
+    }
+
     function addTicket(status) {
       document.getElementById('ticketStatus').value = status;
       document.getElementById('ticketTitle').value = '';
@@ -4259,6 +4472,16 @@
         });
       });
       
+      const quickInput = document.getElementById('quickAddInput');
+      if (quickInput) {
+        quickInput.addEventListener('keydown', (evt) => {
+          if (evt.key === 'Enter') {
+            evt.preventDefault();
+            quickAddTicket();
+          }
+        });
+      }
+
       // Close modal on overlay click
       document.getElementById('ticketModalOverlay').addEventListener('click', (e) => {
         if (e.target.id === 'ticketModalOverlay') closeTicketModal();
@@ -4901,6 +5124,16 @@
     
     // ===== KEYBOARD NAVIGATION =====
     document.addEventListener('keydown', (e) => {
+      const targetTag = document.activeElement?.tagName;
+      const isTyping = targetTag === 'INPUT' || targetTag === 'TEXTAREA' || document.activeElement?.isContentEditable;
+
+      if (!isTyping && (e.key === 'n' || e.key === 'N')) {
+        e.preventDefault();
+        if (e.shiftKey) quickAddTicket('doing');
+        else addTicket('todo');
+        return;
+      }
+
       // `/` to focus search
       if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
         e.preventDefault();
