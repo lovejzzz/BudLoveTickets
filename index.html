@@ -4253,11 +4253,14 @@
     function setSyncState(partial) {
       syncState = { ...syncState, ...partial };
       const badge = document.getElementById('syncStatusBadge');
-      if (!badge) return;
-      if (syncState.syncing) badge.textContent = 'Sync: syncing...';
-      else if (syncState.error) badge.textContent = 'Sync: error';
-      else if (syncState.lastSyncAt) badge.textContent = 'Sync: ok';
-      else badge.textContent = 'Sync: idle';
+      const pill = document.getElementById('syncStatusPill');
+      const label = syncState.syncing ? 'Sync: syncing...' : (syncState.error ? 'Sync: error' : (syncState.lastSyncAt ? 'Sync: ok' : 'Sync: idle'));
+      if (badge) badge.textContent = label;
+      if (pill) {
+        pill.textContent = syncState.syncing ? 'Syncing' : (syncState.error ? 'Sync issue' : 'Synced');
+        pill.classList.toggle('syncing', !!syncState.syncing);
+        pill.classList.toggle('error', !!syncState.error);
+      }
       const diag = document.getElementById('ticketDiagnostics');
       if (diag) {
         if (syncState.error) {
@@ -4414,6 +4417,12 @@
         const doneLabel = (status === 'done' && filtered.length > 0) ? `<div class="done-completed-label">${filtered.length} completed</div>` : '';
         container.innerHTML = doneLabel + filtered.map(t => renderTicketCard(t, status)).join('');
       });
+      const summary = document.getElementById('ticketSummary');
+      if (summary) {
+        const todo = visible.filter(t => t.status === 'todo').length;
+        const doing = visible.filter(t => t.status === 'doing').length;
+        summary.textContent = `${visible.length} visible • ${todo} todo • ${doing} doing`;
+      }
       document.querySelectorAll('.kanban-cards').forEach(zone => {
         zone.ondragover = e => { e.preventDefault(); zone.classList.add('drop-zone'); };
         zone.ondragleave = () => zone.classList.remove('drop-zone');
@@ -4468,6 +4477,17 @@
     }
     function initTouchDrag() {}
 
+    async function quickAddTicket(status = 'todo') {
+      const input = document.getElementById('quickAddInput');
+      if (!input || !input.value.trim()) return showToast('Type a title first');
+      const t = normalizeTicket({ id: Date.now().toString(), title: input.value.trim(), status, priority: 'medium' });
+      pushActivity(t, 'Quick added ticket');
+      tickets.push(t);
+      input.value = '';
+      scheduleRenderTickets();
+      await saveTicketsRemote('quick-add');
+    }
+
     function addTicket(status) {
       document.getElementById('ticketStatus').value = status;
       ['ticketTitle','ticketDesc','ticketOwner','ticketTags','ticketDue','ticketEffort','ticketBlockers'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
@@ -4520,6 +4540,8 @@
         btn.addEventListener('click', () => { document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); });
       });
       document.getElementById('ticketModalOverlay').addEventListener('click', (e) => { if (e.target.id === 'ticketModalOverlay') closeTicketModal(); });
+      const quick = document.getElementById('quickAddInput');
+      if (quick) quick.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); quickAddTicket(); } });
       document.addEventListener('keydown', handleTicketShortcuts);
       hydrateTicketToolbar();
     });
@@ -4569,7 +4591,7 @@
       if (state.currentView !== 'tickets') return;
       const activeTag = document.activeElement && document.activeElement.tagName;
       if (e.key === '/' && activeTag !== 'INPUT' && activeTag !== 'TEXTAREA') { e.preventDefault(); document.getElementById('ticketFilterInput')?.focus(); return; }
-      if (e.key.toLowerCase() === 'n' && activeTag !== 'INPUT' && activeTag !== 'TEXTAREA') { e.preventDefault(); addTicket('todo'); return; }
+      if (e.key.toLowerCase() === 'n' && activeTag !== 'INPUT' && activeTag !== 'TEXTAREA') { e.preventDefault(); if (e.shiftKey) quickAddTicket('doing'); else addTicket('todo'); return; }
       if (e.key.toLowerCase() === 'g') { shortcutGPressedAt = Date.now(); return; }
       if (e.key.toLowerCase() === 't' && Date.now() - shortcutGPressedAt < 1200) { openTodayFocus(); }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a') {
