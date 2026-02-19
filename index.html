@@ -3258,7 +3258,16 @@
       #ticketsView { overflow-x: auto; scroll-snap-type: x mandatory; }
     }
 
-  </style>
+  
+    .tickets-toolbar { display:flex; justify-content:space-between; gap:10px; padding:8px; margin-bottom:8px; flex-wrap:wrap; }
+    .tickets-toolbar-left, .tickets-toolbar-right { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .sync-badge { font-size:12px; padding:4px 8px; border:1px solid var(--border); border-radius:999px; color:var(--text-muted); }
+    .ticket-diagnostics { margin: 8px; padding:8px 10px; border:1px solid #7c2d12; background:#3f1d1d; color:#fecaca; border-radius:8px; font-size:12px; }
+    .ticket-meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+    .ticket-chip { font-size:11px; border:1px solid var(--border); border-radius:999px; padding:2px 7px; color:var(--text-muted); }
+    .card-select { margin-right:6px; }
+    .kanban-card.selected { outline: 2px solid #a855f7; }
+</style>
 </head>
 <body>
   <div class="offline-banner" id="offlineBanner">📴 You're offline - viewing cached data</div>
@@ -3304,12 +3313,26 @@
           <div class="quick-add">
             <input id="quickAddInput" class="quick-add-input" type="text" placeholder="Quick add a ticket…" aria-label="Quick add ticket title" />
             <button class="quick-add-btn" onclick="quickAddTicket()" aria-label="Add ticket quickly">Quick Add</button>
+            <input id="ticketFilterInput" class="quick-add-input" type="text" placeholder="Filter tickets (/)">
+            <select id="ticketOwnerFilter" class="category-select"><option value="">All owners</option></select>
+            <select id="ticketSortSelect" class="category-select">
+              <option value="priority-desc">Priority ↓</option>
+              <option value="due-asc">Due soon</option>
+              <option value="updated-desc">Recently updated</option>
+              <option value="title-asc">Title A-Z</option>
+            </select>
           </div>
+          <button class="pill-btn" onclick="openTodayFocus()" aria-label="Today focus">🎯 Today</button>
+          <button class="pill-btn" onclick="bulkMoveSelected('doing')" aria-label="Bulk move selected to doing">Bulk → Doing</button>
+          <button class="pill-btn" onclick="bulkMoveSelected('done')" aria-label="Bulk move selected to done">Bulk → Done</button>
+          <button class="pill-btn" onclick="bulkDeleteSelected()" aria-label="Bulk delete selected">Bulk Delete</button>
           <button class="pill-btn" onclick="shareWithBud()" aria-label="Share current doing tickets with Bud">Share Doing → Bud</button>
         </div>
+        <div id="ticketDiagnostics" class="ticket-diagnostics hidden"></div>
         <div class="ticket-status-row">
           <span id="ticketSummary">No tickets yet — start with a quick add.</span>
           <span class="sync-pill" id="syncStatusPill" aria-live="polite">Synced</span>
+          <span class="sync-badge" id="syncStatusBadge" aria-live="polite">Sync: idle</span>
         </div>
       </section>
 
@@ -3634,6 +3657,12 @@
               <option value="general">🌐 General</option>
             </select>
           </div>
+
+          <div class="form-group"><label for="ticketOwner">Owner</label><input type="text" id="ticketOwner" placeholder="e.g. SK"></div>
+          <div class="form-group"><label for="ticketTags">Tags (comma separated)</label><input type="text" id="ticketTags" placeholder="bug,api,ux"></div>
+          <div class="form-group"><label for="ticketDue">Due date</label><input type="date" id="ticketDue"></div>
+          <div class="form-group"><label for="ticketEffort">Effort (1-13)</label><input type="number" min="1" max="13" id="ticketEffort" placeholder="3"></div>
+          <div class="form-group"><label for="ticketBlockers">Blockers</label><textarea id="ticketBlockers" rows="2" placeholder="Dependencies / waiting on..."></textarea></div>
           
           <button type="submit" class="submit-btn">Create Ticket</button>
         </form>
@@ -4163,252 +4192,285 @@
     let tickets = [];
     let ideas = [];
     const TICKETS_API = '/api/tickets';
-    
-    const SEED_IDEAS = [
-      { id: 'idea-seed-1', title: 'MCP Playground', desc: 'Visual web app to explore, test, and chain MCP servers. Like Postman meets Zapier for MCP. Server browser, tool tester, workflow builder.', category: 'MCP', status: 'planned', tags: ['mcp', 'webapp', 'tool'], created: '2026-02-07',
-        plan: [
-          { name: 'Phase 1: Server Explorer', desc: 'Connect to any MCP server and browse its tools', done: false },
-          { name: 'Phase 2: Tool Tester', desc: 'Run any tool interactively with auto-generated forms', done: false },
-          { name: 'Phase 3: Multi-Server + Workflow', desc: 'Connect multiple servers, chain tools, visual canvas', done: false },
-          { name: 'Phase 4: Community', desc: 'Share workflows, preset library, featured gallery', done: false }
-        ],
-        notes: '' },
-      { id: 'idea-seed-2', title: 'Vibe Board', desc: 'Describe a mood in words and it generates a complete design system — colors, fonts, components. AI-powered design generation.', category: 'UI', status: 'brainstorming', tags: ['design', 'ai', 'creative'], created: '2026-02-07', plan: [], notes: '' },
-      { id: 'idea-seed-3', title: 'Pulse Dashboard', desc: 'Personal command center connecting Discord, GitHub, tickets, calendar into one live dashboard. Mission control for your digital life.', category: 'Tool', status: 'brainstorming', tags: ['dashboard', 'integration'], created: '2026-02-07', plan: [], notes: '' }
-    ];
+    const LOCAL_CACHE_KEY = 'blt-cache-v2';
+    const LOCAL_OPLOG_KEY = 'blt-oplog-v1';
+    const selectedTicketIds = new Set();
+    let ticketRenderQueued = false;
+    let ticketRenderSig = '';
+    let ticketFilters = { text: '', owner: '', sort: 'priority-desc', todayOnly: false };
+    let syncState = { syncing: false, error: '', lastSyncAt: 0 };
 
-    function updateSyncStatus(status = 'synced', label = null) {
-      syncState = status;
-      const pill = document.getElementById('syncStatusPill');
-      if (!pill) return;
-      pill.classList.remove('syncing', 'error');
-      if (status === 'syncing') pill.classList.add('syncing');
-      if (status === 'error') pill.classList.add('error');
-      pill.textContent = label || (status === 'syncing' ? 'Syncing…' : status === 'error' ? 'Sync failed' : 'Synced');
+    const PRIORITY_SCORE = { low: 1, medium: 2, high: 3 };
+
+    function normalizeTicket(t = {}) {
+      return {
+        id: String(t.id || Date.now()),
+        title: (t.title || '').trim(),
+        desc: t.desc || '',
+        status: ['todo', 'doing', 'done'].includes(t.status) ? t.status : 'todo',
+        priority: ['low', 'medium', 'high'].includes(t.priority) ? t.priority : 'medium',
+        category: t.category || 'general',
+        owner: (t.owner || '').trim(),
+        tags: Array.isArray(t.tags) ? t.tags : String(t.tags || '').split(',').map(x => x.trim()).filter(Boolean),
+        due: t.due || '',
+        effort: Number(t.effort) > 0 ? Number(t.effort) : null,
+        blockers: t.blockers || '',
+        activity: Array.isArray(t.activity) ? t.activity : [],
+        created: t.created || new Date().toISOString().split('T')[0],
+        updatedAt: t.updatedAt || new Date().toISOString()
+      };
     }
 
-    async function saveTicketsRemote() {
-      updateSyncStatus('syncing');
+    function pushActivity(ticket, action) {
+      ticket.activity = ticket.activity || [];
+      ticket.activity.unshift({ at: new Date().toISOString(), action });
+      ticket.activity = ticket.activity.slice(0, 20);
+      ticket.updatedAt = new Date().toISOString();
+    }
+
+    function saveLocalCache() {
+      localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify({ tickets, ideas, savedAt: Date.now() }));
+    }
+
+    function loadLocalCache() {
       try {
-        await fetch(TICKETS_API, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tickets, ideas })
-        });
-        updateSyncStatus('synced');
-        console.log('Data saved!');
-      } catch (e) {
-        updateSyncStatus('error');
-        showToast('⚠️ Could not sync changes. Will retry on next update.');
-        console.error('Failed to save:', e);
+        const raw = localStorage.getItem(LOCAL_CACHE_KEY);
+        if (!raw) return;
+        const cached = JSON.parse(raw);
+        tickets = (cached.tickets || []).map(normalizeTicket);
+        ideas = cached.ideas || [];
+      } catch (e) { console.warn('Local cache unreadable:', e); }
+    }
+
+    function queueLocalOp(type, payload) {
+      try {
+        const ops = JSON.parse(localStorage.getItem(LOCAL_OPLOG_KEY) || '[]');
+        ops.push({ id: Date.now() + '-' + Math.random().toString(16).slice(2), type, payload, at: Date.now() });
+        localStorage.setItem(LOCAL_OPLOG_KEY, JSON.stringify(ops.slice(-500)));
+      } catch {}
+    }
+
+    function setSyncState(partial) {
+      syncState = { ...syncState, ...partial };
+      const badge = document.getElementById('syncStatusBadge');
+      if (!badge) return;
+      if (syncState.syncing) badge.textContent = 'Sync: syncing...';
+      else if (syncState.error) badge.textContent = 'Sync: error';
+      else if (syncState.lastSyncAt) badge.textContent = 'Sync: ok';
+      else badge.textContent = 'Sync: idle';
+      const diag = document.getElementById('ticketDiagnostics');
+      if (diag) {
+        if (syncState.error) {
+          diag.classList.remove('hidden');
+          diag.innerHTML = `⚠️ ${escHtml(syncState.error)} <button onclick="retrySync()" style="margin-left:8px;">Retry</button>`;
+        } else {
+          diag.classList.add('hidden');
+          diag.textContent = '';
+        }
       }
     }
-    
+
+    async function saveTicketsRemote(reason = 'update') {
+      setSyncState({ syncing: true, error: '' });
+      try {
+        const payload = { tickets: tickets.map(normalizeTicket), ideas, clientUpdatedAt: new Date().toISOString() };
+        const res = await fetch(TICKETS_API, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!res.ok) throw new Error(`Save failed (${res.status})`);
+        const data = await res.json();
+        if (data && data.tickets) tickets = data.tickets.map(normalizeTicket);
+        if (data && data.ideas) ideas = data.ideas;
+        saveLocalCache();
+        setSyncState({ syncing: false, lastSyncAt: Date.now(), error: '' });
+      } catch (e) {
+        console.error('Failed to save:', e);
+        queueLocalOp('save', { reason, tickets, ideas });
+        saveLocalCache();
+        setSyncState({ syncing: false, error: `${e.message}. Changes kept locally.` });
+      }
+    }
+
+    async function retrySync() {
+      await saveTicketsRemote('retry');
+      renderTickets();
+    }
+
     async function loadTickets() {
+      loadLocalCache();
       try {
         const res = await fetch(TICKETS_API);
+        if (!res.ok) throw new Error(`Load failed (${res.status})`);
         const data = await res.json();
-        tickets = data.tickets || [];
+        tickets = (data.tickets || []).map(normalizeTicket);
         ideas = data.ideas || [];
-        // Seed ideas if none exist
-        if (ideas.length === 0) {
-          ideas = [...SEED_IDEAS];
-          saveTicketsRemote();
-        }
-        // Ensure all ideas have plan and notes fields
-        ideas.forEach(idea => {
-          if (!idea.plan) idea.plan = [];
-          if (typeof idea.notes !== 'string') idea.notes = '';
-        });
-        console.log('Loaded tickets:', tickets.length, 'ideas:', ideas.length);
-        if (state.currentView === 'tickets') renderTickets();
-        if (state.currentView === 'ideas') renderIdeas();
+        if (ideas.length === 0) { ideas = [...SEED_IDEAS]; await saveTicketsRemote('seed-ideas'); }
+        ideas.forEach(idea => { if (!idea.plan) idea.plan = []; if (typeof idea.notes !== 'string') idea.notes = ''; });
+        saveLocalCache();
+        setSyncState({ lastSyncAt: Date.now(), error: '' });
       } catch (e) {
         console.error('Failed to load tickets:', e);
-        tickets = [];
-        ideas = [...SEED_IDEAS];
+        if (!ideas.length) ideas = [...SEED_IDEAS];
+        setSyncState({ error: `${e.message}. Loaded local cache.` });
       }
+      renderTickets();
+      if (state.currentView === 'ideas') renderIdeas();
+      hydrateTicketToolbar();
     }
-    
-    function getTicketShortId(id) {
-      return 'BLT-' + (id || '0').slice(-4);
-    }
-    
-    function getTicketAvatar(t) {
-      // Determine avatar initials and color
-      if (t.category && t.category.toLowerCase().includes('skyx')) return { initials: 'SK', color: '#a855f7' };
-      if (t.createdBy === 'bot' || t.createdBy === 'bud') return { initials: 'BL', color: '#a855f7' };
-      return { initials: 'SK', color: '#a855f7' };
-    }
-    
+
+    function getTicketShortId(id) { return 'BLT-' + (id || '0').slice(-4); }
+    function getTicketAvatar(t) { return { initials: (t.owner || 'SK').slice(0,2).toUpperCase(), color: '#a855f7' }; }
     function getCategoryLabel(categoryId) {
       if (!categoryId || categoryId === 'general') return '🌐 General';
-      const cases = getCases();
-      const c = cases.find(cs => cs.id === categoryId);
+      const c = getCases().find(cs => cs.id === categoryId);
       return c ? `${c.icon} ${c.name}` : categoryId;
     }
-    
     function formatTicketDate(dateStr) {
       if (!dateStr) return '';
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const parts = dateStr.split('-');
-      if (parts.length !== 3) return dateStr;
-      return `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}`;
+      const d = new Date(dateStr); if (isNaN(d)) return dateStr;
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     }
-    
-    function toggleCardMenu(e, id) {
-      e.stopPropagation();
-      // Close any open menus
-      document.querySelectorAll('.card-menu-dropdown.active').forEach(m => m.classList.remove('active'));
-      const menu = document.getElementById('menu-' + id);
-      if (menu) menu.classList.add('active');
-      
-      // Close on next click anywhere
-      const closeMenu = () => {
-        menu && menu.classList.remove('active');
-        document.removeEventListener('click', closeMenu);
-      };
-      setTimeout(() => document.addEventListener('click', closeMenu), 0);
+
+    function ticketMatchesFilters(t) {
+      if (ticketFilters.owner && (t.owner || '').toLowerCase() !== ticketFilters.owner.toLowerCase()) return false;
+      if (ticketFilters.todayOnly) {
+        const today = new Date().toISOString().split('T')[0];
+        if (!(t.due === today || t.priority === 'high')) return false;
+      }
+      if (ticketFilters.text) {
+        const hay = `${t.title} ${t.desc} ${(t.tags || []).join(' ')} ${t.owner || ''}`.toLowerCase();
+        if (!hay.includes(ticketFilters.text.toLowerCase())) return false;
+      }
+      return true;
     }
-    
+
+    function sortTickets(list) {
+      return list.slice().sort((a,b) => {
+        switch (ticketFilters.sort) {
+          case 'due-asc': return (a.due || '9999-12-31').localeCompare(b.due || '9999-12-31');
+          case 'updated-desc': return (b.updatedAt || '').localeCompare(a.updatedAt || '');
+          case 'title-asc': return (a.title || '').localeCompare(b.title || '');
+          default: return (PRIORITY_SCORE[b.priority]||0) - (PRIORITY_SCORE[a.priority]||0);
+        }
+      });
+    }
+
+    function toggleTicketSelection(id, checked) {
+      if (checked) selectedTicketIds.add(id); else selectedTicketIds.delete(id);
+      scheduleRenderTickets();
+    }
+
+    function renderTicketCard(t, status) {
+      const prevStatus = status === 'doing' ? 'todo' : (status === 'done' ? 'doing' : null);
+      const nextStatus = status === 'todo' ? 'doing' : (status === 'doing' ? 'done' : null);
+      const shortId = getTicketShortId(t.id);
+      const avatar = getTicketAvatar(t);
+      const catLabel = getCategoryLabel(t.category);
+      const selected = selectedTicketIds.has(t.id);
+      return `
+      <div class="kanban-card ${selected ? 'selected' : ''}" draggable="true" data-id="${t.id}" ondragstart="dragStart(event)" ondragend="dragEnd(event)">
+        <div class="kanban-card-top">
+          <div class="kanban-card-top-left">
+            <input type="checkbox" class="card-select" ${selected ? 'checked' : ''} onchange="toggleTicketSelection('${t.id}', this.checked)">
+            <span class="kanban-card-id">${shortId}</span>
+            ${t.priority ? `<span class="kanban-card-priority priority-${t.priority}">${t.priority}</span>` : ''}
+          </div>
+          <button class="kanban-card-menu" onclick="toggleCardMenu(event, '${t.id}')" title="Menu">⋯</button>
+        </div>
+        <div class="card-menu-dropdown" id="menu-${t.id}">
+          <button class="card-menu-item" onclick="event.stopPropagation(); editTicket('${t.id}')">✏️ Edit</button>
+          ${prevStatus ? `<button class="card-menu-item" onclick="event.stopPropagation(); moveTicket('${t.id}', '${prevStatus}')">◀ Move back</button>` : ''}
+          ${nextStatus ? `<button class="card-menu-item" onclick="event.stopPropagation(); moveTicket('${t.id}', '${nextStatus}')">▶ Move forward</button>` : ''}
+          <button class="card-menu-item danger" onclick="event.stopPropagation(); deleteTicket('${t.id}')">🗑️ Delete</button>
+        </div>
+        <div class="kanban-card-title" onclick="editTicket('${t.id}')" style="cursor:pointer;">${escHtml(t.title)}</div>
+        ${t.desc ? `<div class="kanban-card-desc">${escHtml(t.desc)}</div>` : ''}
+        <div class="ticket-meta">
+          ${t.owner ? `<span class="ticket-chip">👤 ${escHtml(t.owner)}</span>` : ''}
+          ${t.due ? `<span class="ticket-chip">📅 ${formatTicketDate(t.due)}</span>` : ''}
+          ${t.effort ? `<span class="ticket-chip">⚡ ${t.effort}</span>` : ''}
+          ${(t.tags || []).slice(0,3).map(tag => `<span class="ticket-chip">#${escHtml(tag)}</span>`).join('')}
+        </div>
+        ${t.blockers ? `<div class="kanban-card-desc" style="margin-top:6px;">⛔ ${escHtml(t.blockers)}</div>` : ''}
+        ${t.category && t.category !== 'general' ? `<span class="kanban-card-category">${catLabel}</span>` : ''}
+        <div class="kanban-card-footer"><div class="kanban-card-footer-left">${t.updatedAt ? `<span class="kanban-card-footer-item">🕐 ${formatTicketDate(t.updatedAt)}</span>` : ''}</div><div class="kanban-card-avatar" style="background:${avatar.color}">${avatar.initials}</div></div>
+      </div>`;
+    }
+
+    function scheduleRenderTickets() {
+      if (ticketRenderQueued) return;
+      ticketRenderQueued = true;
+      requestAnimationFrame(() => { ticketRenderQueued = false; renderTickets(); });
+    }
+
     function renderTickets() {
-      const statuses = ['todo', 'doing', 'done'];
-      statuses.forEach(status => {
+      const visible = sortTickets(tickets.filter(ticketMatchesFilters));
+      const sig = JSON.stringify({len:visible.length, ids:visible.map(t=>`${t.id}:${t.status}:${t.updatedAt||''}`).join('|'), f:ticketFilters, sel:Array.from(selectedTicketIds).sort().join(',')});
+      if (sig === ticketRenderSig && state.currentView === 'tickets') return;
+      ticketRenderSig = sig;
+      ['todo','doing','done'].forEach(status => {
         const container = document.getElementById(status + 'Cards');
         const count = document.getElementById(status + 'Count');
-        const filtered = tickets.filter(t => t.status === status);
+        const filtered = visible.filter(t => t.status === status);
         count.textContent = filtered.length;
-        count.setAttribute('aria-label', `${filtered.length} tickets`);
-        
-        // Build "X completed" label for done column
-        const doneLabel = (status === 'done' && filtered.length > 0)
-          ? `<div class="done-completed-label">${filtered.length} completed</div>`
-          : '';
-        
-        const emptyState = filtered.length === 0 ? `<div class="empty-state">${status === 'todo' ? 'No tickets yet. Add your first task.' : status === 'doing' ? 'Nothing in progress. Move a task here to focus.' : 'No completed tickets yet. Ship one 💜'}</div>` : '';
-        container.innerHTML = doneLabel + emptyState + filtered.map(t => {
-          const prevStatus = status === 'doing' ? 'todo' : (status === 'done' ? 'doing' : null);
-          const nextStatus = status === 'todo' ? 'doing' : (status === 'doing' ? 'done' : null);
-          const shortId = getTicketShortId(t.id);
-          const avatar = getTicketAvatar(t);
-          const catLabel = getCategoryLabel(t.category);
-          const dateStr = formatTicketDate(t.created);
-          
-          return `
-          <div class="kanban-card" draggable="true" data-id="${t.id}" tabindex="0" role="article" aria-label="Ticket ${t.title}"
-               ondragstart="dragStart(event)" ondragend="dragEnd(event)">
-            <div class="kanban-card-top">
-              <div class="kanban-card-top-left">
-                <span class="kanban-card-id">${shortId}</span>
-                ${t.priority ? `<span class="kanban-card-priority priority-${t.priority}">${t.priority}</span>` : ''}
-              </div>
-              <button class="kanban-card-menu" onclick="toggleCardMenu(event, '${t.id}')" title="Menu">⋯</button>
-            </div>
-            <div class="card-menu-dropdown" id="menu-${t.id}">
-              <button class="card-menu-item" onclick="event.stopPropagation(); editTicket('${t.id}')">✏️ Edit</button>
-              ${prevStatus ? `<button class="card-menu-item" onclick="event.stopPropagation(); moveTicket('${t.id}', '${prevStatus}')">◀ Move back</button>` : ''}
-              ${nextStatus ? `<button class="card-menu-item" onclick="event.stopPropagation(); moveTicket('${t.id}', '${nextStatus}')">▶ Move forward</button>` : ''}
-              <button class="card-menu-item danger" onclick="event.stopPropagation(); deleteTicket('${t.id}')">🗑️ Delete</button>
-            </div>
-            <div class="kanban-card-title" onclick="editTicket('${t.id}')" style="cursor:pointer;">${t.title}</div>
-            ${t.desc ? `<div class="kanban-card-desc">${t.desc}</div>` : ''}
-            ${t.category && t.category !== 'general' ? `<span class="kanban-card-category">${catLabel}</span>` : ''}
-            <div class="kanban-card-footer">
-              <div class="kanban-card-footer-left">
-                <div class="kanban-card-move">
-                  ${prevStatus ? `<button class="move-btn" onclick="event.stopPropagation(); moveTicket('${t.id}', '${prevStatus}')" title="Move left">◀</button>` : ''}
-                  ${nextStatus ? `<button class="move-btn" onclick="event.stopPropagation(); moveTicket('${t.id}', '${nextStatus}')" title="Move right">▶</button>` : ''}
-                </div>
-                ${dateStr ? `<span class="kanban-card-footer-item">🕐 ${dateStr}</span>` : ''}
-              </div>
-              <div class="kanban-card-avatar" style="background:${avatar.color}">${avatar.initials}</div>
-            </div>
-          </div>
-        `}).join('');
+        const doneLabel = (status === 'done' && filtered.length > 0) ? `<div class="done-completed-label">${filtered.length} completed</div>` : '';
+        container.innerHTML = doneLabel + filtered.map(t => renderTicketCard(t, status)).join('');
       });
-      
-      const total = tickets.length;
-      const doing = tickets.filter(t => t.status === 'doing').length;
-      const done = tickets.filter(t => t.status === 'done').length;
-      const summary = document.getElementById('ticketSummary');
-      if (summary) summary.textContent = total === 0 ? 'No tickets yet — start with a quick add.' : `${doing} in progress • ${done} done • ${total} total`;
-
-      // Setup drop zones
       document.querySelectorAll('.kanban-cards').forEach(zone => {
-        zone.ondragover = e => { e.preventDefault(); zone.classList.add('drop-zone'); zone.closest('.kanban-column')?.classList.add('drag-over'); };
-        zone.ondragleave = () => { zone.classList.remove('drop-zone'); zone.closest('.kanban-column')?.classList.remove('drag-over'); };
+        zone.ondragover = e => { e.preventDefault(); zone.classList.add('drop-zone'); };
+        zone.ondragleave = () => zone.classList.remove('drop-zone');
         zone.ondrop = e => dropTicket(e, zone);
       });
-      
-      // Setup mobile touch drag
       initTouchDrag();
+      hydrateOwnerFilter();
     }
-    
+
+    function hydrateOwnerFilter() {
+      const select = document.getElementById('ticketOwnerFilter'); if (!select) return;
+      const owners = Array.from(new Set(tickets.map(t => (t.owner || '').trim()).filter(Boolean))).sort();
+      const cur = ticketFilters.owner;
+      select.innerHTML = '<option value="">All owners</option>' + owners.map(o => `<option value="${escHtml(o)}">${escHtml(o)}</option>`).join('');
+      select.value = cur;
+    }
+
+    function hydrateTicketToolbar() {
+      const filterInput = document.getElementById('ticketFilterInput');
+      const owner = document.getElementById('ticketOwnerFilter');
+      const sort = document.getElementById('ticketSortSelect');
+      if (filterInput && !filterInput.dataset.bound) {
+        filterInput.dataset.bound = '1';
+        filterInput.addEventListener('input', () => { ticketFilters.text = filterInput.value.trim(); scheduleRenderTickets(); });
+      }
+      if (owner && !owner.dataset.bound) {
+        owner.dataset.bound = '1';
+        owner.addEventListener('change', () => { ticketFilters.owner = owner.value; scheduleRenderTickets(); });
+      }
+      if (sort && !sort.dataset.bound) {
+        sort.dataset.bound = '1'; sort.value = ticketFilters.sort;
+        sort.addEventListener('change', () => { ticketFilters.sort = sort.value; scheduleRenderTickets(); });
+      }
+    }
+
     let draggedId = null;
     let touchStartY = 0;
     let touchedCard = null;
-    let syncState = 'synced';
-    
-    function dragStart(e) {
-      draggedId = e.target.dataset.id;
-      e.target.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
-    
-    function dragEnd(e) {
-      e.target.classList.remove('dragging');
-    }
-    
+    function dragStart(e) { draggedId = e.target.closest('.kanban-card').dataset.id; e.target.closest('.kanban-card').classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; }
+    function dragEnd(e) { e.target.closest('.kanban-card').classList.remove('dragging'); }
     async function dropTicket(e, zone) {
-      e.preventDefault();
-      zone.classList.remove('drop-zone');
-      zone.closest('.kanban-column')?.classList.remove('drag-over');
+      e.preventDefault(); zone.classList.remove('drop-zone');
       const newStatus = zone.closest('.kanban-column').dataset.status;
-      
-      if (draggedId) {
-        const ticket = tickets.find(t => t.id === draggedId);
-        if (ticket) {
-          ticket.status = newStatus;
-          saveTicketsRemote();
-          renderTickets();
-        }
-        draggedId = null;
+      if (!draggedId) return;
+      const ticket = tickets.find(t => t.id === draggedId);
+      if (ticket && ticket.status !== newStatus) {
+        ticket.status = newStatus; pushActivity(ticket, `Moved to ${newStatus}`);
+        scheduleRenderTickets();
+        await saveTicketsRemote('drop-move');
       }
+      draggedId = null;
     }
-    
-    // Mobile touch drag support - simpler approach with status buttons
-    function initTouchDrag() {
-      // Touch drag is complex on mobile - using move buttons instead
-    }
-    
-    function quickAddTicket(status = 'todo') {
-      const input = document.getElementById('quickAddInput');
-      if (!input) return;
-      const title = input.value.trim();
-      if (!title) {
-        showToast('✍️ Add a title first');
-        input.focus();
-        return;
-      }
-      tickets.push({
-        id: Date.now().toString(),
-        title,
-        desc: '',
-        status,
-        priority: 'medium',
-        category: 'general',
-        created: new Date().toISOString().split('T')[0]
-      });
-      input.value = '';
-      saveTicketsRemote();
-      renderTickets();
-      showToast('✅ Ticket added');
-    }
+    function initTouchDrag() {}
 
     function addTicket(status) {
       document.getElementById('ticketStatus').value = status;
-      document.getElementById('ticketTitle').value = '';
-      document.getElementById('ticketDesc').value = '';
+      ['ticketTitle','ticketDesc','ticketOwner','ticketTags','ticketDue','ticketEffort','ticketBlockers'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       document.getElementById('ticketCategory').value = 'general';
       document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('.priority-btn[data-priority="medium"]').classList.add('active');
@@ -4419,162 +4481,150 @@
       document.getElementById('ticketModalOverlay').style.display = 'flex';
       document.getElementById('ticketTitle').focus();
     }
-    
-    function closeTicketModal() {
-      document.getElementById('ticketModalOverlay').style.display = 'none';
-      document.getElementById('ticketForm').dataset.editId = '';
-    }
-    
+
+    function closeTicketModal() { document.getElementById('ticketModalOverlay').style.display = 'none'; document.getElementById('ticketForm').dataset.editId = ''; }
+
     async function submitTicket(e) {
       e.preventDefault();
       const form = document.getElementById('ticketForm');
       const editId = form.dataset.editId;
-      const title = document.getElementById('ticketTitle').value;
-      const desc = document.getElementById('ticketDesc').value;
-      const status = document.getElementById('ticketStatus').value;
-      const priority = document.querySelector('.priority-btn.active').dataset.priority;
-      const category = document.getElementById('ticketCategory').value;
-      
+      const payload = normalizeTicket({
+        id: editId || Date.now().toString(),
+        title: document.getElementById('ticketTitle').value,
+        desc: document.getElementById('ticketDesc').value,
+        status: document.getElementById('ticketStatus').value,
+        priority: document.querySelector('.priority-btn.active').dataset.priority,
+        category: document.getElementById('ticketCategory').value,
+        owner: document.getElementById('ticketOwner').value,
+        tags: document.getElementById('ticketTags').value,
+        due: document.getElementById('ticketDue').value,
+        effort: document.getElementById('ticketEffort').value,
+        blockers: document.getElementById('ticketBlockers').value
+      });
+      if (!payload.title) return showToast('Title required');
       if (editId) {
-        // Update existing
         const ticket = tickets.find(t => t.id === editId);
-        if (ticket) {
-          ticket.title = title;
-          ticket.desc = desc;
-          ticket.status = status;
-          ticket.priority = priority;
-          ticket.category = category;
-        }
+        if (ticket) { Object.assign(ticket, payload); pushActivity(ticket, 'Edited ticket'); }
       } else {
-        // Create new
-        tickets.push({
-          id: Date.now().toString(),
-          title,
-          desc,
-          status,
-          priority,
-          category,
-          created: new Date().toISOString().split('T')[0]
-        });
+        pushActivity(payload, 'Created ticket');
+        tickets.push(payload);
       }
-      
-      saveTicketsRemote();
-      renderTickets();
+      saveLocalCache();
+      scheduleRenderTickets();
       closeTicketModal();
+      await saveTicketsRemote(editId ? 'edit-ticket' : 'new-ticket');
     }
-    
-    // Priority toggle handlers
+
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.priority-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        });
+        btn.addEventListener('click', () => { document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); });
       });
-      
-      const quickInput = document.getElementById('quickAddInput');
-      if (quickInput) {
-        quickInput.addEventListener('keydown', (evt) => {
-          if (evt.key === 'Enter') {
-            evt.preventDefault();
-            quickAddTicket();
-          }
-        });
-      }
-
-      // Close modal on overlay click
-      document.getElementById('ticketModalOverlay').addEventListener('click', (e) => {
-        if (e.target.id === 'ticketModalOverlay') closeTicketModal();
-      });
+      document.getElementById('ticketModalOverlay').addEventListener('click', (e) => { if (e.target.id === 'ticketModalOverlay') closeTicketModal(); });
+      document.addEventListener('keydown', handleTicketShortcuts);
+      hydrateTicketToolbar();
     });
-    
+
     async function deleteTicket(id) {
-      if (confirm('Delete this ticket?')) {
-        tickets = tickets.filter(t => t.id !== id);
-        saveTicketsRemote();
-        renderTickets();
-      }
+      if (!confirm('Delete this ticket?')) return;
+      tickets = tickets.filter(t => t.id !== id);
+      selectedTicketIds.delete(id);
+      saveLocalCache(); scheduleRenderTickets(); await saveTicketsRemote('delete-ticket');
     }
-    
+
     async function moveTicket(id, newStatus) {
       const ticket = tickets.find(t => t.id === id);
-      if (ticket) {
-        ticket.status = newStatus;
-        saveTicketsRemote();
-        renderTickets();
+      if (!ticket) return;
+      ticket.status = newStatus; pushActivity(ticket, `Moved to ${newStatus}`);
+      scheduleRenderTickets();
+      await saveTicketsRemote('move-ticket');
+    }
+
+    async function bulkMoveSelected(newStatus) {
+      const selected = tickets.filter(t => selectedTicketIds.has(t.id));
+      if (!selected.length) return showToast('Select tickets first');
+      selected.forEach(t => { t.status = newStatus; pushActivity(t, `Bulk moved to ${newStatus}`); });
+      await saveTicketsRemote('bulk-move');
+      showToast(`Moved ${selected.length} ticket(s)`);
+      scheduleRenderTickets();
+    }
+
+    async function bulkDeleteSelected() {
+      const ids = Array.from(selectedTicketIds);
+      if (!ids.length) return showToast('Select tickets first');
+      if (!confirm(`Delete ${ids.length} selected ticket(s)?`)) return;
+      tickets = tickets.filter(t => !selectedTicketIds.has(t.id));
+      selectedTicketIds.clear();
+      await saveTicketsRemote('bulk-delete');
+      scheduleRenderTickets();
+    }
+
+    function openTodayFocus() {
+      ticketFilters.todayOnly = !ticketFilters.todayOnly;
+      showToast(ticketFilters.todayOnly ? '🎯 Today focus on' : '🎯 Today focus off');
+      scheduleRenderTickets();
+    }
+
+    let shortcutGPressedAt = 0;
+    function handleTicketShortcuts(e) {
+      if (state.currentView !== 'tickets') return;
+      const activeTag = document.activeElement && document.activeElement.tagName;
+      if (e.key === '/' && activeTag !== 'INPUT' && activeTag !== 'TEXTAREA') { e.preventDefault(); document.getElementById('ticketFilterInput')?.focus(); return; }
+      if (e.key.toLowerCase() === 'n' && activeTag !== 'INPUT' && activeTag !== 'TEXTAREA') { e.preventDefault(); addTicket('todo'); return; }
+      if (e.key.toLowerCase() === 'g') { shortcutGPressedAt = Date.now(); return; }
+      if (e.key.toLowerCase() === 't' && Date.now() - shortcutGPressedAt < 1200) { openTodayFocus(); }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        const visibleIds = sortTickets(tickets.filter(ticketMatchesFilters)).map(t => t.id);
+        const allSelected = visibleIds.every(id => selectedTicketIds.has(id));
+        visibleIds.forEach(id => allSelected ? selectedTicketIds.delete(id) : selectedTicketIds.add(id));
+        scheduleRenderTickets();
       }
     }
-    
+
     function shareWithBud() {
       const doingTickets = tickets.filter(t => t.status === 'doing');
-      if (doingTickets.length === 0) {
-        showToast('📋 No tickets in Doing!');
-        return;
-      }
-      
-      const message = '🎫 do the tickets:\n' + doingTickets.map(t => 
-        `• ${t.title}${t.desc ? ' - ' + t.desc : ''}`
-      ).join('\n');
-      
-      navigator.clipboard.writeText(message).then(() => {
-        showToast('💜 Copied! Paste in Discord to send to Bud');
-      }).catch(() => {
-        // Fallback
-        const ta = document.createElement('textarea');
-        ta.value = message;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('💜 Copied! Paste in Discord to send to Bud');
+      if (doingTickets.length === 0) { showToast('📋 No tickets in Doing!'); return; }
+      const message = '🎫 do the tickets:
+' + doingTickets.map(t => `• ${t.title}${t.desc ? ' - ' + t.desc : ''}`).join('
+');
+      navigator.clipboard.writeText(message).then(() => showToast('💜 Copied! Paste in Discord to send to Bud')).catch(() => {
+        const ta = document.createElement('textarea'); ta.value = message; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('💜 Copied! Paste in Discord to send to Bud');
       });
     }
-    
+
     function editTicket(id) {
-      const ticket = tickets.find(t => t.id === id);
-      if (!ticket) return;
-      
+      const ticket = tickets.find(t => t.id === id); if (!ticket) return;
       document.getElementById('ticketStatus').value = ticket.status;
       document.getElementById('ticketTitle').value = ticket.title;
       document.getElementById('ticketDesc').value = ticket.desc || '';
-      document.querySelectorAll('.priority-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.priority === ticket.priority);
-      });
-      
-      // Store editing ID
+      document.getElementById('ticketCategory').value = ticket.category || 'general';
+      document.getElementById('ticketOwner').value = ticket.owner || '';
+      document.getElementById('ticketTags').value = (ticket.tags || []).join(', ');
+      document.getElementById('ticketDue').value = ticket.due || '';
+      document.getElementById('ticketEffort').value = ticket.effort || '';
+      document.getElementById('ticketBlockers').value = ticket.blockers || '';
+      document.querySelectorAll('.priority-btn').forEach(b => { b.classList.toggle('active', b.dataset.priority === ticket.priority); });
       document.getElementById('ticketForm').dataset.editId = id;
       document.querySelector('.modal-title').textContent = '✏️ Edit Ticket';
       document.querySelector('.submit-btn').textContent = 'Save Changes';
+      updateCategoryDropdown();
       document.getElementById('ticketModalOverlay').style.display = 'flex';
       document.getElementById('ticketTitle').focus();
     }
-    
+
     async function letsDoIt() {
-      console.log('letsDoIt called, tickets:', tickets);
       const todoTickets = tickets.filter(t => t.status === 'todo');
-      console.log('Todo tickets:', todoTickets.length);
-      
-      if (todoTickets.length === 0) {
-        showToast('📋 No tasks in To Do!');
-        return;
-      }
-      
-      // Move all to doing
-      for (const t of todoTickets) {
-        await fetch(`/api/tickets/${t.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'doing' })
-        });
-      }
-      
+      if (todoTickets.length === 0) { showToast('📋 No tasks in To Do!'); return; }
+      todoTickets.forEach(t => { t.status = 'doing'; pushActivity(t, 'Lets do it bulk move'); });
+      await saveTicketsRemote('lets-do-it');
       showToast('🚀 Moved ' + todoTickets.length + ' task(s) to Doing!');
+      scheduleRenderTickets();
     }
-    
+
     // Load tickets on startup
     loadTickets();
 
-    // ===== IDEAS =====
+// ===== IDEAS =====
     let ideasFilter = 'all';
     let ideasSortMode = 'time-desc';
     const statusOrder = { brainstorming: 0, planned: 1, building: 2, shipped: 3 };
